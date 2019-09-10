@@ -1,0 +1,22 @@
+{
+  "name": "apptemplate",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "co": "^4.6.0",
+    "cookie-parser": "^1.4.4",
+    "d3": "^5.11.0",
+    "debug": "^2.6.9",
+    "express": "^4.16.4",
+    "git": "^0.1.5",
+    "http-errors": "^1.6.3",
+    "mongodb": "^3.3.2",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.19.1",
+    "twig": "^0.10.3"
+  }
+}

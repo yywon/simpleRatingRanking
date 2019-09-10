@@ -1,0 +1,24 @@
+<html lang="en">
+<head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</head>
+
+<div class="activitypage container text-center mt-4">
+    <h1 class= "py-2">Simple Ranking Activity</h1>
+    <div>
+    <p>This is an activity where you will rank the pictures in order 
+        from least to greatest amount of dots. This is the intro. 
+        In the future, there will more instructions on this page.
+    </p>
+    <p class ="py-100">Please read the  <a href="/img/consent.pdf" target="_blank">Consent Form </a> before you start this user study. If you agree to participate in this user study, 
+        please input your Amazon Turk Worker ID and click “Start”.<p>
+        <div class="footer4introduce">
+            <form method="POST" action="/activity/">
+                <input type="text" class="form-control" placeholder="Amazon Turk Worker ID" aria-label="Amazon Turk Worker ID" aria-describedby="basic-addon2" name="userID">
+                <button type="submit" class="btn btn-success" id="startStudyBtn">Start</button>
+            </form>
+        </div>
+</div>
