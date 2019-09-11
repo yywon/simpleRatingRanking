@@ -1,4 +1,4 @@
-function renderQuestion(question){
+function renderQuestion(question, id){
 
     groupnum = question[0]
     candidates = question[1]
@@ -212,16 +212,26 @@ function renderQuestion(question){
             .attr("width", rankingImageSize)
             .attr("height", rankingImageSize)
     
-            d3.select(".btn.btn-success.nextBtn").on("click", function(){
-                console.log("clicked button")
+        });
+            
+    d3.select(".btn.btn-success.nextBtn").on("click", function(){
+        console.log("clicked button")
+        console.log(rankingOrder)
+        //rankingOrder = JSON.stringify(rankingOrder)
 
-                //add ajax function
-                $ajax 
+        url2go =  id + "/rankings"
+            
+        //add ajax function
+        new Promise((resolve, reject) => {
+            $.ajax({
+                dataType: "json",
+                url: url2go,
+                type: "POST",
+                data: JSON.stringify(rankingOrder),
+                success: resolve,
+            });
+        });
 
+    });
 
-
-
-            })
-        })
-    
 }

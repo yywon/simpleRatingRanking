@@ -41,10 +41,19 @@ router.post('/', function(req,res,next){
 router.post('/:id/rankings/', function(req,res,next){
 
   //collect variables
-  userID = req.body.userID ? req.body.userID : userID;
-  rankingOrder = 
+  userID = req.body.userID;
+
+  console.log("bordytype", typeof req.body)
   id = req.params.id;
-  type = req.params.type;
+  let group2save = Object.keys(req.body);
+  group2save = JSON.parse(group2save)
+  console.log("body keys", Object.keys(req.body))
+  console.log("params", req.params)
+  console.log(group2save)
+
+  //console.log("req", req);
+
+  //saveGroupRes4user.saveRes(req, res, next);
 
   //store into db
   co(function* () {
@@ -57,17 +66,20 @@ router.post('/:id/rankings/', function(req,res,next){
       "id" : userID,
       "collection": id,
       "type": "ranking",
-      "pos0": rankingOrder[0],
-      "pos1": rankingOrder[1],
-      "pos2": rankingOrder[2],
-      "pos3": rankingOrder[3]
+      "pos0": parseInt(group2save[0]),
+      "pos1": parseInt(group2save[1]),
+      "pos2": parseInt(group2save[2]),
+      "pos3": parseInt(group2save[3])
     }
 
     responseCol.insertOne(item, function(err, result) {
       console.log('Ranking inserted')
     });
+
+    client.close();
       
   });
+
 
   res.render('ratings', {userID, id, type: "ratings", picture: 0})
 
@@ -103,6 +115,10 @@ router.post('/:id/ratings/:picture', function(req,res,next){
       console.log('Rating inserted')
     });
 
+  client.close();
+
+  });
+
   //go to survey if activity is finished
   if(parseInt(id) === 4 && parseInt(picture) === 3){
     console.log('rendering survey')
@@ -121,9 +137,6 @@ router.post('/:id/ratings/:picture', function(req,res,next){
     picture = parseInt(picture)+ 1
     res.render('ratings', {userID, id, type: "ratings", picture})
   }
-
-
-  });
 
 });
 

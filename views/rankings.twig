@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -24,10 +24,12 @@
     <div class ="float-left text-info">Least number of dots</div> 
     <div class = "float-right text-info r-1">Greatest number of dots</div>
     <div class = "activity"></div>
-    <form method="POST" action="/activity/{{id}}/{{type}}/">
+    <!--<form method="POST" action="/activity/{{id}}/{{type}}/">
         <input type= "hidden" name = "rankingOrder" id = "rankingOrder">
         <button type="submit" class="btn btn-success nextBtn">Next</button>
     </form>
+-->
+    <button class = "btn btn-success nextBtn">Next</button>
 </div>
 </div>
 <script>
@@ -37,11 +39,16 @@
     //make call to db 
 
     allquestions = [
-    [6, [200, 206, 212, 218]],
-    [10, [200, 210, 220, 230]],
-    [14, [200, 214, 228, 242]],
-    [18, [200, 218, 236, 254]]]
-    array = renderQuestion(allquestions[question]);
+    [1, [50, 51, 52, 53]],
+    [2, [50, 52, 54, 56]],
+    [4, [50, 54, 58, 62]],
+    [8, [50, 58, 66, 74]],
+    [16, [50, 66, 82, 98]],
+    [32, [50, 82, 114, 146]],
+    [64, [50, 114, 178, 242]],
+    [128, [50, 178, 306, 434]]]
+
+    array = renderQuestion(allquestions[question], question);
     console.log(array)
 
 </script>

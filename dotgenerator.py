@@ -1,14 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os 
-from vectors import Vector
 
-# Create data
-Base = 20
-colors = (0,0,0)
+# Baseline data
+Base = 50
 area = np.pi*3
 
-noiseLevels = {1,5,10,20,40,80,160}
+noiseLevels = {1,2,4,8,16,32,64,128}
 
 #loop through noise levels
 for i in noiseLevels:
@@ -41,7 +39,7 @@ for i in noiseLevels:
             for existing_location in existing_locations:
                 vecdif = existing_location - new_location
                 
-                if ((abs(vecdif[0]) < .025) & (abs(vecdif[1]) < .025)):
+                if ((abs(vecdif[0]) < .03) & (abs(vecdif[1]) < .03)):
                     #print("broke criteria")
                     break
                 else:
@@ -50,7 +48,7 @@ for i in noiseLevels:
             if valid_checks == len(existing_locations):
                 dots += 1
                 existing_locations.append(new_location)    
-                plt.plot(x, y, 'ro')
+                plt.plot(x, y, 'ko')
 
         print("number of dots: " + str(dots))
 
