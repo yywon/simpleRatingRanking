@@ -24,17 +24,17 @@
     <div class ="float-left text-info">Least number of dots</div> 
     <div class = "float-right text-info r-1">Greatest number of dots</div>
     <div class = "activity"></div>
-    <!--<form method="POST" action="/activity/{{id}}/{{type}}/">
+    <form method="POST" action="/activity/{{id}}/{{type}}/">
         <input type= "hidden" name = "rankingOrder" id = "rankingOrder">
         <button type="submit" class="btn btn-success nextBtn">Next</button>
     </form>
--->
-    <button class = "btn btn-success nextBtn">Next</button>
+
 </div>
 </div>
 <script>
     var question = '{{ id }}';
-    question = parseInt(question) -1
+    var userID = '{{ userID }}';
+    question = parseInt(question) - 1
 
     //make call to db 
 
@@ -48,8 +48,7 @@
     [64, [50, 114, 178, 242]],
     [128, [50, 178, 306, 434]]]
 
-    array = renderQuestion(allquestions[question], question);
-    console.log(array)
+    renderQuestion(allquestions[question], question, userID);
 
 </script>
 </body>
