@@ -36,24 +36,17 @@ router.post('/', function(req,res,next){
 
 });
 
-
-//post a ranking and load next rating page
-router.post('/:id/rankings/', function(req,res,next){
+//post a ranking
+router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
 
   //collect variables
-  userID = req.body.userID;
-
-  console.log("bordytype", typeof req.body)
+  userID = req.params.userID
   id = req.params.id;
   let group2save = Object.keys(req.body);
   group2save = JSON.parse(group2save)
-  console.log("body keys", Object.keys(req.body))
-  console.log("params", req.params)
-  console.log(group2save)
 
-  //console.log("req", req);
-
-  //saveGroupRes4user.saveRes(req, res, next);
+  console.log(userID)
+  console.log(id)
 
   //store into db
   co(function* () {
@@ -72,20 +65,46 @@ router.post('/:id/rankings/', function(req,res,next){
       "pos3": parseInt(group2save[3])
     }
 
-    responseCol.insertOne(item, function(err, result) {
-      console.log('Ranking inserted')
-    });
+    var criteria = {
+      "id": userID, 
+      "collection": id, 
+      "type": "ranking"
+    }
+
+    var newItem = {
+        "pos0": parseInt(group2save[0]),
+        "pos1": parseInt(group2save[1]),
+        "pos2": parseInt(group2save[2]),
+        "pos3": parseInt(group2save[3])
+    }
+
+    count = yield responseCol.find(criteria).count()
+    console.log(count)
+
+    if(count > 0){
+      responseCol.update(criteria,{ $set: newItem })
+      console.log('Ranking updated')
+    } else {
+      responseCol.insertOne(item, function(err, result) {
+        console.log('Ranking inserted')
+      });
+    }
 
     client.close();
       
   });
+});
 
+router.post('/:id/rankings/', function(req, res, next){
+
+  userID = req.body.userID ? req.body.userID : userID
+  id = req.params.id;
+
+  console.log("user", userID);
 
   res.render('ratings', {userID, id, type: "ratings", picture: 0})
 
 });
-
-
 
 //Post a rating and load next page
 router.post('/:id/ratings/:picture', function(req,res,next){
@@ -113,30 +132,31 @@ router.post('/:id/ratings/:picture', function(req,res,next){
 
     responseCol.insertOne(item, function(err, result) {
       console.log('Rating inserted')
+      console.log("Inserted id:" + id)
+      console.log("Inserted picture:" + picture)
+
+      if(parseInt(id) === 7 && parseInt(picture) === 3){
+        console.log('rendering survey')
+        res.render('survey')
+        return;
+      }
+    
+      //adjust to next activity
+      if(parseInt(picture) === 3){
+        console.log("moving to next id")
+        picture === 0
+        id = parseInt(id) + 1
+        type = "rankings"
+        res.render('rankings', {userID, id, type})
+      } else {
+        picture = parseInt(picture)+ 1
+        res.render('ratings', {userID, id, type: "ratings", picture})
+      }
+
     });
-
-  client.close();
-
-  });
-
   //go to survey if activity is finished
-  if(parseInt(id) === 4 && parseInt(picture) === 3){
-    console.log('rendering survey')
-    res.render('survey')
-    return;
-  }
 
-  //adjust to next activity
-  if(parseInt(picture) === 3){
-    console.log("moving to next id")
-    picture === 0
-    id = parseInt(id) + 1
-    type = "rankings"
-    res.render('rankings', {userID, id, type})
-  } else {
-    picture = parseInt(picture)+ 1
-    res.render('ratings', {userID, id, type: "ratings", picture})
-  }
+});
 
 });
 

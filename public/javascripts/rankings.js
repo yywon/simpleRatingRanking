@@ -1,4 +1,4 @@
-function renderQuestion(question, id){
+function renderQuestion(question, id, userID){
 
     groupnum = question[0]
     candidates = question[1]
@@ -154,6 +154,7 @@ function renderQuestion(question, id){
         })
         .on("click", function () {
             console.log("click1")
+
             let clickeditem = this;
             let clickedX = d3.select(clickeditem).attr("x")
             let clickedY = d3.select(clickeditem).attr("y")
@@ -162,13 +163,18 @@ function renderQuestion(question, id){
             let imageFullname = splitName[splitName.length - 1]
             let splitedFullname = imageFullname.split(".")
             let imageIndex4data = splitedFullname[0]
-
+            
             //let existingRanking = d3.selectAll(".CANofRanking")._groups[0].length
             let existingRanking = rankingOrder.length
 
             console.log("existingRanking to add the image to rankinglist ", existingRanking)
             //add image to ranking array
             rankingOrder.unshift(imageIndex4data)
+            //send data if full
+            if (rankingOrder.length > 3){
+                sendData(rankingOrder, id, userID)
+            }
+
             svg4pool.append("rect")
                 .attr("class", "clickedborder4Pool_" + imageIndex4data)
                 .attr("x", clickedX - 2)
@@ -181,22 +187,8 @@ function renderQuestion(question, id){
                 .on("click", function () {
 
                     console.log("click2")
+                    reset(rankingOrder);
 
-                    let clickeditem = this;
-                    //get rid of rectangle
-                    if (d3.select(this)) d3.select(this).remove();
-                    //if (d3.select(".g4rankingborder").selectAll(".noticeBorder")) d3.select(".g4rankingborder").selectAll(".noticeBorder").remove()
-                    //console.log("clicked image to delete in ranking list ", d3.select(".rankCandidate_" + imageIndex4data))
-                    if (d3.select(".rankCandidate_" + imageIndex4data)) d3.select(".rankCandidate_" + imageIndex4data).remove();
-
-
-                    position = rankingOrder.indexOf(imageIndex4data)
-                    rankingOrder.splice(position,1)
-
-                    let existingRanking = rankingOrder.length
-                    //let sortedKey = rankedImageNames(existingRanking)
-                    // console.log("sortedKey after unclick ", sortedKey)
-                    //reOrderRankingList(existingRanking, sortedKey) 
                 })
 
             /////put the clicked heatmap of the pool to ranking list
@@ -213,25 +205,40 @@ function renderQuestion(question, id){
             .attr("height", rankingImageSize)
     
         });
+}
             
-    d3.select(".btn.btn-success.nextBtn").on("click", function(){
-        console.log("clicked button")
-        console.log(rankingOrder)
-        //rankingOrder = JSON.stringify(rankingOrder)
+function sendData(rankingOrder, id, userID){
+    console.log("sending data")
+    console.log(rankingOrder)
 
-        url2go =  id + "/rankings"
+    increment = id + 1;
+    
+    //url2go =  id + "/rankings"
+    url2go = userID + "/" + increment + "/sendRankings/"
             
-        //add ajax function
-        new Promise((resolve, reject) => {
+    //add ajax function
+    new Promise((resolve, reject) => {
             $.ajax({
                 dataType: "json",
                 url: url2go,
                 type: "POST",
                 data: JSON.stringify(rankingOrder),
-                success: resolve,
+                success: resolve
             });
         });
+}
 
-    });
+function reset(array){
+    i = array.length;
+    while(i > 0){
+        console.log(array)
 
+        image = array[i-1];
+         //remove image
+        if (d3.select(".clickedborder4Pool_"  + image)) d3.select(".clickedborder4Pool_"  + image).remove();
+        if (d3.select(".rankCandidate_" + image)) d3.select(".rankCandidate_" + image).remove();
+        array.pop()
+        i--;
+
+    }
 }

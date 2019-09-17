@@ -1,12 +1,3 @@
-allquestions = [
-    [6, [200, 206, 212, 218]],
-    [10, [200, 210, 220, 230]],
-    [14, [200, 214, 228, 242]],
-    [18, [200, 218, 236, 254]]
-]
-
-renderQuestion(allquestions[3], 0);
-
 function renderQuestion(question, index){
 
     groupnum = question[0]
@@ -21,7 +12,7 @@ function renderQuestion(question, index){
     let svgimagewidth = "100%"
     let divWidth = d3.select('.activity').node().offsetWidth
     let imageSize = divWidth / 3
-    let svgimageheight = imageSize + 50;
+    let svgimageheight = imageSize+ 20;
 
     //grouping for image
     let svg4image = d3.select('.image').append('svg')
@@ -50,6 +41,35 @@ function renderQuestion(question, index){
             .attr("y", 2)
             .attr("width", imageSize)
             .attr("height", imageSize)
+    
+    var data = [0, 50, 100, 150, 200, 250, 300, 350, 400];
+
+    var sliderSimple = d3
+        .sliderBottom() 
+        .min(d3.min(data))
+        .max(d3.max(data))
+        .step(1)
+        .width(500)
+        .tickFormat(d3.format(''))
+        .ticks(5)
+        .default(50)
+        .on('onchange', val => {
+            d3.select('p#value-simple').text(d3.format('')(val));
+        });
+          
+    var gSimple = d3
+        .select('div#slider-simple')
+        .append('svg')
+        .attr('width', 700)
+        .attr('height', 70)
+        .append('g')
+        .attr('transform', 'translate(100,30)');
+          
+    gSimple.call(sliderSimple);
+          
+    d3.select('p#value-simple').text(d3.format('')(sliderSimple.value()));
+          
+
 
     
 

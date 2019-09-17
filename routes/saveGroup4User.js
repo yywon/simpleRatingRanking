@@ -4,11 +4,14 @@ const express = require('express');
 const router = express.Router();
 const co = require('co');
 
-const url = 'mongodb://rwkemmer@10.218.105.218:22/ratingsrankingbasic';
+const url = 'mongodb://rwkemmer@10.218.105.218:22/ratingsrankingsbasic';
 
 const saveGroup = {
     saveGroup = {},
     saveRes: function (req, res, next) {
+        
+        console.log("we did it")
+
         userID = req.body.userID
         id = req.params.id;
         let group2save = req.body.group2save
