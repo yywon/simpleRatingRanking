@@ -102,6 +102,7 @@ for i in permutationArray:
     data['questions'].append({
         'noiselevel': i[0],
         'variation': i[1],
+        'array': ordering,
         'pos0': ordering[0],
         'pos1': ordering[1],
         'pos2': ordering[2],

@@ -30,22 +30,13 @@
     </form>
 </div>
 <script> 
-    var question = '{{ id }}';
     var picture = '{{ picture }}'
-    question = parseInt(question) -1
-    picture = parseInt(picture)
+    var question = '{{ question }}';
 
-    allquestions = [
-    [1, [50, 51, 52, 53]],
-    [2, [50, 52, 54, 56]],
-    [4, [50, 54, 58, 62]],
-    [8, [50, 58, 66, 74]],
-    [16, [50, 66, 82, 98]],
-    [32, [50, 82, 114, 146]],
-    [64, [50, 114, 178, 242]],
-    [128, [50, 178, 306, 434]]]
-    
-    renderQuestion(allquestions[question], picture);
+    picture = parseInt(picture)
+    question = JSON.parse(question)
+    console.log("question: " + question)
+    renderQuestion(question, picture);
 
 </script>
 </body>

@@ -6,17 +6,22 @@ const co = require('co');
 
 var url = 'mongodb://10.218.105.218:27017/';
 var userID = null
+let assignQuestions = require('./assignQuestions')
+let loadQuestion = require('./loadQuestion')
 
 //store userID and load first activity
 router.post('/', function(req,res,next){
 
   userID = req.body.userID ? req.body.userID : userID
+  id = 1
 
   co(function* () {
 
     let client = yield MongoClient.connect(url);
     const db = client.db('ratingsrankingsbasic')
-    let usersCol = db.collection('users')
+    let usersCol = db.collection('users') 
+
+    let assignedQuestions = assignQuestions.assign();
 
     check = yield usersCol.findOne({"user" : userID})
 
@@ -24,16 +29,28 @@ router.post('/', function(req,res,next){
     if(check === null){
       
       //insert new user if user does not exist
-      var item = { "user": userID };
+      var item = { 
+         "user": userID,
+         "key2pay": null,
+         "group4Answers": assignedQuestions
+      };
 
-      usersCol.insertOne(item, function(err, result) {
-        console.log('Username inserted', result);
-      });
+      yield usersCol.insertOne(item);
+
+       //load next question
+      question = loadQuestion.load(userID, id)
+
+      //Console.log("QUESTION : " +   question)
+      //json encode array
+      question = JSON.stringify(question)
+
+      res.render('rankings', {userID, id, type: "rankings", question})
+
+
     }
   });
 
-  res.render('rankings', {userID, id: 1 , type: "rankings"})
-
+ 
 });
 
 //post a ranking
@@ -102,7 +119,12 @@ router.post('/:id/rankings/', function(req, res, next){
 
   console.log("user", userID);
 
-  res.render('ratings', {userID, id, type: "ratings", picture: 0})
+  question = loadQuestion.load(userID, id)
+
+  //json encode array
+  question = JSON.stringify(question)
+
+  res.render('ratings', {userID, id, type: "ratings", picture: 0, question})
 
 });
 
@@ -147,10 +169,16 @@ router.post('/:id/ratings/:picture', function(req,res,next){
         picture === 0
         id = parseInt(id) + 1
         type = "rankings"
-        res.render('rankings', {userID, id, type})
+        question = loadQuestion.load(userID, id)
+        //json encode array
+        question = JSON.stringify(question)
+        res.render('rankings', {userID, id, type, question})
       } else {
         picture = parseInt(picture)+ 1
-        res.render('ratings', {userID, id, type: "ratings", picture})
+        question = loadQuestion.load(userID, id)
+        //json encode array
+        question = JSON.stringify(question)
+        res.render('ratings', {userID, id, type: "ratings", picture, question})
       }
 
     });

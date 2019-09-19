@@ -3,6 +3,9 @@ function renderQuestion(question, id, userID){
     groupnum = question[0]
     candidates = question[1]
 
+    console.log("groupnum    " + groupnum)
+    console.log("candidates   " + candidates)
+
     //hook onto html element
     d3.select(".activity").html("")
 
