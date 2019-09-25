@@ -1,8 +1,10 @@
-function renderQuestion(question, index){
+function renderQuestion(question, picture, id, userID){
+
+    var startTime = new Date().getTime(); 
 
     groupnum = question[0]
     candidates = question[1]
-    candidate = candidates[index]
+    candidate = candidates[picture]
 
     d3.select(".activity").html("")
 
@@ -44,6 +46,39 @@ function renderQuestion(question, index){
     
     var data = [0, 50, 100, 150, 200, 250, 300, 350, 400];
 
+    d3.select(".btn.btn-success.nextBtn").on("click", function () {
+        console.log("Button Clicked");
+        console.log(userID)
+        console.log(id)
+        var endTime = new Date().getTime();
+        var timeSpent = endTime - startTime;
+        rating = document.getElementById("rating").value
+        sendData(id, userID, picture, timeSpent, rating)
+    })
+}
+
+function sendData(id, userID, picture, time, rating){
+    console.log("sending data")
+    
+    //url2go =  id + "/rankings"
+    url2go = userID + "/" + id + "/" + picture + "/sendRatings/"
+
+    data2send = [time, rating]
+            
+    //add ajax function
+    new Promise((resolve, reject) => {
+            $.ajax({
+                dataType: "json",
+                url: url2go,
+                type: "POST",
+                data: JSON.stringify(data2send),
+                success: resolve
+            });
+        });
+}
+
+
+/*
     var sliderSimple = d3
         .sliderBottom() 
         .min(d3.min(data))
@@ -68,7 +103,8 @@ function renderQuestion(question, index){
     gSimple.call(sliderSimple);
           
     d3.select('p#value-simple').text(d3.format('')(sliderSimple.value()));
-          
+
+*/
 
 
     
@@ -89,10 +125,3 @@ function renderQuestion(question, index){
 
 
 
-
-
-
-
-
-
-}

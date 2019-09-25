@@ -13,34 +13,39 @@
 <div class = "activitypage">
 <div class="container text-center mt-4">
     <div class="fixed-top py-2" id="userID">UserID: <div name= "userID" style="display:inline" id="userID">{{ userID }}</div></div>
-    <h1 class= "py-2">Simple Ranking/Rating Activity - Excercise {{ id }}</h1>
-    <h3 class= "py-2"> {{ type }}</h3>
+    <h1 class= "py-2">Excercise {{ id }} - Ranking</h1>
     <div>
     <p>
-        This is an activity where you will rank the pictures in order 
-        from least to greatest amount of <strong></strong> dots. 
+        In this activity you will rank the pictures in order 
+        from <strong>least</strong> to <strong>greatest</strong> amount of dots. 
+        Click on each individual dot picture to place it in your answer.
     </p>
     </div>
     <div class ="float-left text-info">Least number of dots</div> 
     <div class = "float-right text-info r-1">Greatest number of dots</div>
     <div class = "activity"></div>
     <form method="POST" action="/activity/{{id}}/{{type}}/">
-        <input type= "hidden" name = "rankingOrder" id = "rankingOrder">
+        <p class="py-2 text-danger"> {{ error }} </p>
         <button type="submit" class="btn btn-success nextBtn">Next</button>
     </form>
 
 </div>
 </div>
 <script>
-    var noiseID = '{{ id }}';
-    var userID = '{{ userID }}';
-    var question = '{{ question }}';
 
-    noiseID = parseInt(noiseID) - 1
-    console.log(question)
+    //construct qustion
+    var noiselevel = '{{ noiselevel }}'
+    var question = '{{ question }}';
     question = JSON.parse(question)
-    renderQuestion(question, noiseID, userID);
-    
+    question = [parseInt(noiselevel), question]
+
+    var userID = '{{ userID }}';
+
+    var id = '{{ id }}';
+    console.log("ID: ", id)
+
+    renderQuestion(question, id, userID);
+
 </script>
 </body>
 </html>

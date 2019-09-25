@@ -2,41 +2,52 @@
 <html lang="en">
 <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <script src="https://d3js.org/d3.v5.js"></script>
         <script src="https://unpkg.com/d3-simple-slider"></script>
         <script type="text/javascript" src="/javascripts/ratings.js"></script>
-        
 </head>
 
 <body>
+<div id="time" name="time"></div>
 <div class = "activitypage">
 <div class="container text-center mt-4">
     <div class="fixed-top py-2" id="userID">UserID: <div name= "userID" style="display:inline" id="userID">{{ userID }}</div></div>
-    <h1 class= "py-2">Simple Ranking/Rating Activity - Excercise {{ id }}</h1>
-    <h3 class= "py-2"> {{ type }}</h3>
+    <h1 class= "py-2">Excercise {{ id }} - Rating</h1>
     <div>
-    <p>This is an activity where you will estimate how many dots are in the image</p>
+    <p>Enter in an estimate for how many dots you think are in this image</p>
     </div>
     <div class = "activity"></div>
     <div class="d-flex justify-content-center"><div id="slider-simple"></div></div>
-    <form method="POST" action="/activity/{{id}}/{{type}}/{{picture}}">
+    <form autocomplete="off" method="POST" action="/activity/{{id}}/{{type}}/{{picture}}">
         <div class="text-center display-3"><p id="value-simple"></div>
-        <input style="margin-bottom: 30px; width: 150px; margin-left: auto; margin-right: auto;" type="text" class="form-control" placeholder="Enter Estimate" aria-label="Enter Estimate" aria-describedby="basic-addon2" name="rating">
+        <input autocomplete="off" style="margin-bottom: 30px; width: 150px; margin-left: auto; margin-right: auto;" type="text" class="form-control" placeholder="Enter Estimate" aria-label="Enter Estimate" aria-describedby="basic-addon2" name="rating" id="rating">
+        <p class="py-2 text-danger"> {{ error }} </p>
         <button type="submit" class="btn btn-success nextBtn">Next</button>
     </form>
+
 </div>
 <script> 
-    var picture = '{{ picture }}'
-    var question = '{{ question }}';
 
-    picture = parseInt(picture)
+    //construct question
+    var noiselevel = '{{ noiselevel }}'
+    var question = '{{ question }}';
     question = JSON.parse(question)
+    question = [parseInt(noiselevel), question]
+
+    var picture = '{{ picture }}';
+    picture = parseInt(picture)
+
+    var userID = '{{ userID }}';
+
+    var id = '{{ id }}';
+    console.log("ID: ", id)
+
     console.log("question: " + question)
-    renderQuestion(question, picture);
+    renderQuestion(question, picture, id, userID);
 
 </script>
 </body>

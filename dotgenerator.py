@@ -95,25 +95,40 @@ for i in masterArray:
         permutationArray.append(perm)
         counter += 1
 
-data = {}
-data['questions'] = []  
+data = []
+
 for i in permutationArray: 
     ordering = i[2]
-    data['questions'].append({
+    instance = {
+        'noiselevel': i[0],
+        'variation': i[1],
+        'array': ordering
+    } 
+
+    data.append(instance)
+
+with open('public/data/questions.json', 'w') as outfile:
+    json.dump(data, outfile)
+
+
+'''
+for i in permutationArray: 
+    ordering = i[2]
+    data.append({
         'noiselevel': i[0],
         'variation': i[1],
         'array': ordering,
-        'pos0': ordering[0],
-        'pos1': ordering[1],
-        'pos2': ordering[2],
-        'pos3': ordering[3]
+        #'pos0': ordering[0],
+        #'pos1': ordering[1],
+        #'pos2': ordering[2],
+        #'pos3': ordering[3]
     })
 
 #dump to outfile
 with open('public/data/questions.json', 'w') as outfile:
     json.dump(data, outfile)
 
-
+'''
 
 
 

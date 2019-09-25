@@ -1,5 +1,7 @@
 function renderQuestion(question, id, userID){
 
+    var startTime = new Date().getTime();
+
     groupnum = question[0]
     candidates = question[1]
 
@@ -25,7 +27,7 @@ function renderQuestion(question, id, userID){
     let svg4ranking_width = "100%";
     let divWidth = d3.select('.rankingDiv').node().offsetWidth
     let rankingImageSize = divWidth / (topNSize +.5)
-    let svg4ranking_height = rankingImageSize + 100;
+    let svg4ranking_height = rankingImageSize + 70;
     let gap4images = (divWidth - (rankingImageSize * topNSize)) / topNSize
 
     //Grouping for ranks
@@ -131,9 +133,7 @@ function renderQuestion(question, id, userID){
             //try to put the image to the ranking list
 
             //find existing ranking
-            //let existingRanking = d3.selectAll(".CANofRanking")
             existingRanking = rankingOrder.length
-            //console.log("existing ranking" + existingRanking)
 
             //check to see if ranking list is full
             if (existingRanking > topNSize) {
@@ -172,10 +172,12 @@ function renderQuestion(question, id, userID){
 
             console.log("existingRanking to add the image to rankinglist ", existingRanking)
             //add image to ranking array
-            rankingOrder.unshift(imageIndex4data)
+            rankingOrder.push(imageIndex4data)
             //send data if full
             if (rankingOrder.length > 3){
-                sendData(rankingOrder, id, userID)
+                var endTime = new Date().getTime();
+                var timeSpent = endTime- startTime;
+                sendData(rankingOrder, id, userID, timeSpent)
             }
 
             svg4pool.append("rect")
@@ -185,7 +187,6 @@ function renderQuestion(question, id, userID){
                 .attr("width", rankingImageSize + 2)
                 .attr("height", rankingImageSize + 2)
                 .attr("style", "fill:gray;stroke:gray;stroke-width:2;stroke-opacity:1;opacity:0.5")
-                    //add in another image (1,2,3,4)
 
                 .on("click", function () {
 
@@ -208,24 +209,29 @@ function renderQuestion(question, id, userID){
             .attr("height", rankingImageSize)
     
         });
+
+    //var timeSpentReport = TimeMe.getTimeOnCurrentPageInSeconds();
+
 }
             
-function sendData(rankingOrder, id, userID){
+function sendData(rankingOrder, id, userID, time){
     console.log("sending data")
-    console.log(rankingOrder)
-
-    increment = id + 1;
+    console.log("Time: ", time)
     
     //url2go =  id + "/rankings"
-    url2go = userID + "/" + increment + "/sendRankings/"
-            
+    url2go = userID + "/" + id + "/sendRankings/"
+
+    //add time to end of rankingOrder array
+    group = rankingOrder
+    group.push(time)
+
     //add ajax function
     new Promise((resolve, reject) => {
             $.ajax({
                 dataType: "json",
                 url: url2go,
                 type: "POST",
-                data: JSON.stringify(rankingOrder),
+                data: JSON.stringify(group),
                 success: resolve
             });
         });
@@ -234,7 +240,6 @@ function sendData(rankingOrder, id, userID){
 function reset(array){
     i = array.length;
     while(i > 0){
-        console.log(array)
 
         image = array[i-1];
          //remove image

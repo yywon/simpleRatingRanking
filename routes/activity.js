@@ -6,8 +6,8 @@ const co = require('co');
 
 var url = 'mongodb://10.218.105.218:27017/';
 var userID = null
-let assignQuestions = require('./assignQuestions')
 let loadQuestion = require('./loadQuestion')
+let storeQuestion = require('./storeQuestion')
 
 //store userID and load first activity
 router.post('/', function(req,res,next){
@@ -15,42 +15,8 @@ router.post('/', function(req,res,next){
   userID = req.body.userID ? req.body.userID : userID
   id = 1
 
-  co(function* () {
+  loadQuestion.loadFirst(req, res, userID, id)
 
-    let client = yield MongoClient.connect(url);
-    const db = client.db('ratingsrankingsbasic')
-    let usersCol = db.collection('users') 
-
-    let assignedQuestions = assignQuestions.assign();
-
-    check = yield usersCol.findOne({"user" : userID})
-
-    //check to see if user exists in database
-    if(check === null){
-      
-      //insert new user if user does not exist
-      var item = { 
-         "user": userID,
-         "key2pay": null,
-         "group4Answers": assignedQuestions
-      };
-
-      yield usersCol.insertOne(item);
-
-       //load next question
-      question = loadQuestion.load(userID, id)
-
-      //Console.log("QUESTION : " +   question)
-      //json encode array
-      question = JSON.stringify(question)
-
-      res.render('rankings', {userID, id, type: "rankings", question})
-
-
-    }
-  });
-
- 
 });
 
 //post a ranking
@@ -59,72 +25,46 @@ router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
   //collect variables
   userID = req.params.userID
   id = req.params.id;
-  let group2save = Object.keys(req.body);
-  group2save = JSON.parse(group2save)
+  let group = Object.keys(req.body);
+  group = JSON.parse(group)
+  time = group[4]
 
-  console.log(userID)
-  console.log(id)
-
-  //store into db
-  co(function* () {
-
-    let client = yield MongoClient.connect(url);
-    const db = client.db('ratingsrankingsbasic')
-    let responseCol = db.collection('responses')
-
-    var item = {
-      "id" : userID,
-      "collection": id,
-      "type": "ranking",
-      "pos0": parseInt(group2save[0]),
-      "pos1": parseInt(group2save[1]),
-      "pos2": parseInt(group2save[2]),
-      "pos3": parseInt(group2save[3])
-    }
-
-    var criteria = {
-      "id": userID, 
-      "collection": id, 
-      "type": "ranking"
-    }
-
-    var newItem = {
-        "pos0": parseInt(group2save[0]),
-        "pos1": parseInt(group2save[1]),
-        "pos2": parseInt(group2save[2]),
-        "pos3": parseInt(group2save[3])
-    }
-
-    count = yield responseCol.find(criteria).count()
-    console.log(count)
-
-    if(count > 0){
-      responseCol.update(criteria,{ $set: newItem })
-      console.log('Ranking updated')
-    } else {
-      responseCol.insertOne(item, function(err, result) {
-        console.log('Ranking inserted')
-      });
-    }
-
-    client.close();
-      
-  });
+  group.pop()
+  storeQuestion.storeRanking(userID, id, group, time)
 });
 
+//load new rating question
 router.post('/:id/rankings/', function(req, res, next){
 
-  userID = req.body.userID ? req.body.userID : userID
+  userID = req.body.userID ? req.body.userID : userID;
   id = req.params.id;
 
+  loadQuestion.loadAfterRanking(req, res, userID, id);
+
+});
+
+
+router.post(':s?/:t?/:d?/:userID/:id/:picture/sendRatings/', function(req,res,next){
+  console.log("YUPPPPPPPPPPPPP")
+
+  userID = req.params.userID
+  id = req.params.id;
+  picture = req.params.picture;
+
+  let data = Object.keys(req.body);
+  data = JSON.parse(data)
+
+  console.log(data)
+
+  let time = data[0]
+  let rating = data[1]
+
+  console.log("Time: ", time);
+  console.log("rating, ", rating)
   console.log("user", userID);
+  console.log("id", id);
 
-  question = loadQuestion.load(userID, id)
-
-  //json encode array
-  question = JSON.stringify(question)
-
-  res.render('ratings', {userID, id, type: "ratings", picture: 0, question})
+  storeQuestion.storeRating(userID, id, picture, rating, time)
 
 });
 
@@ -134,57 +74,30 @@ router.post('/:id/ratings/:picture', function(req,res,next){
   //collect variables
   userID = req.body.userID ? req.body.userID : userID;
   rating = req.body.rating;
+  time = req.body.time;
   id = req.params.id;
   picture = req.params.picture;
 
-  //insert rating into db
-  co(function* () {
+  if(isNaN(rating) || rating === ''){
+    res.render('ratings', {userID, id, type: "ratings", picture, question, noiselevel, error: "ERROR: Please submit a valid estimate"})
+    return;
+  }
 
-    let client = yield MongoClient.connect(url);
-    const db = client.db('ratingsrankingsbasic')
-    let responseCol = db.collection('responses')
+  //storeQuestion.storeRating(userID, id, picture, rating)
 
-    var item = {
-      "id" : userID,
-      "collection": id,
-      "type": "rating",
-      "picture": picture,
-      "estimate": rating
-    }
+  if(parseInt(picture) === 3){
+    console.log("moving to next id")
+    id = parseInt(id) + 1
+  }
 
-    responseCol.insertOne(item, function(err, result) {
-      console.log('Rating inserted')
-      console.log("Inserted id:" + id)
-      console.log("Inserted picture:" + picture)
+  if(parseInt(id) === 9 && parseInt(picture) === 3){
+    console.log('rendering survey')
+    res.render('survey')
+    return;
+  }
 
-      if(parseInt(id) === 7 && parseInt(picture) === 3){
-        console.log('rendering survey')
-        res.render('survey')
-        return;
-      }
-    
-      //adjust to next activity
-      if(parseInt(picture) === 3){
-        console.log("moving to next id")
-        picture === 0
-        id = parseInt(id) + 1
-        type = "rankings"
-        question = loadQuestion.load(userID, id)
-        //json encode array
-        question = JSON.stringify(question)
-        res.render('rankings', {userID, id, type, question})
-      } else {
-        picture = parseInt(picture)+ 1
-        question = loadQuestion.load(userID, id)
-        //json encode array
-        question = JSON.stringify(question)
-        res.render('ratings', {userID, id, type: "ratings", picture, question})
-      }
-
-    });
-  //go to survey if activity is finished
-
-});
+  //load new question
+  loadQuestion.loadAfterRating(req, res, userID, id, picture);
 
 });
 
