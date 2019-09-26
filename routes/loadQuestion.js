@@ -32,7 +32,7 @@ const loadModule = {
             check = yield usersCol.findOne({"user" : userID})
         
             //check to see if user exists in database
-            if(check === null){
+            if(check === null || userID != null){
               
               //insert new user if user does not exist
                 var item = { 
@@ -69,9 +69,10 @@ const loadModule = {
 
                 res.render('rankings', {userID, id, type: "rankings", question, noiselevel})
 
+        } else if(userID == null){
+          res.render('index', {error: "ERROR: Please enter a username"});
         } else{
             res.render('index', {error: "ERROR: Username already exists"});
-
           }
         })
     },

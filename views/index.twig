@@ -5,24 +5,94 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="timeme.min.js"></script>
+        <link rel="stylesheet" href="/stylesheets/intropage.scss">
 </head>
 
-<div class="activitypage container text-center mt-4">
-    <h1 class= "py-2">Simple Rating and Ranking Activity</h1>
-    <div>
-    <p>This is an activity where you will rank the pictures in order 
-        from least to greatest amount of dots. This is the intro. 
-        In the future, there will more instructions on this page.
+<div class="introduction containerIntro">
+    <div class = "float left">
+    <div class = "text-danger">{{ error }}</div>
+    <h1 class= "py-4">Introduction</h1>
+    <p>Welcome to our study on the <strong>Predicting the number of dots in an image.</strong></p>
+    </br>
+    <p>This study utilizes two distinct activities, ranking estimation and numerical estimation, in order to best 
+        estimate how many dots are in an image. From this study, we want to better understand how we can aggregate 
+        ordinal (i.e., ranking) and cardinal (i.e., numerical) estimate data from multiple human users into a 
+        multimodal consensus estimate that best extracts crowd wisdom. </p>
+    <h1 class= "py-2">Task</h1>
+    <p>In this task, we want to understand how human users estimate the number of dots in an image. 
+        Each task is comprised of two subtasks. The following figure is the interface of the first subtask. 
+        We will first display an interface where users rank 2-8 pictures of dots in order from least to greatest. 
+        Then, we will display a second interface where users will numerically estimate how many dots they think 
+        are in the image.</p>
+    <p><i class = "text-info">Interface A</i></p>
+    <img src="/images/images/rankings.png" class="screenshot">
+    <br>
+    <p><i class = "text-info">Interface B</i></p>
+    <img src="/images/images/ratings.png" class="screenshot">
+    <br>
+    <p><strong>Based on your own visual perception, you are required to </strong></br>
+        1) 1) Rank 2-8 images in order from least to greatest number of dots (Interface A)</br>
+        2) Numerically estimate how many dots are in each specific image (Interface B) 
     </p>
+    <h1 class= "py-2">Training</h1>
+    <p>A demo video is provided to show all interactions available in our user interface.</p>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/062oVI5NbVo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <p>
+                 <ul>
+                    <li>
+                        Add / delete an image to / from the ranking list: <strong>click</strong> on the image in the candidate sets
+                    </li>
+                     <li>
+                        Compare an image with others in the ranking list: <strong>hover</strong> over an image in the candidate set
+                    </li>
+                     <li>
+                        Reset the ranking list: <strong>click</strong> on any image in the candidate selection area to reset it
+                    </li>
+                    <li>
+                        Give a numerical estimation for the dots in an image: <strong>type</strong> the number of dots you believe are in an image
+                    </li>
+                </ul>
+    </p>
+    <p>After you have finished one question, please click “Next” button to continue to the next one. 
+        <strong>There are 16 questions in the entire user study.</strong> These include 8 questions involving ranking estimation 
+        and 8 involving numerical estimation for each image. </p>
+
+    <h1>When finished…</h1>
+    <p>After you have finished all the 30 questions, there is a Demographics Questionnaire. Please complete it. When you have completed 
+        the Demographics Questionnaire, a redeem code will be spawned in the page. 
+        Please enter this redeem code in Amazon Mechanical Turk in order to get your compensation.</p>
+    <p class="forbiddenP"><strong>Please do not use the back/forward or refresh features of your browser as 
+        they will end your session and you will not be paid.</strong></p>
+    <p>Please read the  <a href="/images/images/consent.pdf" target="_blank">Consent Form </a> before you start this user study. If you agree to participate in this user study, 
+        please input your Amazon Turk Worker ID and click “Start”.<p>
+    </div>
+    <div class="footer4introduce">
+        <div class = "text-danger">{{ error }}</div>
+        <form autocomplete="off" method="POST" action="/activity/">
+            <input autocomplete="off" type="text" class="form-control" placeholder="Amazon Turk Worker ID" 
+                aria-label="Amazon Turk Worker ID" aria-describedby="basic-addon2" name="userID">
+            <button type="submit" class="btn btn-success" id="startStudyBtn">Start</button>
+        </form>
+    </div>
+
+</div>
+
+
+
+<!--
+
+</div>
     <p class ="py-100">Please read the  <a href="/img/consent.pdf" target="_blank">Consent Form </a> before you start this user study. If you agree to participate in this user study, 
         please input your Amazon Turk Worker ID and click “Start”.<p>
         <div class = "text-danger">{{ error }}</div>
         <div class="footer4introduce">
-            <form autocomplete="off" method="POST" action="/activity/">
-                <input autocomplete="off" type="text" class="form-control" placeholder="Amazon Turk Worker ID" aria-label="Amazon Turk Worker ID" aria-describedby="basic-addon2" name="userID">
+            <form autocomplete="off" method="POST" action="/video">
+                <input autocomplete="off" type="text" class="form-control" placeholder="Amazon Turk Worker ID" 
+                aria-label="Amazon Turk Worker ID" aria-describedby="basic-addon2" name="userID">
                 <button type="submit" class="btn btn-success" id="startStudyBtn">Start</button>
             </form>
             <script></script>
         </div>
-</div>
+
+    -->
 

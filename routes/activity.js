@@ -19,6 +19,7 @@ router.post('/', function(req,res,next){
 
 });
 
+
 //post a ranking
 router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
 
@@ -32,6 +33,7 @@ router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
   group.pop()
   storeQuestion.storeRanking(userID, id, group, time)
 });
+
 
 //load new rating question
 router.post('/:id/rankings/', function(req, res, next){

@@ -65,7 +65,6 @@ function renderQuestion(question, id, userID){
         .style("width", labelDivWidth)
         .html("asdsa")
     
-    
     //Grouping for candidates
     //let margin4pool = { top: 10, right: 0, bottom: 0, left: 0 }
     let svg4pool_width = "100%";
@@ -86,7 +85,7 @@ function renderQuestion(question, id, userID){
             })
 
         .attr("y", function (d, i) {
-            let yValue = 0
+            let yValue = 0;
             return yValue;
         })
 
@@ -174,11 +173,14 @@ function renderQuestion(question, id, userID){
             //add image to ranking array
             rankingOrder.push(imageIndex4data)
             //send data if full
+
+            console.log("length: ", rankingOrder.length)
+
             if (rankingOrder.length > 3){
                 var endTime = new Date().getTime();
                 var timeSpent = endTime- startTime;
                 sendData(rankingOrder, id, userID, timeSpent)
-            }
+            } 
 
             svg4pool.append("rect")
                 .attr("class", "clickedborder4Pool_" + imageIndex4data)
@@ -201,16 +203,14 @@ function renderQuestion(question, id, userID){
             .attr('xlink:href', clickedImage)
             .attr("x", function () {
                 let existingRanking = rankingOrder.length - 1
+                console.log("exisitng ranking: ", existingRanking)
                 let position2put = (rankingImageSize + gap4images) * existingRanking + 2
                 return position2put
             })
             .attr("y", 2)
             .attr("width", rankingImageSize)
             .attr("height", rankingImageSize)
-    
         });
-
-    //var timeSpentReport = TimeMe.getTimeOnCurrentPageInSeconds();
 
 }
             
@@ -222,7 +222,7 @@ function sendData(rankingOrder, id, userID, time){
     url2go = userID + "/" + id + "/sendRankings/"
 
     //add time to end of rankingOrder array
-    group = rankingOrder
+    group = rankingOrder.slice();
     group.push(time)
 
     //add ajax function
