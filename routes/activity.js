@@ -66,6 +66,10 @@ router.post(':s?/:t?/:d?/:userID/:id/:picture/sendRatings/', function(req,res,ne
   console.log("user", userID);
   console.log("id", id);
 
+  if(isNaN(rating) || rating === ''){
+    return;
+  }
+
   storeQuestion.storeRating(userID, id, picture, rating, time)
 
 });

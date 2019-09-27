@@ -6,7 +6,13 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-        <script type="text/javascript" src="javascripts/survey.js"></script>
+
+        
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="https://surveyjs.azureedge.net/1.1.13/survey.jquery.js"></script>
+    <link href="https://surveyjs.azureedge.net/1.1.13/survey.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="../../../javascripts/survey.js"></script>
+
 </head>
 <body>
     <h1 class="d-flex justify-content-center">Post Study Demographic Survery</h1>
@@ -20,8 +26,9 @@
             </p>
         </div>
         <div id="surveyElement"></div>
-        <div id="result"></div>
+        <div id="surveyResult" hidden></div>
+        <h1 id = "key2show" ></h1>
     </div>
-   
+    <script>startFromSurvey()</script>
 </body>
 </html>
