@@ -38,6 +38,7 @@ const loadModule = {
                 var item = { 
                     "user": userID,
                     "key2pay": null,
+                    "surveyResults": null,
                     "group4Answers": assignedQuestions
                 };
         
