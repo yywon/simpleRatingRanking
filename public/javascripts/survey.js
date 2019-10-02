@@ -74,7 +74,7 @@ let json = {
             type: "text",
             title: "If you have been or are enrolled in a post high school institution, what is your major?",
             placeHolder: "",
-            isRequired: true
+            isRequired: false
         },
         {
             type: "radiogroup",
@@ -102,17 +102,18 @@ let json = {
         },
         {
             type: "radiogroup",
-            hasOther: true,
+            //hasOther: true,
             isRequired: true,
             name: "nativeSpeaker",
             colCount: 1,
             title: "Are you a native English speaker?",
-            otherText: 'If No, then what is your native language?',
+            //otherText: 'If No, then what is your native language?',
             choices: [{
                     value: "Yes",
                     text: "Yes"
                 },
-                // { value: "No", text: "*No*" },
+                { value: "No", 
+                text: "No" },
             ]
         },
         {
