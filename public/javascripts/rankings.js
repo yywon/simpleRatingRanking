@@ -5,8 +5,8 @@ function renderQuestion(question, id, userID){
     groupnum = question[0]
     candidates = question[1]
 
-    console.log("groupnum    " + groupnum)
-    console.log("candidates   " + candidates)
+    //console.log("groupnum    " + groupnum)
+    //console.log("candidates   " + candidates)
 
     //hook onto html element
     d3.select(".activity").html("")
@@ -136,7 +136,7 @@ function renderQuestion(question, id, userID){
 
             //check to see if ranking list is full
             if (existingRanking > topNSize) {
-                console.log("do nothing because the ranking list is full.")
+                //console.log("do nothing because the ranking list is full.")
             } else {
                 g4rankingImage.append("image")
                     .attr("class", "tryRankingCandidate")
@@ -155,7 +155,7 @@ function renderQuestion(question, id, userID){
                 if (d3.select(".tryRankingCandidate")) d3.select(".tryRankingCandidate").remove();
         })
         .on("click", function () {
-            console.log("click1")
+            //console.log("click1")
 
             let clickeditem = this;
             let clickedX = d3.select(clickeditem).attr("x")
@@ -169,12 +169,12 @@ function renderQuestion(question, id, userID){
             //let existingRanking = d3.selectAll(".CANofRanking")._groups[0].length
             let existingRanking = rankingOrder.length
 
-            console.log("existingRanking to add the image to rankinglist ", existingRanking)
+            //console.log("existingRanking to add the image to rankinglist ", existingRanking)
             //add image to ranking array
             rankingOrder.push(imageIndex4data)
             //send data if full
 
-            console.log("length: ", rankingOrder.length)
+            //console.log("length: ", rankingOrder.length)
 
             if (rankingOrder.length > 3){
                 var endTime = new Date().getTime();
@@ -192,7 +192,7 @@ function renderQuestion(question, id, userID){
 
                 .on("click", function () {
 
-                    console.log("click2")
+                    //console.log("click2")
                     reset(rankingOrder);
 
                 })
@@ -203,7 +203,7 @@ function renderQuestion(question, id, userID){
             .attr('xlink:href', clickedImage)
             .attr("x", function () {
                 let existingRanking = rankingOrder.length - 1
-                console.log("exisitng ranking: ", existingRanking)
+                //console.log("exisitng ranking: ", existingRanking)
                 let position2put = (rankingImageSize + gap4images) * existingRanking + 2
                 return position2put
             })
@@ -215,8 +215,8 @@ function renderQuestion(question, id, userID){
 }
             
 function sendData(rankingOrder, id, userID, time){
-    console.log("sending data")
-    console.log("Time: ", time)
+    //console.log("sending data")
+    //console.log("Time: ", time)
     
     //url2go =  id + "/rankings"
     url2go = userID + "/" + id + "/sendRankings/"

@@ -47,9 +47,9 @@ function renderQuestion(question, picture, id, userID){
     var data = [0, 50, 100, 150, 200, 250, 300, 350, 400];
 
     d3.select(".btn.btn-success.nextBtn").on("click", function () {
-        console.log("Button Clicked");
-        console.log(userID)
-        console.log(id)
+        //console.log("Button Clicked");
+        //console.log(userID)
+        //console.log(id)
         var endTime = new Date().getTime();
         var timeSpent = endTime - startTime;
         rating = document.getElementById("rating").value
@@ -58,7 +58,7 @@ function renderQuestion(question, picture, id, userID){
 }
 
 function sendData(id, userID, picture, time, rating){
-    console.log("sending data")
+    //console.log("sending data")
     
     //url2go =  id + "/rankings"
     url2go = userID + "/" + id + "/" + picture + "/sendRatings/"

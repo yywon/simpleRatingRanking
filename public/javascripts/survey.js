@@ -9,12 +9,12 @@ let json = {
             type: "text",
             title: "What is your age?",
             placeHolder: "",
-            isRequired: true
+            isRequired: false
         },
         {
             type: "radiogroup",
             hasOther: false,
-            isRequired: true,
+            isRequired: false,
             name: "gender",
             colCount: 1,
             title: "What is your gender?",
@@ -26,12 +26,16 @@ let json = {
                     value: "Female",
                     text: "Female"
                 },
+                {
+                    value: "Other",
+                    text: "Other"
+                }
             ]
         },
         {
             type: "radiogroup",
             hasOther: false,
-            isRequired: true,
+            isRequired: false,
             name: "education",
             colCount: 1,
             title: "What is your current level of education?",
@@ -79,7 +83,7 @@ let json = {
         {
             type: "radiogroup",
             hasOther: false,
-            isRequired: true,
+            isRequired: false,
             name: "employed",
             colCount: 1,
             title: "Are you currently employed?",
@@ -102,12 +106,12 @@ let json = {
         },
         {
             type: "radiogroup",
-            //hasOther: true,
-            isRequired: true,
+            hasOther: true,
+            isRequired: false,
             name: "nativeSpeaker",
             colCount: 1,
             title: "Are you a native English speaker?",
-            //otherText: 'If No, then what is your native language?',
+            otherText: 'If No, then what is your native language?',
             choices: [{
                     value: "Yes",
                     text: "Yes"
@@ -119,7 +123,7 @@ let json = {
         {
             type: "radiogroup",
             hasOther: false,
-            isRequired: true,
+            isRequired: false,
             name: "stayInUS",
             colCount: 1,
             title: "How long have you lived in the United States?",
@@ -152,6 +156,30 @@ let json = {
                     text: "Greater than 5 years"
                 },
             ]
+        },
+        {
+            type: "radiogroup",
+            //hasOther: true,
+            isRequired: false,
+            name: "estimation",
+            colCount: 1,
+            title: "Have you previously participated on estimation tasks on MTurk?",
+            //otherText: 'If Yes, please specify the activity.',
+            choices: [{
+                    value: "Yes",
+                    text: "Yes"
+                },
+                { value: "No", 
+                text: "No" },
+            ]
+        },
+        {
+            type: "text",
+            name: "specify",
+            title: "If Yes to #9, please specify the activity.",
+            placeHolder: "",
+            isRequired: false
+
         }
     ],
     // completedHtml: "**Thank you for completing the survey. Please click the 'Finish' button to get your key!**"
@@ -162,6 +190,8 @@ function getKey() {
 }
 
 function startFromSurvey(userID) {
+
+    $(".debrief").show()
 
     let survey = new Survey.Model(json);
 
@@ -183,10 +213,10 @@ function startFromSurvey(userID) {
         $(".intro").hide()
 
         let key = getKey()
-        console.log("key ", key)
+        //console.log("key ", key)
 
         let userDemographic = JSON.stringify(result.data, null, 3);
-        console.log("userDemographic ", userDemographic)
+        //console.log("userDemographic ", userDemographic)
 
         url2go = userID + "/sendSurvey"
 
@@ -197,7 +227,8 @@ function startFromSurvey(userID) {
                 type: "POST",
                 data: {'userDemographic': userDemographic, 'key': key},
                 success: function(){
-                    d3.select("#key2show").html("Key for MTurk: ")
+                    d3.select('#debrief').html("The experiment that you have just participated in is part of an Arizona State University project that seeks to understand how ranking estimates and numerical estimates from multiple users can be aggregated to perform challenging estimation tasks. If you have any questions, comments, or concerns regarding this experiment please do not hesitate to contact us at o.are.lab@gmail.com. Thank you for your participation and for your patience.")
+                    d3.select("#key2show").html("Code for MTurk: ")
                     d3.select('#key').html(key)
                     resolve
                 },

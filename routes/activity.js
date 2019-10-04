@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://10.218.105.218:27017/';
+var url = 'mongodb://demo.vaderlab.asu:8000/';
 var userID = null
 let loadQuestion = require('./loadQuestion')
 let storeQuestion = require('./storeQuestion')
@@ -54,7 +54,7 @@ router.post('/:s?/:t?/:d?/:userID/sendSurvey', function(req,res,next){
   userDemographic = req.body.userDemographic;
   userDemographic = JSON.parse(userDemographic);
 
-  console.log(userDemographic);
+  //console.log(userDemographic);
 
   storeQuestion.storeSurvey(userID, userDemographic, key)
 
@@ -72,15 +72,15 @@ router.post(':s?/:t?/:d?/:userID/:id/:picture/sendRatings/', function(req,res,ne
   let data = Object.keys(req.body);
   data = JSON.parse(data)
 
-  console.log(data)
+  //console.log(data)
 
   let time = data[0]
   let rating = data[1]
 
-  console.log("Time: ", time);
-  console.log("rating, ", rating)
-  console.log("user", userID);
-  console.log("id", id);
+  //console.log("Time: ", time);
+  //console.log("rating, ", rating)
+  //console.log("user", userID);
+  //console.log("id", id);
 
   if(isNaN(rating) || rating === ''){
     return;
@@ -108,12 +108,12 @@ router.post('/:id/ratings/:picture', function(req,res,next){
   //storeQuestion.storeRating(userID, id, picture, rating)
 
   if(parseInt(picture) === 3){
-    console.log("moving to next id")
+    //console.log("moving to next id")
     id = parseInt(id) + 1
   }
 
   if(parseInt(id) === 9 && parseInt(picture) === 3){
-    console.log('rendering survey')
+    //console.log('rendering survey')
     res.render('survey', {userID})
     return;
   }

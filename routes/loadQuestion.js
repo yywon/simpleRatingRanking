@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://10.218.105.218:27017/';
+var url = 'mongodb://demo.vaderlab.asu:8000/';
 let assignQuestions = require('./assignQuestions')
 
 Base = 50
@@ -42,13 +42,13 @@ const loadModule = {
                     "group4Answers": assignedQuestions
                 };
         
-                console.log(usersCol.insertOne);
+                //console.log(usersCol.insertOne);
         
                 yield usersCol.insertOne(item);
         
                //load next question
 
-                console.log("userID", userID)
+                //console.log("userID", userID)
 
                 //find question pool for user
                 var questions =  yield usersCol.find({"user":userID}).toArray();       
@@ -60,13 +60,13 @@ const loadModule = {
                 //find question from pool based off of the noise level and variation
                 //question2load = yield questionPoolCol.find( {"questions" : {"noiselevel": noiselevel, "variation": variation} } ).toArray();
                 question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
-                console.log("questions2load ", question2load)
+                //console.log("questions2load ", question2load)
                 question2load = question2load[0].array
-                console.log("questions2load ", question2load)
+                //console.log("questions2load ", question2load)
 
                 question = JSON.stringify(question2load)
 
-                console.log("question: " + question)
+                //console.log("question: " + question)
 
                 res.render('rankings', {userID, id, type: "rankings", question, noiselevel})
 
@@ -103,7 +103,7 @@ const loadModule = {
         //find users questions
         var questions =  yield usersCol.find({"user":userID}).toArray();       
         questions = questions[0].group4Answers
-        console.log("questions ", questions)
+        //console.log("questions ", questions)
 
         // get question array instance at the position of id
         let variation = questions[id-1];
@@ -112,7 +112,7 @@ const loadModule = {
         //question2load = yield questionPoolCol.find( {"questions" : {"noiselevel": noiselevel, "variation": variation} } ).toArray();
         question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
         question2load = question2load[0].array
-        console.log("questions2load ", question2load)
+        //console.log("questions2load ", question2load)
 
         question = JSON.stringify(question2load)
 
@@ -127,8 +127,8 @@ const loadModule = {
       noiselevel = noiseLevels[id-1];
       var question2load
 
-      console.log("userID: ", userID)
-      console.log("id: ", id)
+      //console.log("userID: ", userID)
+      //console.log("id: ", id)
 
       co(function* () {
 
@@ -148,7 +148,7 @@ const loadModule = {
         //question2load = yield questionPoolCol.find( {"questions" : {"noiselevel": noiselevel, "variation": variation} } ).toArray();
         question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
         question2load = question2load[0].array
-        console.log("questions2load ", question2load)
+        //console.log("questions2load ", question2load)
 
         question = JSON.stringify(question2load)
         

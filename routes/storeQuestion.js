@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://10.218.105.218:27017/';
+var url = 'mongodb://demo.vaderlab.asu:8000/';
 let assignQuestions = require('./assignQuestions')
 
 const storeModule = {
@@ -40,10 +40,10 @@ const storeModule = {
 
             if(count > 0){
                 responseCol.update(criteria,{ $set: newItem })
-                console.log('Ranking updated')
+                //console.log('Ranking updated')
             } else {
                 responseCol.insertOne(item, function(err, result) {
-                console.log('Ranking inserted')
+                //console.log('Ranking inserted')
             });
         }
 
@@ -72,7 +72,7 @@ const storeModule = {
             }
 
             responseCol.insertOne(item, function(err, result) {
-                console.log('Rating inserted')
+                //console.log('Rating inserted')
             });
         });
     },
@@ -90,7 +90,7 @@ const storeModule = {
             }
 
             UsersCol.updateOne({"user": userID}, { $set: newItem });
-            console.log('user updated')
+            console.log('User Completed task')
         })
     }
 }
