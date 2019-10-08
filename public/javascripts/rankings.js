@@ -13,7 +13,9 @@ function renderQuestion(question, id, userID){
 
     //Variables
     topNSize = 4
-    topNPositions = Array.from(Array(topNSize).keys())
+    topNPositions = Array.from(Array(topNSize).keys()) //array from 1 to 4
+
+    //array for rankings
     var rankingOrder = []
 
     //Global Variables to be deleted
@@ -26,15 +28,17 @@ function renderQuestion(question, id, userID){
     //let margin = { top: 2, right: 0, bottom: 0, left: 2 }
     let svg4ranking_width = "100%";
     let divWidth = d3.select('.rankingDiv').node().offsetWidth
-    let rankingImageSize = divWidth / (topNSize +.5)
-    let svg4ranking_height = rankingImageSize + 70;
-    let gap4images = (divWidth - (rankingImageSize * topNSize)) / topNSize
+    let rankingImageSize = divWidth / (topNSize + .5)
+    let space = rankingImageSize/8;
+    let svg4ranking_height = rankingImageSize+ rankingImageSize/4;
+    let gap4images = (divWidth - (space + (rankingImageSize * topNSize))) / topNSize;
 
     //Grouping for ranks
 
     let svg4ranking = d3.select(".rankingDiv").append("svg")
         .attr("width", svg4ranking_width)
         .attr("height", svg4ranking_height)
+        .style("background-color", "lightgreen")
         //.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
         let g4rankingborder = svg4ranking.append("g")
@@ -43,10 +47,10 @@ function renderQuestion(question, id, userID){
         .data(topNPositions)
         .enter().append("rect")
         .attr("x", function (d, i) {
-            let xValue = (rankingImageSize + gap4images) * i
+            let xValue = space + ((rankingImageSize + gap4images) * i)
             return xValue
         })
-        .attr("y", 0)
+        .attr("y", rankingImageSize/8)
         .attr("width", rankingImageSize + 4)
         .attr("height", rankingImageSize + 4)
         .attr("style", function (d, i) {
@@ -63,8 +67,8 @@ function renderQuestion(question, id, userID){
     d3.select(".label4ranking").selectAll(".label1")
         .attr("class", "ranking")
         .style("width", labelDivWidth)
-        .html("asdsa")
-    
+
+
     //Grouping for candidates
     //let margin4pool = { top: 10, right: 0, bottom: 0, left: 0 }
     let svg4pool_width = "100%";
@@ -80,12 +84,12 @@ function renderQuestion(question, id, userID){
             .data(topNPositions)
             .enter().append("rect")
             .attr("x", function (d, i) {
-                let xValue = (rankingImageSize + gap4images) * i
+                let xValue = space + (rankingImageSize + gap4images) * i
                 return xValue
             })
 
         .attr("y", function (d, i) {
-            let yValue = 0;
+            let yValue = rankingImageSize/8;
             return yValue;
         })
 
@@ -103,11 +107,11 @@ function renderQuestion(question, id, userID){
             return path4image
         })
         .attr("x", function (d, i) {
-            let xValue = 2 + (rankingImageSize +  gap4images) * i
+            let xValue = space + 2 + (rankingImageSize +  gap4images) * i
             return xValue
         })
         .attr("y", function (d, i) {
-            let yValue = 2
+            let yValue = rankingImageSize/8 + 2
             return yValue 
         })
 
@@ -142,10 +146,10 @@ function renderQuestion(question, id, userID){
                     .attr("class", "tryRankingCandidate")
                     .attr('xlink:href', hoveredImage)
                     .attr("x", function () {
-                        let position2put = (rankingImageSize + gap4images) * existingRanking + 2
+                        let position2put = space + (rankingImageSize + gap4images) * existingRanking + 2
                         return position2put
                     })
-                    .attr("y", 2)
+                    .attr("y", rankingImageSize/8 + 2)
                     .attr("width", rankingImageSize)
                     .attr("height", rankingImageSize)
             }
@@ -193,7 +197,7 @@ function renderQuestion(question, id, userID){
                 .on("click", function () {
 
                     //console.log("click2")
-                    reset(rankingOrder);
+                    //reset(rankingOrder);
 
                 })
 
@@ -204,13 +208,35 @@ function renderQuestion(question, id, userID){
             .attr("x", function () {
                 let existingRanking = rankingOrder.length - 1
                 //console.log("exisitng ranking: ", existingRanking)
-                let position2put = (rankingImageSize + gap4images) * existingRanking + 2
+                let position2put = space + (rankingImageSize + gap4images) * existingRanking + 2
                 return position2put
             })
-            .attr("y", 2)
+            .attr("y", 2 + rankingImageSize/8)
             .attr("width", rankingImageSize)
             .attr("height", rankingImageSize)
         });
+
+        d3.select(".UndoBtn").on("click", function(){
+            i = rankingOrder.length;
+            image = rankingOrder[i-1];
+            if (d3.select(".clickedborder4Pool_"  + image)) d3.select(".clickedborder4Pool_"  + image).remove();
+            if (d3.select(".rankCandidate_" + image)) d3.select(".rankCandidate_" + image).remove();
+            rankingOrder.pop();
+        })
+
+        d3.select(".ResetBtn").on("click", function(){
+            reset(rankingOrder);
+        })
+
+        d3.select(".btn.btn-success.nextBtn").on("click", function () {
+            //console.log("Button Clicked");
+            //console.log(userID)
+            //console.log(id)
+            var endTime = new Date().getTime();
+            var timeSpent = endTime - startTime;
+            rating = document.getElementById("rating").value
+            sendData(id, userID, picture, timeSpent, rating)
+        })
 
 }
             

@@ -12,12 +12,12 @@
 <body>
 <div class = "activitypage">
 <div class="container text-center mt-4">
-    <div class="d-flex justify-content-center py-2" id="userID">UserID: <div name= "userID" style="display:inline" id="userID">{{ userID }}</div></div>
+    <div class="d-flex justify-content-center py-2" id="userID">UserID:   <div name= "userID" style="display:inline" id="userID">{{ userID }}</div></div>
     <h1 class= "py-2">Exercise {{ id }} of 8 - Ranking</h1>
     <div>
     <p>
         In this activity you will rank the pictures in order 
-        from <strong>least</strong> to <strong>greatest</strong> amount of dots. 
+        from <strong>least</strong> to <strong>greatest</strong> number of dots. 
         Click on each individual dot picture to place it in your answer.
     </p>
     </div>
@@ -26,7 +26,15 @@
     <div class = "activity"></div>
     <form method="POST" action="/activity/{{id}}/{{type}}/">
         <p class="py-2 text-danger"> {{ error }} </p>
-        <button type="submit" class="btn btn-success nextBtn">Next</button>
+        <div role="toolbar">
+            <div class="btn-group py-2 mr-1" role="group">
+                <button type="button" class="py-2 btn btn-warning UndoBtn">Undo</button>
+                <button type= "button" class="py-2 btn btn-warning ResetBtn">Reset</button>
+            </div>
+            <div class="btn-group py-2 ml-1" role="group">
+                <button type="submit" class="btn btn-success nextBtn">Next</button>
+            </div>
+        </div>
     </form>
 
 </div>

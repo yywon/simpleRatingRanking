@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://rwkemmer@10.218.105.218:27017/';
 var userID = null
 let loadQuestion = require('./loadQuestion')
 let storeQuestion = require('./storeQuestion')
