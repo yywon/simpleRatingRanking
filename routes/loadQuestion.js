@@ -1,3 +1,4 @@
+
 var express = require('express');
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
@@ -32,7 +33,7 @@ const loadModule = {
             check = yield usersCol.findOne({"user" : userID})
         
             //check to see if user exists in database
-            if(check === null || userID != null){
+            if(check === null && userID != null){
               
               //insert new user if user does not exist
                 var item = { 
