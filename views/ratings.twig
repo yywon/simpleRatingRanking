@@ -14,8 +14,8 @@
 <body>
 <div class = "activitypage">
 <div class="container text-center mt-4">
-    <div class="fixed-top py-2" id="userID">UserID: <div name= "userID" style="display:inline" id="userID">{{ userID }}</div></div>
-    <h1 class= "py-2">Subtask {{ id }} - Numerical Estimation</h1>
+    <div class="d-flex justify-content-center py-2" id="userID">UserID: <div name= "userID" style="display:inline" id="userID">{{ userID }}</div></div>
+    <h1 class= "py-2">Exercise {{ id }} of 8 - Numerical Estimation</h1>
     <div>
     <p>Enter in an estimate for how many dots you think are in this image</p>
     </div>
@@ -23,7 +23,7 @@
     <div class="d-flex justify-content-center"><div id="slider-simple"></div></div>
     <form autocomplete="off" method="POST" action="/activity/{{id}}/{{type}}/{{picture}}">
         <div class="text-center display-3"><p id="value-simple"></div>
-        <input autocomplete="off" style="margin-bottom: 30px; width: 150px; margin-left: auto; margin-right: auto;" type="text" class="form-control" placeholder="Enter Estimate" aria-label="Enter Estimate" aria-describedby="basic-addon2" name="rating" id="rating">
+        <input autocomplete="off" autofocus style="margin-bottom: 30px; width: 150px; margin-left: auto; margin-right: auto;" type="text" class="form-control" placeholder="Enter Estimate" aria-label="Enter Estimate" aria-describedby="basic-addon2" name="rating" id="rating">
         <p class="py-2 text-danger"> {{ error }} </p>
         <button type="submit" class="btn btn-success nextBtn">Next</button>
     </form>

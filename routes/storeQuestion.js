@@ -75,6 +75,23 @@ const storeModule = {
                 console.log('Rating inserted')
             });
         });
+    },
+
+    storeSurvey: function(userID, result, key){
+
+        co(function* () {
+            let client = yield MongoClient.connect(url);
+            const db = client.db('ratingsrankingsbasic')
+            let UsersCol = db.collection('users')
+
+            newItem = {
+                "surveyResults": result, 
+                "key2pay": key
+            }
+
+            UsersCol.updateOne({"user": userID}, { $set: newItem });
+            console.log('user updated')
+        })
     }
 }
 

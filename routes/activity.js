@@ -24,12 +24,13 @@ router.post('/', function(req,res,next){
 router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
 
   //collect variables
-  userID = req.params.userID
+  userID = req.params.userID;
   id = req.params.id;
   let group = Object.keys(req.body);
   group = JSON.parse(group)
   time = group[4]
 
+  //get rid of extra time variable in the group
   group.pop()
   storeQuestion.storeRanking(userID, id, group, time)
 });
@@ -45,9 +46,24 @@ router.post('/:id/rankings/', function(req, res, next){
 
 });
 
+//send survey questions
+router.post('/:s?/:t?/:d?/:userID/sendSurvey', function(req,res,next){
 
+  userID = req.params.userID;
+  key = req.body.key;
+  userDemographic = req.body.userDemographic;
+  userDemographic = JSON.parse(userDemographic);
+
+  console.log(userDemographic);
+
+  storeQuestion.storeSurvey(userID, userDemographic, key)
+
+  res.send("{}");
+
+})
+
+//send ratings
 router.post(':s?/:t?/:d?/:userID/:id/:picture/sendRatings/', function(req,res,next){
-  console.log("YUPPPPPPPPPPPPP")
 
   userID = req.params.userID
   id = req.params.id;
@@ -66,11 +82,15 @@ router.post(':s?/:t?/:d?/:userID/:id/:picture/sendRatings/', function(req,res,ne
   console.log("user", userID);
   console.log("id", id);
 
+  if(isNaN(rating) || rating === ''){
+    return;
+  }
+
   storeQuestion.storeRating(userID, id, picture, rating, time)
 
 });
 
-//Post a rating and load next page
+//load next rating page
 router.post('/:id/ratings/:picture', function(req,res,next){
 
   //collect variables
@@ -94,7 +114,7 @@ router.post('/:id/ratings/:picture', function(req,res,next){
 
   if(parseInt(id) === 9 && parseInt(picture) === 3){
     console.log('rendering survey')
-    res.render('survey')
+    res.render('survey', {userID})
     return;
   }
 
