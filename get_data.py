@@ -88,7 +88,8 @@ for user in usersCol.find():
        	data = {
 			"noiseLevel" : noiseLevel,
  			"ranking": rank,
-			"rating": pictures
+			"rating": pictures,
+			"groundtruth": questionOrder
 		}
 
 	dataArray.append(data)
