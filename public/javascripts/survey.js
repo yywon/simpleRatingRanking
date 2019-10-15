@@ -106,12 +106,11 @@ let json = {
         },
         {
             type: "radiogroup",
-            hasOther: true,
+            hasOther: false,
             isRequired: false,
             name: "nativeSpeaker",
             colCount: 1,
             title: "Are you a native English speaker?",
-            otherText: 'If No, then what is your native language?',
             choices: [{
                     value: "Yes",
                     text: "Yes"
@@ -119,6 +118,13 @@ let json = {
                 { value: "No", 
                 text: "No" },
             ]
+        },
+        {
+            type: "text",
+            isRequired: false,
+            name: "nativeLanguage",
+            placeHolder: "",
+            title: "If No to #7, then what is your native language?",
         },
         {
             type: "radiogroup",
@@ -133,23 +139,23 @@ let json = {
                 },
                 {
                     value: "Less than 1 year",
-                    text: "Less than 1 year"
+                    text: "0 - 1 years"
                 },
                 {
                     value: "1 year",
-                    text: "1 year"
+                    text: "1 - 2 years"
                 },
                 {
                     value: "2 years",
-                    text: "2 years"
+                    text: "2 - 3 years"
                 },
                 {
                     value: "3 years",
-                    text: "3 years"
+                    text: "3 - 4 years"
                 },
                 {
                     value: "4 years",
-                    text: "4 years"
+                    text: "4 - 5 years"
                 },
                 {
                     value: "Greater than 5 years",
