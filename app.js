@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var MongoClient = require('mongodb').MongoClient;
 
 var d3 = require('d3');
+//NOTE: duplicated
 var MongoClient = require('mongodb').MongoClient
 
 var indexRouter = require('./routes/index');

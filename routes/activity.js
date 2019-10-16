@@ -9,13 +9,37 @@ var userID = null
 let loadQuestion = require('./loadQuestion')
 let storeQuestion = require('./storeQuestion')
 
+const User = require('../User');
+let users = [];
+
+let getUserInstance = uid => users.find(user => user.id === uid);
+
 //store userID and load first activity
 router.post('/', function(req,res,next){
 
-  userID = req.body.userID ? req.body.userID : userID
-  id = 1
+  //NOTE: this is where the override is happening,
+  //my suggestion would be to create a new instance for each user.
+  //I think I suggested this approach initially. Sorry.
 
-  loadQuestion.loadFirst(req, res, userID, id)
+  // userID = req.body.userID ? req.body.userID : userID
+  // id = 1
+
+  if (!req.body.userID) {
+  //  TODO: handle no user id, perhaps send an error page.
+  //  return res.render('error')
+  }
+
+  let currentUser = getUserInstance(req.body.userID);
+
+  //NOTE: add new user if not already exists based on id
+  if (!currentUser) {
+    users.push(new User(req.body.userID));
+    currentUser = getUserInstance(req.body.userID);
+  }
+
+  // loadQuestion.loadFirst(req, res, userID, id)
+  //NOTE: pass in user's instance instead
+  loadQuestion.loadFirst(req, res, currentUser)
 
 });
 
@@ -39,8 +63,9 @@ router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
 //load new rating question
 router.post('/:id/rankings/', function(req, res, next){
 
-  userID = req.body.userID ? req.body.userID : userID;
-  id = req.params.id;
+  // userID = req.body.userID ? req.body.userID : userID;
+  // id = req.params.id;
+  let currentUser = getUserInstance(req.body.userID);
 
   loadQuestion.loadAfterRanking(req, res, userID, id);
 
@@ -101,6 +126,8 @@ router.post('/:id/ratings/:picture', function(req,res,next){
   picture = req.params.picture;
 
   if(isNaN(rating) || rating === ''){
+    //TODO: question references global var, use current user's current question instead
+    //currentUser.question
     res.render('ratings', {userID, id, type: "ratings", picture, question, noiselevel, error: "ERROR: Please submit a valid estimate"})
     return;
   }
@@ -109,6 +136,8 @@ router.post('/:id/ratings/:picture', function(req,res,next){
 
   if(parseInt(picture) === 3){
     //console.log("moving to next id")
+    //TODO: update user's activityID
+    // currentUser.activityID += 1
     id = parseInt(id) + 1
   }
 

@@ -13,7 +13,11 @@ noiseLevels = [128,64,32,16,8,4,2,1]
 
 const loadModule = { 
     
-    loadFirst: function(req, res, userID, id) {
+    // loadFirst: function(req, res, userID, id) {
+    //NOTE: id is now available via user.activityID
+    loadFirst: function(req, res, user) {
+
+        //TODO: use user.id, user.activityID where necessary
 
         //determine noise level from position of id
         noiselevel = noiseLevels[0];
@@ -69,13 +73,15 @@ const loadModule = {
 
                 //console.log("question: " + question)
 
+                //TODO: before sending question, save question to user's instance via user.saveCurrentQuestion
                 res.render('rankings', {userID, id, type: "rankings", question, noiselevel})
 
-        } else if(userID == null){
-          res.render('index', {error: "ERROR: Please enter a username"});
-        } else{
-            res.render('index', {error: "ERROR: Username already exists"});
-          }
+        }
+            else if(userID == null){
+              res.render('index', {error: "ERROR: Please enter a username"});
+            } else{
+                res.render('index', {error: "ERROR: Username already exists"});
+            }
         })
     },
 
@@ -115,6 +121,7 @@ const loadModule = {
         question2load = question2load[0].array
         //console.log("questions2load ", question2load)
 
+        //  TODO: update user's current question here
         question = JSON.stringify(question2load)
 
         res.render('ratings', {userID, id, type: "ratings", picture: 0, question, noiselevel});
