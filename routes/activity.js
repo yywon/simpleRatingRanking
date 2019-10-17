@@ -51,7 +51,7 @@ router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
   let group = Object.keys(req.body);
   group = JSON.parse(group)
   time = group[4]
-  
+
   //get rid of extra time variable in the group
   group.pop()
   storeQuestion.storeRanking(userID, id, group, time)
@@ -64,6 +64,7 @@ router.post('/:id/rankings/', function(req, res, next){
 
   // userID = req.body.userID ? req.body.userID : userID;
   // id = req.params.id;
+  console.log(req.body)
   console.log(req.body.userID)
 
   let currentUser = getUserInstance(req.body.userID);
