@@ -21,12 +21,8 @@ router.post('/', function(req,res,next){
   //my suggestion would be to create a new instance for each user.
   //I think I suggested this approach initially. Sorry.
 
-  // userID = req.body.userID ? req.body.userID : userID
-  // id = 1
-
   if (!req.body.userID) {
-  //  TODO: handle no user id, perhaps send an error page.
-  //  return res.render('error')
+    res.render('index', {error: "ERROR: Please enter a username"});
   }
 
   let currentUser = getUserInstance(req.body.userID);
@@ -67,7 +63,7 @@ router.post('/:id/rankings/', function(req, res, next){
   // id = req.params.id;
   let currentUser = getUserInstance(req.body.userID);
 
-  loadQuestion.loadAfterRanking(req, res, userID, id);
+  loadQuestion.loadAfterRanking(req, res, currentUser);
 
 });
 
@@ -119,36 +115,32 @@ router.post(':s?/:t?/:d?/:userID/:id/:picture/sendRatings/', function(req,res,ne
 router.post('/:id/ratings/:picture', function(req,res,next){
 
   //collect variables
-  userID = req.body.userID ? req.body.userID : userID;
+  //userID = req.body.userID ? req.body.userID : userID;
   rating = req.body.rating;
   time = req.body.time;
   id = req.params.id;
   picture = req.params.picture;
 
+  let currentUser = getUserInstance(req.body.userID);
+
   if(isNaN(rating) || rating === ''){
     //TODO: question references global var, use current user's current question instead
     //currentUser.question
-    res.render('ratings', {userID, id, type: "ratings", picture, question, noiselevel, error: "ERROR: Please submit a valid estimate"})
+    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, question: currentUser.question, noiselevel, error: "ERROR: Please submit a valid estimate"})
     return;
   }
 
-  //storeQuestion.storeRating(userID, id, picture, rating)
-
   if(parseInt(picture) === 3){
-    //console.log("moving to next id")
-    //TODO: update user's activityID
-    // currentUser.activityID += 1
-    id = parseInt(id) + 1
+    currentUser.activityID += 1
   }
 
   if(parseInt(id) === 9 && parseInt(picture) === 3){
-    //console.log('rendering survey')
-    res.render('survey', {userID})
+    res.render('survey', {userID: currentUser.id })
     return;
   }
 
   //load new question
-  loadQuestion.loadAfterRating(req, res, userID, id, picture);
+  loadQuestion.loadAfterRating(req, res, currentUser, picture);
 
 });
 

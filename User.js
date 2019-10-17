@@ -1,6 +1,6 @@
 module.exports = class User {
-    constructor(uid) {
-        this.uid = uid;
+    constructor(id) {
+        this.id = id;
         this.activityID = 1;
     }
 
