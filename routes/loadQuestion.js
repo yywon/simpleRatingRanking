@@ -88,7 +88,7 @@ const loadModule = {
       id = user.activityID
       
       //determine noise level from position of id
-      noiselevel = noiseLevels[id-1];
+      noiselevel = noiseLevels[user.activityID-1];
       var question2load;
 
       co(function* () {
@@ -135,9 +135,6 @@ const loadModule = {
 
     loadAfterRating: function(req, res, user, picture){
 
-      userID = user.id
-      id = user.activityID
-
       noiselevel = noiseLevels[user.activityID - 1];
       var question2load
 
@@ -172,12 +169,12 @@ const loadModule = {
           
           //adjust to next activity
 
-          res.render('rankings', {userID: user.id, id: user.activityID , type: "rankings", question: user.question, noiselevel})
+          res.render('rankings', {userID: user.id, id: user.activityID , type: "rankings", question: user.question(), noiselevel})
       
         });
       } else {
         picture = parseInt(picture)+ 1
-        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, question: user.question, noiselevel})
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, question: user.question(), noiselevel})
       }
 
     }
