@@ -34,14 +34,14 @@ const loadModule = {
         
             let assignedQuestions = assignQuestions.assign();
         
-            check = yield usersCol.findOne({"user" : userID})
+            check = yield usersCol.findOne({"user" : user.id})
         
             //check to see if user exists in database
-            if(check === null && userID != null){
+            if(check === null && user.id != null){
               
               //insert new user if user does not exist
                 var item = { 
-                    "user": userID,
+                    "user": user.id,
                     "key2pay": null,
                     "surveyResults": null,
                     "group4Answers": assignedQuestions
@@ -56,14 +56,13 @@ const loadModule = {
                 //console.log("userID", userID)
 
                 //find question pool for user
-                var questions =  yield usersCol.find({"user":userID}).toArray();       
+                var questions =  yield usersCol.find({"user": user.id}).toArray();       
                 questions = questions[0].group4Answers
 
                 // get question array instance at the position of id
                 let variation = questions[0];
 
                 //find question from pool based off of the noise level and variation
-                //question2load = yield questionPoolCol.find( {"questions" : {"noiselevel": noiselevel, "variation": variation} } ).toArray();
                 question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
                 //console.log("questions2load ", question2load)
                 question2load = question2load[0].array
@@ -74,7 +73,9 @@ const loadModule = {
                 //console.log("question: " + question)
 
                 //TODO: before sending question, save question to user's instance via user.saveCurrentQuestion
-                res.render('rankings', {userID, id, type: "rankings", question, noiselevel})
+                user.saveCurrentQuestion(question)
+
+                res.render('rankings', { user: user.id , id: user.activityID , type: "rankings", question, noiselevel})
 
         }
             else if(userID == null){
@@ -85,7 +86,10 @@ const loadModule = {
         })
     },
 
-    loadAfterRanking: function(req, res, userID, id) {
+    loadAfterRanking: function(req, res, user) {
+
+      userID = user.id
+      id = user.activityID
       
       //determine noise level from position of id
       noiselevel = noiseLevels[id-1];
@@ -100,10 +104,12 @@ const loadModule = {
         let questionPoolCol = db.collection('questionPool')
 
         //check if inserted
-        check =  yield responseCol.findOne({"user": userID, "type":"ranking", "collection": id})
+        check =  yield responseCol.findOne({"user": user.id, "type":"ranking", "collection": user.activityID})
+
+        //TODO: Change question
 
         if (check === null){
-          res.render('rankings', {userID, id, type: "rankings", question, noiselevel, error: "ERROR: Please submit a complete ranking"})
+          res.render('rankings', {userID : user.ID, id: user.activityID , type: "rankings", question: user.question(), noiselevel, error: "ERROR: Please submit a complete ranking"})
           return;
         } 
 
@@ -123,6 +129,7 @@ const loadModule = {
 
         //  TODO: update user's current question here
         question = JSON.stringify(question2load)
+        user.saveCurrentQuestion(question)
 
         res.render('ratings', {userID, id, type: "ratings", picture: 0, question, noiselevel});
 
@@ -130,49 +137,52 @@ const loadModule = {
 
     },
 
-    loadAfterRating: function(req, res, userID, id, picture){
+    loadAfterRating: function(req, res, user, picture){
 
-      noiselevel = noiseLevels[id-1];
+      userID = user.id
+      id = user.activityID
+
+      noiselevel = noiseLevels[user.activityID - 1];
       var question2load
 
       //console.log("userID: ", userID)
       //console.log("id: ", id)
 
-      co(function* () {
+      if(parseInt(picture) === 3){
+        picture === 0
 
-        let client = yield MongoClient.connect(url);
-        const db = client.db('ratingsrankingsbasic')
-        let usersCol = db.collection('users')
-        let questionPoolCol = db.collection('questionPool')
+        co(function* () {
 
-        //find users questions
-        var questions =  yield usersCol.find({"user":userID}).toArray();       
-        questions = questions[0].group4Answers
+          let client = yield MongoClient.connect(url);
+          const db = client.db('ratingsrankingsbasic')
+          let usersCol = db.collection('users')
+          let questionPoolCol = db.collection('questionPool')
+  
+          //find users questions
+          var questions =  yield usersCol.find({"user": user.id }).toArray();       
+          questions = questions[0].group4Answers
+  
+          // get question array instance at the position of id
+          let variation = questions[id-1];
+  
+          //find question from pool based off of the noise level and variation
+          question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
+          question2load = question2load[0].array
+          //console.log("questions2load ", question2load)
+  
+          question = JSON.stringify(question2load)
 
-        // get question array instance at the position of id
-        let variation = questions[id-1];
+          user.saveCurrentQuestion(question)
+          
+          //adjust to next activity
 
-        //find question from pool based off of the noise level and variation
-        //question2load = yield questionPoolCol.find( {"questions" : {"noiselevel": noiselevel, "variation": variation} } ).toArray();
-        question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
-        question2load = question2load[0].array
-        //console.log("questions2load ", question2load)
-
-        question = JSON.stringify(question2load)
-        
-        //adjust to next activity
-        if(parseInt(picture) === 3){
-          picture === 0
-          res.render('rankings', {userID, id, type: "rankings", question, noiselevel})
-        } else {
-          picture = parseInt(picture)+ 1
-          res.render('ratings', {userID, id, type: "ratings", picture, question, noiselevel})
-        }
-    
-      });
-
-    
-
+          res.render('rankings', {userID: user.id, id: user.activityID , type: "rankings", question: user.question, noiselevel})
+      
+        });
+      } else {
+        picture = parseInt(picture)+ 1
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, question: user.question, noiselevel})
+      }
 
     }
 }
