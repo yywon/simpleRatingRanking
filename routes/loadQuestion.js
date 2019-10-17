@@ -75,7 +75,7 @@ const loadModule = {
                 //TODO: before sending question, save question to user's instance via user.saveCurrentQuestion
                 user.saveCurrentQuestion(question)
 
-                res.render('rankings', { user: user.id , id: user.activityID , type: "rankings", question: user.question() , noiselevel})
+                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", question: user.question() , noiselevel})
             } else{
                 res.render('index', {error: "ERROR: Username already exists"});
             }
@@ -105,29 +105,29 @@ const loadModule = {
         //TODO: Change question
 
         if (check === null){
-          res.render('rankings', {userID : user.ID, id: user.activityID , type: "rankings", question: user.question(), noiselevel, error: "ERROR: Please submit a complete ranking"})
+          res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), noiselevel, error: "ERROR: Please submit a complete ranking"})
           return;
         } 
 
         //find users questions
-        var questions =  yield usersCol.find({"user":userID}).toArray();       
-        questions = questions[0].group4Answers
+        //var questions =  yield usersCol.find({"user":userID}).toArray();       
+        //questions = questions[0].group4Answers
         //console.log("questions ", questions)
 
         // get question array instance at the position of id
-        let variation = questions[id-1];
+        //let variation = questions[id-1];
 
         //find question from pool based off of the noise level and variation
         //question2load = yield questionPoolCol.find( {"questions" : {"noiselevel": noiselevel, "variation": variation} } ).toArray();
-        question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
-        question2load = question2load[0].array
+        //question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
+        //question2load = question2load[0].array
         //console.log("questions2load ", question2load)
 
         //  TODO: update user's current question here
-        question = JSON.stringify(question2load)
-        user.saveCurrentQuestion(question)
+        //question = JSON.stringify(question2load)
+        //user.saveCurrentQuestion(question)
 
-        res.render('ratings', {userID, id, type: "ratings", picture: 0, question, noiselevel});
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question(), noiselevel});
 
       });
 
