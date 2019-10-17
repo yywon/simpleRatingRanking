@@ -47,7 +47,7 @@ const loadModule = {
                     "group4Answers": assignedQuestions
                 };
         
-                //console.log(usersCol.insertOne);
+                console.log(usersCol.insertOne);
         
                 yield usersCol.insertOne(item);
         
@@ -75,11 +75,7 @@ const loadModule = {
                 //TODO: before sending question, save question to user's instance via user.saveCurrentQuestion
                 user.saveCurrentQuestion(question)
 
-                res.render('rankings', { user: user.id , id: user.activityID , type: "rankings", question, noiselevel})
-
-        }
-            else if(userID == null){
-              res.render('index', {error: "ERROR: Please enter a username"});
+                res.render('rankings', { user: user.id , id: user.activityID , type: "rankings", question: user.question() , noiselevel})
             } else{
                 res.render('index', {error: "ERROR: Username already exists"});
             }

@@ -33,6 +33,8 @@ router.post('/', function(req,res,next){
     currentUser = getUserInstance(req.body.userID);
   }
 
+  console.log("current User: ", currentUser)
+
   // loadQuestion.loadFirst(req, res, userID, id)
   //NOTE: pass in user's instance instead
   loadQuestion.loadFirst(req, res, currentUser)
