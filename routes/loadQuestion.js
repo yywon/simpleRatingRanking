@@ -5,7 +5,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://10.218.105.218:27017/';
 let assignQuestions = require('./assignQuestions')
 
 Base = 50
@@ -53,8 +53,6 @@ const loadModule = {
         
                //load next question
 
-                //console.log("userID", userID)
-
                 //find question pool for user
                 var questions =  yield usersCol.find({"user": user.id}).toArray();       
                 questions = questions[0].group4Answers
@@ -84,8 +82,8 @@ const loadModule = {
 
     loadAfterRanking: function(req, res, user) {
 
-      userID = user.id
-      id = user.activityID
+      console.log(user.id)
+      console.log(user.activityID)
       
       //determine noise level from position of id
       noiselevel = noiseLevels[user.activityID-1];
@@ -99,33 +97,17 @@ const loadModule = {
         let responseCol = db.collection('responses')
         let questionPoolCol = db.collection('questionPool')
 
+        //TODO: Fix this 
+
         //check if inserted
         check =  yield responseCol.findOne({"user": user.id, "type":"ranking", "collection": user.activityID})
 
-        //TODO: Change question
-
+        
         if (check === null){
           res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), noiselevel, error: "ERROR: Please submit a complete ranking"})
           return;
         } 
-
-        //find users questions
-        //var questions =  yield usersCol.find({"user":userID}).toArray();       
-        //questions = questions[0].group4Answers
-        //console.log("questions ", questions)
-
-        // get question array instance at the position of id
-        //let variation = questions[id-1];
-
-        //find question from pool based off of the noise level and variation
-        //question2load = yield questionPoolCol.find( {"questions" : {"noiselevel": noiselevel, "variation": variation} } ).toArray();
-        //question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
-        //question2load = question2load[0].array
-        //console.log("questions2load ", question2load)
-
-        //  TODO: update user's current question here
-        //question = JSON.stringify(question2load)
-        //user.saveCurrentQuestion(question)
+    
 
         res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question(), noiselevel});
 
@@ -137,9 +119,6 @@ const loadModule = {
 
       noiselevel = noiseLevels[user.activityID - 1];
       var question2load
-
-      //console.log("userID: ", userID)
-      //console.log("id: ", id)
 
       if(parseInt(picture) === 3){
         picture === 0

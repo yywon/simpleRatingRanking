@@ -179,12 +179,15 @@ function renderQuestion(question, id, userID){
             //send data if full
 
             //console.log("length: ", rankingOrder.length)
-
+            
+            
             if (rankingOrder.length > 3){
+
                 var endTime = new Date().getTime();
                 var timeSpent = endTime- startTime;
                 sendData(rankingOrder, id, userID, timeSpent)
             } 
+            
 
             svg4pool.append("rect")
                 .attr("class", "clickedborder4Pool_" + imageIndex4data)
@@ -228,15 +231,16 @@ function renderQuestion(question, id, userID){
             reset(rankingOrder);
         })
 
+        /*
         d3.select(".btn.btn-success.nextBtn").on("click", function () {
-            //console.log("Button Clicked");
+            console.log("Button Clicked");
             //console.log(userID)
             //console.log(id)
             var endTime = new Date().getTime();
-            var timeSpent = endTime - startTime;
-            rating = document.getElementById("rating").value
-            sendData(id, userID, picture, timeSpent, rating)
+            var timeSpent = endTime- startTime;
+            sendData(rankingOrder, id, userID, timeSpent)
         })
+        */
 
 }
             
@@ -251,16 +255,18 @@ function sendData(rankingOrder, id, userID, time){
     group = rankingOrder.slice();
     group.push(time)
 
+    
     //add ajax function
     new Promise((resolve, reject) => {
             $.ajax({
                 dataType: "json",
                 url: url2go,
                 type: "POST",
-                data: JSON.stringify(group),
+                data: JSON.stringify(group), 
                 success: resolve
             });
         });
+    
 }
 
 function reset(array){

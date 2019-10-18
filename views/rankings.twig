@@ -24,8 +24,8 @@
     <div class ="float-left text-info">Least number of dots</div> 
     <div class = "float-right text-info r-1">Greatest number of dots</div>
     <div class = "activity"></div>
-    <form method="POST" action="/activity/{{id}}/{{type}}/">
-        <p class="py-2 text-danger"> {{ error }} </p>
+    <p class="py-2 text-danger"> {{ error }} </p>
+    <form method="POST" action="/activity/{{id}}/{{type}}/{{userID}}">
         <div role="toolbar">
             <div class="btn-group py-2 mr-1" role="group">
                 <button type="button" class="py-2 btn btn-warning UndoBtn">Undo</button>
@@ -48,8 +48,6 @@
     question = [parseInt(noiselevel), question]
 
     var userID = '{{ userID }}';
-
-    console.log(userID)
 
     var id = '{{ id }}';
 

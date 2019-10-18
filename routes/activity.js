@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://rwkemmer@10.218.105.218:27017/';
+var url = 'mongodb://10.218.105.218:27017/';
 var userID = null
 let loadQuestion = require('./loadQuestion')
 let storeQuestion = require('./storeQuestion')
@@ -23,7 +23,10 @@ router.post('/', function(req,res,next){
 
   if (!req.body.userID) {
     res.render('index', {error: "ERROR: Please enter a username"});
+    return;
   }
+
+  console.log(req.body)
 
   let currentUser = getUserInstance(req.body.userID);
 
@@ -42,21 +45,18 @@ router.post('/', function(req,res,next){
 });
 
 //load new rating question
-router.post('/:id/rankings/', function(req, res, next){
+router.post('/:id/rankings/:userID', function(req, res, next){
 
-  // userID = req.body.userID ? req.body.userID : userID;
-  // id = req.params.id;
-  console.log(req.body)
-  console.log(req.body.userID)
-
-  let currentUser = getUserInstance(req.body.userID);
+  let currentUser = getUserInstance(req.params.userID);
+  console.log(currentUser)
 
   loadQuestion.loadAfterRanking(req, res, currentUser);
 
 });
 
+
 //post a ranking
-router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
+router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
 
   //collect variables
   userID = req.params.userID;
@@ -71,8 +71,10 @@ router.post(':s?/:t?/:d?/:userID/:id/sendRankings/', function(req,res,next){
 
 });
 
+
+
 //send survey questions
-router.post('/:s?/:t?/:d?/:userID/sendSurvey', function(req,res,next){
+router.post('/:s?/:t?/:d?/:f?/:userID/sendSurvey', function(req,res,next){
 
   userID = req.params.userID;
   key = req.body.key;
@@ -88,7 +90,7 @@ router.post('/:s?/:t?/:d?/:userID/sendSurvey', function(req,res,next){
 })
 
 //send ratings
-router.post(':s?/:t?/:d?/:userID/:id/:picture/sendRatings/', function(req,res,next){
+router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,res,next){
 
   userID = req.params.userID
   id = req.params.id;
@@ -116,7 +118,7 @@ router.post(':s?/:t?/:d?/:userID/:id/:picture/sendRatings/', function(req,res,ne
 });
 
 //load next rating page
-router.post('/:id/ratings/:picture', function(req,res,next){
+router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //collect variables
   //userID = req.body.userID ? req.body.userID : userID;
@@ -125,7 +127,7 @@ router.post('/:id/ratings/:picture', function(req,res,next){
   id = req.params.id;
   picture = req.params.picture;
 
-  let currentUser = getUserInstance(req.body.userID);
+  let currentUser = getUserInstance(req.params.userID);
 
   if(isNaN(rating) || rating === ''){
     //TODO: question references global var, use current user's current question instead
