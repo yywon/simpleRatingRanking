@@ -72,9 +72,6 @@ const loadModule = {
     },
 
     loadAfterRanking: function(req, res, user) {
-
-      console.log(user.id)
-      console.log(user.activityID)
       
       //determine noise level from position of id
       noiselevel = noiseLevels[user.activityID-1];
@@ -88,12 +85,8 @@ const loadModule = {
         let responseCol = db.collection('responses')
         let questionPoolCol = db.collection('questionPool')
 
-        console.log("activityID: ", user.activityID)
-        console.log("user: ", user.id)
 
         check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
-
-        console.log("check: ", check)
 
         
         if (check === null){

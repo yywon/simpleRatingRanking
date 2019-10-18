@@ -256,9 +256,6 @@ function sendData(rankingOrder, id, userID, time){
     //add time to end of rankingOrder array
     group = rankingOrder.slice();
     group.push(time)
-
-    console.log("time", time)
-
     
     //add ajax function
     new Promise((resolve, reject) => {
@@ -288,7 +285,6 @@ function reset(array){
 }
 
 function resetTime(){
-    console.log("reseting time")
     startTime = new Date().getTime();
     return startTime
 }

@@ -41,10 +41,10 @@ const storeModule = {
 
             if(count > 0){
                 responseCol.update(criteria,{ $set: newItem })
-                console.log('Ranking updated')
+                //console.log('Ranking updated')
             } else {
                 responseCol.insertOne(item, function(err, result) {
-                console.log('Ranking inserted')
+                //console.log('Ranking inserted')
             });
         }
 
@@ -91,7 +91,7 @@ const storeModule = {
             }
 
             UsersCol.updateOne({"user": userID}, { $set: newItem });
-            console.log('User Completed task')
+            //console.log('User Completed task')
         })
     }
 }
