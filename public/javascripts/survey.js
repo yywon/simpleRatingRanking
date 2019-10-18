@@ -244,35 +244,5 @@ function startFromSurvey(userID) {
 
     })
 
-    /*
-    d3.select(".sv_complete_btn").on("click", function(){
-        //hide top
-
-        let key = getKey()
-        console.log("key ", key)
-
-        let result = d3.select("#surveyResult").text()
-        console.log("result, ", result)
-
-        url2go = userID + "/sendSurvey"
-
-        //ajax send to user database
-        new Promise((resolve, reject) => {
-            $.ajax({
-                dataType: "json",
-                url: url2go,
-                type: "POST",
-                data: {'result': result, 'key': key},
-                success: resolve
-            });
-        });
-
-        d3.select("#key2show").html("Key for MTurk: " + key)
-
-        
-        
-    })
-    */
-
 };
 

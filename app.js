@@ -13,7 +13,7 @@ var MongoClient = require('mongodb').MongoClient
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var activityRouter = require('./routes/activity');
-;
+
 var app = express();
 
 // view engine setup

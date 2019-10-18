@@ -8,7 +8,7 @@ module.exports = class User {
         this.currentQuestion = question;
     }
 
-    get question() {
+    question() {
         return this.currentQuestion;
     }
 };
