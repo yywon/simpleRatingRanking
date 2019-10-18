@@ -186,6 +186,8 @@ function renderQuestion(question, id, userID){
                 var endTime = new Date().getTime();
                 var timeSpent = endTime- startTime;
                 sendData(rankingOrder, id, userID, timeSpent)
+                startTime = resetTime()
+
             } 
             
 
@@ -255,6 +257,8 @@ function sendData(rankingOrder, id, userID, time){
     group = rankingOrder.slice();
     group.push(time)
 
+    console.log("time", time)
+
     
     //add ajax function
     new Promise((resolve, reject) => {
@@ -281,4 +285,10 @@ function reset(array){
         i--;
 
     }
+}
+
+function resetTime(){
+    console.log("reseting time")
+    startTime = new Date().getTime();
+    return startTime
 }

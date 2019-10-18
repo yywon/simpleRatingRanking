@@ -13,11 +13,7 @@ noiseLevels = [128,64,32,16,8,4,2,1]
 
 const loadModule = { 
     
-    // loadFirst: function(req, res, userID, id) {
-    //NOTE: id is now available via user.activityID
     loadFirst: function(req, res, user) {
-
-        //TODO: use user.id, user.activityID where necessary
 
         //determine noise level from position of id
         noiselevel = noiseLevels[0];
@@ -47,8 +43,6 @@ const loadModule = {
                     "group4Answers": assignedQuestions
                 };
         
-                console.log(usersCol.insertOne);
-        
                 yield usersCol.insertOne(item);
         
                //load next question
@@ -62,15 +56,12 @@ const loadModule = {
 
                 //find question from pool based off of the noise level and variation
                 question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
-                //console.log("questions2load ", question2load)
                 question2load = question2load[0].array
-                //console.log("questions2load ", question2load)
 
                 question = JSON.stringify(question2load)
 
                 //console.log("question: " + question)
 
-                //TODO: before sending question, save question to user's instance via user.saveCurrentQuestion
                 user.saveCurrentQuestion(question)
 
                 res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", question: user.question() , noiselevel})
@@ -97,18 +88,19 @@ const loadModule = {
         let responseCol = db.collection('responses')
         let questionPoolCol = db.collection('questionPool')
 
-        //TODO: Fix this 
+        console.log("activityID: ", user.activityID)
+        console.log("user: ", user.id)
 
-        //check if inserted
-        check =  yield responseCol.findOne({"user": user.id, "type":"ranking", "collection": user.activityID})
+        check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
+
+        console.log("check: ", check)
 
         
         if (check === null){
           res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), noiselevel, error: "ERROR: Please submit a complete ranking"})
           return;
         } 
-    
-
+        
         res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question(), noiselevel});
 
       });
