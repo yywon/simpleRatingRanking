@@ -11,7 +11,6 @@ var d3 = require('d3');
 var MongoClient = require('mongodb').MongoClient
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var activityRouter = require('./routes/activity');
 
 var app = express();
@@ -32,7 +31,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/activity', activityRouter);
 
 // catch 404 and forward to error handler
