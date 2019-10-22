@@ -14,18 +14,23 @@ responsesCol = db['responses']
 completed_users = []
 
 userRemove = 0
+
 for user in usersCol.find():
 
     key2pay = user["key2pay"]
     userName = user["user"]
-    if(key2pay is not None):
-        completed_users.append(user)
+    responseCount = responsesCol.count({'user' : userName})
+
+    print(userName + ": " + str(responseCount))
+    if(key2pay is not None and responseCount == 40):
+        completed_users.append(userName)
     else:
         userRemove += 1
-        #responsesCol.remove({'user' : userName})
+        responsesCol.remove({'user' : userName})
+	usersCol.remove({'user' : userName})
 
-print("Completed Users: " + len(completed_users))
-print("Users Removed: " + len(userRemove))
+print("Completed Users: " + str(len(completed_users)))
+print("Users Removed: " + str(userRemove))
 
 
 
