@@ -10,19 +10,19 @@ area = np.pi*3
 
 masterArray = []
 
-noiseLevels = {1,2,4,8,16,32,64,128}
+noiseLevels = {1,2,3,4,5,6,7,128}
 
 #loop through noise levels and generate pictures
 for i in noiseLevels:
 
-    #PATH = 'C:/Users/rwkemmer/Desktop/dots/'
+    PATH = 'C:/Users/rwkemmer/Desktop/dots/'
 
     print("Noise Level: " + str(i))
 
     pictureData = []
 
-    #os.chdir(PATH)
-    #os.mkdir(str(i))
+    os.chdir(PATH)
+    os.mkdir(str(i))
 
     #each picture per noise level
     for j in range(4):
@@ -56,11 +56,9 @@ for i in noiseLevels:
             if valid_checks == len(existing_locations):
                 dots += 1
                 existing_locations.append(new_location)    
-                #plt.plot(x, y, 'ko')
+                plt.plot(x, y, 'ko')
 
-        print("number of dots: " + str(dots))
-
-        '''
+        
         axes = plt.gca()
         axes.set_xlim([-0.01,1.01])
         axes.set_ylim([-0.01,1.01])
@@ -72,13 +70,15 @@ for i in noiseLevels:
 
         plt.clf()
 
-        '''
-
     activityArray = [i, pictureData]
 
     masterArray.append(activityArray)
 
 permutationArray = []
+
+#change path to app template
+PATH = 'C:/Users/rwkemmer/Documents/apptemplate/'
+os.chdir(PATH)
 
 for i in masterArray:
     permutationsofActivity = []
@@ -111,24 +111,6 @@ with open('public/data/questions.json', 'w') as outfile:
     json.dump(data, outfile)
 
 
-'''
-for i in permutationArray: 
-    ordering = i[2]
-    data.append({
-        'noiselevel': i[0],
-        'variation': i[1],
-        'array': ordering,
-        #'pos0': ordering[0],
-        #'pos1': ordering[1],
-        #'pos2': ordering[2],
-        #'pos3': ordering[3]
-    })
-
-#dump to outfile
-with open('public/data/questions.json', 'w') as outfile:
-    json.dump(data, outfile)
-
-'''
 
 
 

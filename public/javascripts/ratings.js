@@ -43,8 +43,6 @@ function renderQuestion(question, picture, id, userID){
             .attr("y", 2)
             .attr("width", imageSize)
             .attr("height", imageSize)
-    
-    var data = [0, 50, 100, 150, 200, 250, 300, 350, 400];
 
     d3.select(".btn.btn-success.nextBtn").on("click", function () {
         //console.log("Button Clicked");
@@ -79,6 +77,8 @@ function sendData(id, userID, picture, time, rating){
 
 
 /*
+
+var data = [0, 50, 100, 150, 200, 250, 300, 350, 400];
     var sliderSimple = d3
         .sliderBottom() 
         .min(d3.min(data))

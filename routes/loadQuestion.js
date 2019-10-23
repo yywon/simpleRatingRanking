@@ -9,7 +9,7 @@ var url = 'mongodb://localhost:27017/';
 let assignQuestions = require('./assignQuestions')
 
 Base = 50
-noiseLevels = [128,64,32,16,8,4,2,1]
+noiseLevels = [128,7,6,5,4,3,2,1]
 
 const loadModule = { 
     
@@ -24,7 +24,7 @@ const loadModule = {
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsbasic')
+            const db = client.db('ratingsrankingshard')
             let usersCol = db.collection('users')
             let questionPoolCol = db.collection('questionPool')
         
@@ -80,7 +80,7 @@ const loadModule = {
       co(function* () {
 
         let client = yield MongoClient.connect(url);
-        const db = client.db('ratingsrankingsbasic')
+        const db = client.db('ratingsrankingshard')
         let usersCol = db.collection('users')
         let responseCol = db.collection('responses')
         let questionPoolCol = db.collection('questionPool')
@@ -111,7 +111,7 @@ const loadModule = {
         co(function* () {
 
           let client = yield MongoClient.connect(url);
-          const db = client.db('ratingsrankingsbasic')
+          const db = client.db('ratingsrankingshard')
           let usersCol = db.collection('users')
           let questionPoolCol = db.collection('questionPool')
   

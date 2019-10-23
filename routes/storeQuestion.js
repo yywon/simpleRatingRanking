@@ -15,7 +15,7 @@ const storeModule = {
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsbasic')
+            const db = client.db('ratingsrankingshard')
             let responseCol = db.collection('responses')
 
             var item = {
@@ -60,7 +60,7 @@ const storeModule = {
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsbasic')
+            const db = client.db('ratingsrankingshard')
             let responseCol = db.collection('responses')
 
             var item = {
@@ -82,7 +82,7 @@ const storeModule = {
 
         co(function* () {
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsbasic')
+            const db = client.db('ratingsrankingshard')
             let UsersCol = db.collection('users')
 
             newItem = {
