@@ -67,7 +67,7 @@ for user in usersCol.find():
 		ratingResponse = 0
 	    else:
 	    	ratingResponse = ratingResponse["estimate"]
-		ratingResponse = int(ratingResponse)
+		ratingResponse = int(float(ratingResponse))
             pictures.append(ratingResponse)
 
 	
