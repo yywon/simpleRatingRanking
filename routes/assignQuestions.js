@@ -10,12 +10,16 @@ const assignModule = {
         
         questions = []
         for(i = 0; i < 8; i++){
-            questionNumber = Math.floor(Math.random() * 24);
-            questions[i] = questionNumber
+            q = []
+            for(j = 0; j < 4; j++){
+                questionNumber = 50 + Math.floor(Math.random() * 40);
+                q[j] = questionNumber
+            }
+            questions[i] = q
         }
 
-        return questions
+    return questions
     }
 }
 
-module.exports = assignModule
+module.exports = assignModule 

@@ -2,9 +2,6 @@ function renderQuestion(question, id, userID){
 
     var startTime = new Date().getTime();
 
-    groupnum = question[0]
-    candidates = question[1]
-
     //console.log("groupnum    " + groupnum)
     //console.log("candidates   " + candidates)
 
@@ -68,7 +65,6 @@ function renderQuestion(question, id, userID){
         .attr("class", "ranking")
         .style("width", labelDivWidth)
 
-
     //Grouping for candidates
     //let margin4pool = { top: 10, right: 0, bottom: 0, left: 0 }
     let svg4pool_width = "100%";
@@ -100,10 +96,10 @@ function renderQuestion(question, id, userID){
     let g4candidatesImage = svg4pool.append("g")
         .attr("class", "g4candidatesImage")
         .selectAll("image")
-        .data(candidates)
+        .data(question)
         .enter().append("image")
         .attr('xlink:href', function (d, i) {
-            let path4image = "/images/dots/" + groupnum + "/" + d + ".png"
+            let path4image = "/images/dots/" + d + ".png"
             return path4image
         })
         .attr("x", function (d, i) {

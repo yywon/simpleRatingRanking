@@ -4,18 +4,19 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://10.218.105.218:27017/';
 let assignQuestions = require('./assignQuestions')
 
 
 const storeModule = {
 
-    storeRanking: function(userID, id, group2save,time){
+    storeRanking: function(userID, id, group2save, time){
+
         //store into db
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsbasic')
+            const db = client.db('ratingsrankingsdistributed')
             let responseCol = db.collection('responses')
 
             var item = {
@@ -60,7 +61,7 @@ const storeModule = {
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsbasic')
+            const db = client.db('ratingsrankingsdistributed')
             let responseCol = db.collection('responses')
 
             var item = {
@@ -82,7 +83,7 @@ const storeModule = {
 
         co(function* () {
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsbasic')
+            const db = client.db('ratingsrankingsdistributed')
             let UsersCol = db.collection('users')
 
             newItem = {

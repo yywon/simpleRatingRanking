@@ -5,28 +5,25 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://10.218.105.218:27017/';
 let assignQuestions = require('./assignQuestions')
 
 Base = 50
-noiseLevels = [128,64,32,16,8,4,2,1]
 
 const loadModule = { 
     
     loadFirst: function(req, res, user) {
-
-        //determine noise level from position of id
-        noiselevel = noiseLevels[0];
 
         var question2load
         var questionArray
 
         co(function* () {
 
-            let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsbasic')
-            let usersCol = db.collection('users')
-            let questionPoolCol = db.collection('questionPool')
+          let client = yield MongoClient.connect(url);
+          const db = client.db('ratingsrankingsdistributed')
+          let usersCol = db.collection('users')
+          let responseCol = db.collection('responses')
+
         
             let assignedQuestions = assignQuestions.assign();
         
@@ -51,20 +48,16 @@ const loadModule = {
                 var questions =  yield usersCol.find({"user": user.id}).toArray();       
                 questions = questions[0].group4Answers
 
+                console.log(questions)
+                
                 // get question array instance at the position of id
-                let variation = questions[0];
-
-                //find question from pool based off of the noise level and variation
-                question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
-                question2load = question2load[0].array
-
+                let question2load = questions[0];
+                
                 question = JSON.stringify(question2load)
-
-                //console.log("question: " + question)
-
+                console.log("question: " + question)
                 user.saveCurrentQuestion(question)
 
-                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", question: user.question() , noiselevel})
+                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", question: user.question()})
             } else{
                 res.render('index', {error: "ERROR: Username already exists"});
             }
@@ -72,29 +65,22 @@ const loadModule = {
     },
 
     loadAfterRanking: function(req, res, user) {
-      
-      //determine noise level from position of id
-      noiselevel = noiseLevels[user.activityID-1];
-      var question2load;
 
       co(function* () {
 
         let client = yield MongoClient.connect(url);
-        const db = client.db('ratingsrankingsbasic')
+        const db = client.db('ratingsrankingsdistributed')
         let usersCol = db.collection('users')
         let responseCol = db.collection('responses')
-        let questionPoolCol = db.collection('questionPool')
-
 
         check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
 
-        
         if (check === null){
-          res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), noiselevel, error: "ERROR: Please submit a complete ranking"})
+          res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), error: "ERROR: Please submit a complete ranking"})
           return;
         } 
         
-        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question(), noiselevel});
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question()});
 
       });
 
@@ -102,7 +88,6 @@ const loadModule = {
 
     loadAfterRating: function(req, res, user, picture){
 
-      noiselevel = noiseLevels[user.activityID - 1];
       var question2load
 
       if(parseInt(picture) === 3){
@@ -111,34 +96,30 @@ const loadModule = {
         co(function* () {
 
           let client = yield MongoClient.connect(url);
-          const db = client.db('ratingsrankingsbasic')
+          const db = client.db('ratingsrankingsdistributed')
           let usersCol = db.collection('users')
-          let questionPoolCol = db.collection('questionPool')
-  
+          let responseCol = db.collection('responses')
+
           //find users questions
           var questions =  yield usersCol.find({"user": user.id }).toArray();       
           questions = questions[0].group4Answers
   
-          // get question array instance at the position of id
-          let variation = questions[id-1];
-  
-          //find question from pool based off of the noise level and variation
-          question2load = yield questionPoolCol.find({"noiselevel": noiselevel, "variation": variation}).toArray();
-          question2load = question2load[0].array
-          //console.log("questions2load ", question2load)
-  
+          let question2load = questions[0];
+                
           question = JSON.stringify(question2load)
+
+          console.log("question: " + question)
 
           user.saveCurrentQuestion(question)
           
           //adjust to next activity
 
-          res.render('rankings', {userID: user.id, id: user.activityID , type: "rankings", question: user.question(), noiselevel})
+          res.render('rankings', {userID: user.id, id: user.activityID , type: "rankings", question: user.question()})
       
         });
       } else {
         picture = parseInt(picture)+ 1
-        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, question: user.question(), noiselevel})
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, question: user.question()})
       }
 
     }

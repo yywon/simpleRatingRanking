@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os 
 from itertools import permutations
+from itertools import combinations
 import json
 
 # Baseline data
@@ -61,38 +62,3 @@ for j in range(40):
     plt.savefig(PATH + '/' + str(N),bbox_inches='tight', pad_inches=0)
 
     plt.clf()
-
-permutationArray = []
-
-#change path to app template
-PATH = 'C:/Users/rwkemmer/Documents/apptemplate/'
-os.chdir(PATH)
-
-    permutationsofActivity = []
-    activity = i[0]
-    pictureData = i[1]
-    #print(pictureData)
-    permutationsofActivity = permutations(pictureData, 4)
-    permy = []
-
-    counter = 0
-    for permutation in permutationsofActivity:
-        perm = [activity, counter, permutation]
-        print(perm)
-        permutationArray.append(perm)
-        counter += 1
-
-data = []
-
-for i in permutationArray: 
-    ordering = i[2]
-    instance = {
-        'noiselevel': i[0],
-        'variation': i[1],
-        'array': ordering
-    } 
-
-    data.append(instance)
-
-with open('public/data/questions.json', 'w') as outfile:
-    json.dump(data, outfile)

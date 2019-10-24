@@ -2,9 +2,7 @@ function renderQuestion(question, picture, id, userID){
 
     var startTime = new Date().getTime(); 
 
-    groupnum = question[0]
-    candidates = question[1]
-    candidate = candidates[picture]
+    candidate = question[picture]
 
     d3.select(".activity").html("")
 
@@ -38,7 +36,7 @@ function renderQuestion(question, picture, id, userID){
             .attr("class", "g4image")
 
         let img = g4image.append("image")
-            .attr('xlink:href', "/images/dots/" + groupnum + "/" + candidate + ".png")
+            .attr('xlink:href', "/images/dots/" + candidate + ".png")
             .attr("x", imageSize + 2)
             .attr("y", 2)
             .attr("width", imageSize)
