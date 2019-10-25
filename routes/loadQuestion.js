@@ -1,11 +1,10 @@
-
 var express = require('express');
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://10.218.105.218:27017/';
+var url = 'mongodb://localhost:27017/';
 let assignQuestions = require('./assignQuestions')
 
 Base = 50
@@ -24,7 +23,6 @@ const loadModule = {
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
 
-        
             let assignedQuestions = assignQuestions.assign();
         
             check = yield usersCol.findOne({"user" : user.id})
@@ -39,9 +37,9 @@ const loadModule = {
                     "surveyResults": null,
                     "group4Answers": assignedQuestions
                 };
-        
+                
                 yield usersCol.insertOne(item);
-        
+                
                //load next question
 
                 //find question pool for user
