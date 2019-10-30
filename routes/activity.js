@@ -137,7 +137,7 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
   }
 
   //load survey if activity is complete
-  if(currentUser.activityID === 9 && parseInt(picture) === 3){
+  if(currentUser.activityID === 5 && parseInt(picture) === 3){
     res.render('survey', {userID: currentUser.id })
     return
   } 
