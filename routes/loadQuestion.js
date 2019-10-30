@@ -102,7 +102,7 @@ const loadModule = {
           var questions =  yield usersCol.find({"user": user.id }).toArray();       
           questions = questions[0].group4Answers
   
-          let question2load = questions[0];
+          let question2load = questions[user.activityID - 1];
                 
           question = JSON.stringify(question2load)
 

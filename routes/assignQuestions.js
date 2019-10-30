@@ -8,14 +8,26 @@ const assignModule = {
 
     assign: function() {
         
+        //populate array
+        allNumbers = []
+        for(i = 0; i < 40; i++){
+            allNumbers[i] = 50 + i
+        }
+
+        for(let i = allNumbers.length - 1; i > 0; i--){
+            const j = Math.floor(Math.random() * i)
+            const temp = allNumbers[i]
+            allNumbers[i] = allNumbers[j]
+            allNumbers[j] = temp
+          }
+
         questions = []
-        for(i = 0; i < 8; i++){
+        chunk = 4
+        length = allNumbers.length
+        for(i = 0; i<length; i+=chunk){
             q = []
-            for(j = 0; j < 4; j++){
-                questionNumber = 50 + Math.floor(Math.random() * 40);
-                q[j] = questionNumber
-            }
-            questions[i] = q
+            q = allNumbers.slice(i, i+chunk)
+            questions.push(q)
         }
 
     return questions

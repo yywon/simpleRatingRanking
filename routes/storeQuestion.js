@@ -14,6 +14,38 @@ const storeModule = {
         //store into db
         co(function* () {
 
+            var group = group2save.map(Number);
+            console.log(group)
+
+            //calc sum difference 
+            n = group.length
+            diffSum = 0;
+            for(i = n - 1; i >= 0; i--){
+                diffSum = diffSum + (i*group[i] - (n-1-i) * group[i])
+            }
+            diffSum = Math.abs(diffSum)
+            
+            let pairs = []
+            for (let i = 0; i < group.length - 1; i++) {
+                for (let j = i + 1; j < group.length; j++) {
+                    p = [group[i], group[j]]
+                    pairs.push(p)
+                }
+            }
+
+            console.log(pairs)
+
+            min = 99
+            for(i = 0; i < pairs.length - 1; i++){
+                test = Math.abs(pairs[i][0]- pairs[i][1])
+                if(test < min){
+                    min = test
+                }
+            } 
+
+            console.log("diffSum: ", diffSum)
+            console.log("min", min)
+
             let client = yield MongoClient.connect(url);
             const db = client.db('ratingsrankingsdistributed')
             let responseCol = db.collection('responses')
@@ -23,6 +55,8 @@ const storeModule = {
                 "collection": id,
                 "type": "ranking",
                 "ranking": group2save,
+                "sum_differences": diffSum,
+                "minimum_difference": min, 
                 "time": time
             }
 
@@ -45,7 +79,7 @@ const storeModule = {
             } else {
                 responseCol.insertOne(item, function(err, result) {
                 //console.log('Ranking inserted')
-            });
+                });
         }
 
         client.close();
