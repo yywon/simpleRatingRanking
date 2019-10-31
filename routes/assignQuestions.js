@@ -6,11 +6,11 @@ const co = require('co');
 
 const assignModule = {
 
-    assign: function() {
+    assign: function(frames) {
         
         //populate array
         allNumbers = []
-        for(i = 0; i < 32; i++){
+        for(i = 0; i < 30; i++){
             allNumbers[i] = 50 + i
         }
 
@@ -22,10 +22,10 @@ const assignModule = {
         }
 
         questions = []
-        chunk = 4
-        length = allNumbers.length
+        chunk = frames
+        length = frames * 8
         console.log(length)
-        for(i = 0; i<length/2; i+=chunk){
+        for(i = 0; i<length; i+=chunk){
             q = []
             q = allNumbers.slice(i, i+chunk)
             questions.push(q)

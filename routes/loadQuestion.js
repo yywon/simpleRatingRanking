@@ -4,9 +4,10 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://10.218.105.218:27017/';
 let assignQuestions = require('./assignQuestions')
 
+frames = [2,3,5,6]
 Base = 50
 
 const loadModule = { 
@@ -23,7 +24,10 @@ const loadModule = {
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
 
-            let assignedQuestions = assignQuestions.assign();
+            i = Math.floor(Math.random() * 3) 
+            let assignedQuestions = assignQuestions.assign(frames[i])
+
+            console.log(assignedQuestions)
         
             check = yield usersCol.findOne({"user" : user.id})
         
@@ -35,7 +39,8 @@ const loadModule = {
                     "user": user.id,
                     "key2pay": null,
                     "surveyResults": null,
-                    "group4Answers": assignedQuestions
+                    "group4Answers": assignedQuestions,
+                    "frames": frames[i]
                 };
                 
                 yield usersCol.insertOne(item);
@@ -46,8 +51,6 @@ const loadModule = {
                 var questions =  yield usersCol.find({"user": user.id}).toArray();       
                 questions = questions[0].group4Answers
 
-                console.log(questions)
-                
                 // get question array instance at the position of id
                 let question2load = questions[0];
                 
