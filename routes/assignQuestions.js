@@ -23,7 +23,7 @@ const assignModule = {
 
         questions = []
         chunk = frames
-        length = frames * 8
+        length = 30
         console.log(length)
         for(i = 0; i<length; i+=chunk){
             q = []

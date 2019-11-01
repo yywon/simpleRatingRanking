@@ -127,18 +127,18 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //render next page if input is valid
   if(isNaN(rating) || rating === ''){
-    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, question: currentUser.question(), noiselevel, error: "ERROR: Please submit a valid estimate"})
+    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, total: user.getTotal(), question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
     return;
   }
 
   //increment activity ID if user makes it to 3rd picture
-  if(parseInt(picture) === 3){
+  if(parseInt(picture) === currentUser.getFrames() - 1){
     currentUser.activityID += 1
   }
 
   //load survey if activity is complete
-  if(currentUser.activityID === 5 && parseInt(picture) === 3){
-    res.render('survey', {userID: currentUser.id })
+  if(currentUser.activityID === (30/currentUser.getFrames()) && parseInt(picture) === currentUser.getFrames() - 1){
+    res.render('survey', {userID: currentUser.id})
     return
   } 
     //load new question

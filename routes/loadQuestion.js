@@ -7,12 +7,11 @@ const co = require('co');
 var url = 'mongodb://10.218.105.218:27017/';
 let assignQuestions = require('./assignQuestions')
 
-frames = [2,3,5,6]
-Base = 50
-
 const loadModule = { 
     
     loadFirst: function(req, res, user) {
+
+      let framesList = [2,3,5,6]
 
         var question2load
         var questionArray
@@ -24,13 +23,14 @@ const loadModule = {
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
 
-            i = Math.floor(Math.random() * 3) 
-            let assignedQuestions = assignQuestions.assign(frames[i])
+            i = Math.floor(Math.random() * 4) 
+            let userFrames = framesList[i] 
+            let assignedQuestions = assignQuestions.assign(userFrames)
 
             console.log(assignedQuestions)
-        
+
             check = yield usersCol.findOne({"user" : user.id})
-        
+
             //check to see if user exists in database
             if(check === null && user.id != null){
               
@@ -40,7 +40,7 @@ const loadModule = {
                     "key2pay": null,
                     "surveyResults": null,
                     "group4Answers": assignedQuestions,
-                    "frames": frames[i]
+                    "frames": userFrames
                 };
                 
                 yield usersCol.insertOne(item);
@@ -57,8 +57,10 @@ const loadModule = {
                 question = JSON.stringify(question2load)
                 console.log("question: " + question)
                 user.saveCurrentQuestion(question)
+                console.log("user frames: " + userFrames)
+                user.saveFrames(userFrames)
 
-                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", question: user.question()})
+                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: user.getFrames(), total: user.getTotal(), question: user.question()})
             } else{
                 res.render('index', {error: "ERROR: Username already exists"});
             }
@@ -77,11 +79,11 @@ const loadModule = {
         check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
 
         if (check === null){
-          res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), error: "ERROR: Please submit a complete ranking"})
+          res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), total: user.getTotal(), frames: user.getFrames(), error: "ERROR: Please submit a complete ranking"})
           return;
         } 
         
-        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question()});
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, total: user.getTotal(), question: user.question()});
 
       });
 
@@ -91,7 +93,7 @@ const loadModule = {
 
       var question2load
 
-      if(parseInt(picture) === 3){
+      if(parseInt(picture) === user.getFrames() - 1){
         picture === 0
 
         co(function* () {
@@ -115,12 +117,12 @@ const loadModule = {
           
           //adjust to next activity
 
-          res.render('rankings', {userID: user.id, id: user.activityID , type: "rankings", question: user.question()})
+          res.render('rankings', {userID: user.id, id: user.activityID , frames: user.getFrames(), total: user.getTotal(), type: "rankings", question: user.question()})
       
         });
       } else {
         picture = parseInt(picture)+ 1
-        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, question: user.question()})
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, total: user.getTotal(), question: user.question()})
       }
 
     }

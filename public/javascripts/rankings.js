@@ -1,4 +1,4 @@
-function renderQuestion(question, id, userID){
+function renderQuestion(question, id, userID, frames){
 
     var startTime = new Date().getTime();
 
@@ -9,7 +9,9 @@ function renderQuestion(question, id, userID){
     d3.select(".activity").html("")
 
     //Variables
-    topNSize = 4
+    console.log(frames)
+    topNSize = parseInt(frames)
+
     topNPositions = Array.from(Array(topNSize).keys()) //array from 1 to 4
 
     //array for rankings
@@ -25,10 +27,12 @@ function renderQuestion(question, id, userID){
     //let margin = { top: 2, right: 0, bottom: 0, left: 2 }
     let svg4ranking_width = "100%";
     let divWidth = d3.select('.rankingDiv').node().offsetWidth
-    let rankingImageSize = divWidth / (topNSize + .5)
+    let rankingImageSize = divWidth / (topNSize + 1)
     let space = rankingImageSize/8;
-    let svg4ranking_height = rankingImageSize+ rankingImageSize/4;
+    let svg4ranking_height = rankingImageSize + rankingImageSize/4;
     let gap4images = (divWidth - (space + (rankingImageSize * topNSize))) / topNSize;
+
+    console.log(rankingImageSize)
 
     //Grouping for ranks
 
@@ -54,7 +58,6 @@ function renderQuestion(question, id, userID){
             return "fill:transparent;stroke:black;stroke-width:1;stroke-opacity:1"
         })
     
-
     arr4label = ["Least Amount of Dots", "Most Amount of Dots"]
     labelDivWidth = (rankingImageSize + gap4images) + "px"
 
@@ -68,7 +71,7 @@ function renderQuestion(question, id, userID){
     //Grouping for candidates
     //let margin4pool = { top: 10, right: 0, bottom: 0, left: 0 }
     let svg4pool_width = "100%";
-    let svg4pool_height = (rankingImageSize) + 50;
+    let svg4pool_height = (rankingImageSize) + 70;
     let svg4pool = d3.select(".candidatePoolContents").append("svg")
         .attr("width", svg4pool_width)
         .attr("height", svg4pool_height)
@@ -102,10 +105,12 @@ function renderQuestion(question, id, userID){
             let path4image = "/images/dots/" + d + ".png"
             return path4image
         })
+
         .attr("x", function (d, i) {
             let xValue = space + 2 + (rankingImageSize +  gap4images) * i
             return xValue
         })
+
         .attr("y", function (d, i) {
             let yValue = rankingImageSize/8 + 2
             return yValue 
@@ -177,7 +182,7 @@ function renderQuestion(question, id, userID){
             //console.log("length: ", rankingOrder.length)
             
             
-            if (rankingOrder.length > 3){
+            if (rankingOrder.length > (frames - 1)){
 
                 var endTime = new Date().getTime();
                 var timeSpent = endTime- startTime;
