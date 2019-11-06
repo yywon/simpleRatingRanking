@@ -8,6 +8,7 @@ var url = 'mongodb://localhost:27017/';
 var userID = null
 let loadQuestion = require('./loadQuestion')
 let storeQuestion = require('./storeQuestion')
+let assignQuestions = require('./assignQuestions')
 
 //User Objects and current User array
 const User = require('../User');
@@ -27,15 +28,19 @@ router.post('/', function(req,res,next){
 
   //Fetch current user
   let currentUser = getUserInstance(req.body.userID);
-
+  
   //add new user if not already exists based on id
   if (!currentUser) {
     users.push(new User(req.body.userID));
     currentUser = getUserInstance(req.body.userID);
   }
 
+  //assign frames to user
+  userFrames = assignQuestions.assignFrames(users)
+  console.log("userFrames: ", userFrames)
+  currentUser.saveFrames(userFrames)
   //load first question
-  loadQuestion.loadFirst(req, res, currentUser)
+  loadQuestion.loadFirst(req, res, currentUser, userFrames)
 
 });
 
@@ -127,7 +132,7 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //render next page if input is valid
   if(isNaN(rating) || rating === ''){
-    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, total: user.getTotal(), question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
+    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, total: currentUser.getTotal(), question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
     return;
   }
 

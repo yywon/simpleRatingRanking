@@ -2,6 +2,7 @@ module.exports = class User {
     constructor(id) {
         this.id = id;
         this.activityID = 1;
+        this.frameNumber = 0;
     }
 
     saveCurrentQuestion(question) {

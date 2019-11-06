@@ -9,9 +9,7 @@ let assignQuestions = require('./assignQuestions')
 
 const loadModule = { 
     
-    loadFirst: function(req, res, user) {
-
-      let framesList = [2,3,5,6]
+    loadFirst: function(req, res, user, userFrames) {
 
         var question2load
         var questionArray
@@ -19,12 +17,10 @@ const loadModule = {
         co(function* () {
 
           let client = yield MongoClient.connect(url);
-          const db = client.db('ratingsrankingsdistributed')
+          const db = client.db('ratingsrankingsframes')
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
 
-            i = Math.floor(Math.random() * 4) 
-            let userFrames = framesList[i] 
             let assignedQuestions = assignQuestions.assign(userFrames)
 
             console.log(assignedQuestions)
@@ -45,8 +41,8 @@ const loadModule = {
                 
                 yield usersCol.insertOne(item);
                 
-               //load next question
-
+                //load next question
+                
                 //find question pool for user
                 var questions =  yield usersCol.find({"user": user.id}).toArray();       
                 questions = questions[0].group4Answers
@@ -60,7 +56,7 @@ const loadModule = {
                 console.log("user frames: " + userFrames)
                 user.saveFrames(userFrames)
 
-                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: user.getFrames(), total: user.getTotal(), question: user.question()})
+                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: userFrames, total: user.getTotal(), question: user.question()})
             } else{
                 res.render('index', {error: "ERROR: Username already exists"});
             }
@@ -72,7 +68,7 @@ const loadModule = {
       co(function* () {
 
         let client = yield MongoClient.connect(url);
-        const db = client.db('ratingsrankingsdistributed')
+        const db = client.db('ratingsrankingsframes')
         let usersCol = db.collection('users')
         let responseCol = db.collection('responses')
 
@@ -99,7 +95,7 @@ const loadModule = {
         co(function* () {
 
           let client = yield MongoClient.connect(url);
-          const db = client.db('ratingsrankingsdistributed')
+          const db = client.db('ratingsrankingsframes')
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
 

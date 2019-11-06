@@ -27,10 +27,28 @@ function renderQuestion(question, id, userID, frames){
     //let margin = { top: 2, right: 0, bottom: 0, left: 2 }
     let svg4ranking_width = "100%";
     let divWidth = d3.select('.rankingDiv').node().offsetWidth
-    let rankingImageSize = divWidth / (topNSize + 1)
-    let space = rankingImageSize/8;
+
+
+    var rankingImageSize
+    var gap4images
+    var space
+
+    if(topNSize === 2){
+        rankingImageSize = divWidth/5;
+        space = rankingImageSize;
+        gap4images = (divWidth - (space + (rankingImageSize * topNSize)))/ topNSize;
+    } else if(topNSize === 3){
+        rankingImageSize = divWidth/5;
+        space = rankingImageSize * 3/5;
+        gap4images = (divWidth - (space + (rankingImageSize * topNSize)))/ topNSize;
+    } else{
+        rankingImageSize = divWidth / (topNSize + 1)
+        space = rankingImageSize/8;
+        gap4images = (divWidth - (space + (rankingImageSize * topNSize))) / topNSize;
+    }
+    
+
     let svg4ranking_height = rankingImageSize + rankingImageSize/4;
-    let gap4images = (divWidth - (space + (rankingImageSize * topNSize))) / topNSize;
 
     console.log(rankingImageSize)
 
