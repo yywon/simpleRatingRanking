@@ -1,7 +1,7 @@
 import pymongo
 import json
 
-url = 'mongodb://localhost:27017/'
+url = 'mongodb://10.218.105.218:27017/'
 
 noiseLevels = [128,64,32,16,8,4,2,1]
 
