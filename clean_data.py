@@ -1,4 +1,4 @@
-import pymongo
+mport pymongo
 import json
 
 url = 'mongodb://localhost:27017/'

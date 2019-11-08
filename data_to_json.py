@@ -16,10 +16,6 @@ dataArray = []
 #iterate over users
 for user in usersCol.find():
 
-    #userQuestions = []
-    #userRankResponses = []
-    #userRatingResponses = []
-
     #retrieve permutation
     userPermutation = user["group4Answers"]
 
@@ -29,7 +25,6 @@ for user in usersCol.find():
     #get the users responses for each question 
     for i in range(len(noiseLevels)):
 	
-	noiseLevel = noiseLevels[i]
         pictures = []
 	rank = []
         temp = [None] * 4
