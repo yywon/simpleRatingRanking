@@ -89,7 +89,7 @@ for user in usersCol.find():
 
 	dataArray.append(data)
 	
-with open('responseData.json', 'w') as outfile:
+with open('responseData2.json', 'w') as outfile:
 	json.dump(dataArray, outfile) 
 
 	
