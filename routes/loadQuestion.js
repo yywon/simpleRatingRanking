@@ -4,7 +4,8 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://localhost:27017/';
+//var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://10.218.105.218:27017/';
 let assignQuestions = require('./assignQuestions')
 
 Base = 50
@@ -71,17 +72,17 @@ const loadModule = {
         let usersCol = db.collection('users')
         let responseCol = db.collection('responses')
 
+        
         check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
 
         if (check === null){
           res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), error: "ERROR: Please submit a complete ranking"})
           return;
         } 
-        
+      
         res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question()});
 
       });
-
     },
 
     loadAfterRating: function(req, res, user, picture){

@@ -184,8 +184,7 @@ function renderQuestion(question, id, userID){
                 sendData(rankingOrder, id, userID, timeSpent)
                 startTime = resetTime()
 
-            } 
-            
+            }
 
             svg4pool.append("rect")
                 .attr("class", "clickedborder4Pool_" + imageIndex4data)
@@ -229,7 +228,7 @@ function renderQuestion(question, id, userID){
             reset(rankingOrder);
         })
 
-        /*
+        
         d3.select(".btn.btn-success.nextBtn").on("click", function () {
             console.log("Button Clicked");
             //console.log(userID)
@@ -238,7 +237,7 @@ function renderQuestion(question, id, userID){
             var timeSpent = endTime- startTime;
             sendData(rankingOrder, id, userID, timeSpent)
         })
-        */
+        
 
 }
             
@@ -252,18 +251,16 @@ function sendData(rankingOrder, id, userID, time){
     //add time to end of rankingOrder array
     group = rankingOrder.slice();
     group.push(time)
-    
     //add ajax function
     new Promise((resolve, reject) => {
-            $.ajax({
-                dataType: "json",
-                url: url2go,
-                type: "POST",
-                data: JSON.stringify(group), 
-                success: resolve
-            });
+        $.ajax({
+            dataType: "json",
+            url: url2go, 
+            type: "POST",
+            data: JSON.stringify(group), 
+            success: resolve
         });
-    
+    });
 }
 
 function reset(array){

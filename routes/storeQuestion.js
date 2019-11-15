@@ -4,7 +4,8 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://localhost:27017/';
+//var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://10.218.105.218:27017/';
 let assignQuestions = require('./assignQuestions')
 
 const storeModule = {
@@ -17,14 +18,19 @@ const storeModule = {
             var group = group2save.map(Number);
             console.log(group)
 
+            //sort array
+            group.sort((a,b) => a - b);
+            
             //calc sum difference 
             n = group.length
             diffSum = 0;
             for(i = n - 1; i >= 0; i--){
-                diffSum = diffSum + (i*group[i] - (n-1-i) * group[i])
+                diffSum += i*group[i] - (n-1-i) * group[i]
             }
             diffSum = Math.abs(diffSum)
             
+
+            //min amongst all pairs
             let pairs = []
             for (let i = 0; i < group.length - 1; i++) {
                 for (let j = i + 1; j < group.length; j++) {
@@ -32,8 +38,6 @@ const storeModule = {
                     pairs.push(p)
                 }
             }
-
-            console.log(pairs)
 
             min = 99
             for(i = 0; i < pairs.length - 1; i++){
@@ -75,10 +79,11 @@ const storeModule = {
 
             if(count > 0){
                 responseCol.update(criteria,{ $set: newItem })
-                //console.log('Ranking updated')
+                console.log('Ranking updated')
+                console.log('total time', time)
             } else {
                 responseCol.insertOne(item, function(err, result) {
-                //console.log('Ranking inserted')
+                console.log('Ranking inserted')
                 });
         }
 

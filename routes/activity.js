@@ -64,8 +64,13 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
   //get rid of extra time variable in the group (so that group only constains ranking)
   group.pop()
 
+  if(group.length == 4){
+    storeQuestion.storeRanking(userID, id, group, time);
+  } else{
+    res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), error: "ERROR: Please submit a complete ranking"})
+  }
+
   //store ranking
-  storeQuestion.storeRanking(userID, id, group, time)
 
 });
 
@@ -127,7 +132,7 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //render next page if input is valid
   if(isNaN(rating) || rating === ''){
-    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, question: currentUser.question(), noiselevel, error: "ERROR: Please submit a valid estimate"})
+    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
     return;
   }
 
