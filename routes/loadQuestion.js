@@ -5,6 +5,8 @@ var assert = require('assert');
 const co = require('co');
 
 var url = 'mongodb://10.218.105.218:27017/';
+//var url = 'mongodb://localhost:27017/';
+
 let assignQuestions = require('./assignQuestions')
 
 const loadModule = { 

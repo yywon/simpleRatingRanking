@@ -205,7 +205,6 @@ function renderQuestion(question, id, userID, frames){
                 var endTime = new Date().getTime();
                 var timeSpent = endTime- startTime;
                 sendData(rankingOrder, id, userID, timeSpent)
-                startTime = resetTime()
 
             } 
             
@@ -252,7 +251,7 @@ function renderQuestion(question, id, userID, frames){
             reset(rankingOrder);
         })
 
-        /*
+        
         d3.select(".btn.btn-success.nextBtn").on("click", function () {
             console.log("Button Clicked");
             //console.log(userID)
@@ -261,7 +260,7 @@ function renderQuestion(question, id, userID, frames){
             var timeSpent = endTime- startTime;
             sendData(rankingOrder, id, userID, timeSpent)
         })
-        */
+        
 
 }
             
@@ -301,9 +300,4 @@ function reset(array){
         i--;
 
     }
-}
-
-function resetTime(){
-    startTime = new Date().getTime();
-    return startTime
 }

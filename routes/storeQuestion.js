@@ -5,6 +5,8 @@ var assert = require('assert');
 const co = require('co');
 
 var url = 'mongodb://10.218.105.218:27017/';
+//var url = 'mongodb://localhost:27017/';
+
 let assignQuestions = require('./assignQuestions')
 
 const storeModule = {
@@ -19,6 +21,7 @@ const storeModule = {
 
             //calc sum difference 
             n = group.length
+            group = group.sort((a,b) => a - b);
             diffSum = 0;
             for(i = n - 1; i >= 0; i--){
                 diffSum = diffSum + (i*group[i] - (n-1-i) * group[i])
@@ -36,7 +39,7 @@ const storeModule = {
             console.log(pairs)
 
             min = 99
-            for(i = 0; i < pairs.length - 1; i++){
+            for(i = 0; i < pairs.length; i++){
                 test = Math.abs(pairs[i][0]- pairs[i][1])
                 if(test < min){
                     min = test
