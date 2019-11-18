@@ -40,7 +40,7 @@ const storeModule = {
             }
 
             min = 99
-            for(i = 0; i < pairs.length - 1; i++){
+            for(i = 0; i < pairs.length; i++){
                 test = Math.abs(pairs[i][0]- pairs[i][1])
                 if(test < min){
                     min = test
