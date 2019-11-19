@@ -3,8 +3,6 @@ import json
 
 url = 'mongodb://localhost:27017/'
 
-noiseLevels = [128,64,32,16,8,4,2,1]
-
 #set up database and all columns 
 client = pymongo.MongoClient(url)
 db = client['ratingsrankingsbasic']
@@ -16,59 +14,38 @@ dataArray = []
 #iterate over users
 for user in usersCol.find():
 
-    #userQuestions = []
-    #userRankResponses = []
-    #userRatingResponses = []
-
-    #retrieve permutation
-    userPermutation = user["group4Answers"]
-
+	ground_truth = user['group4answers']
     #get username
-    userName = user['user']
+	userName = user['user']
 
     #get the users responses for each question 
-    for i in range(len(noiseLevels)):
-	
-	noiseLevel = noiseLevels[i]
-        pictures = []
-	rank = []
-        temp = [None] * 4
-	
-	#get noise level and permutation number
-        variation = userPermutation[i]
-        noiseLevel = noiseLevels[i]
-
-        questionOrder = questionPoolCol.find_one({"noiselevel": noiseLevel, "variation": variation})
-        questionOrder = questionOrder["array"]
-
-        #collection is i+1
-        collection = i + 1
-	collection = str(collection)
-
-        rankResponse = responsesCol.find_one({"user": userName, "collection": collection, "type": "ranking"})
-	if (rankResponse is None):
-		rank = [0,0,0,0]
-	else:
-		rank = rankResponse["ranking"]
-		rank = [int(x) for x in rank]
-		k = 4
-        	while (k > 0):
-            		maxpos = rank.index(max(rank))
+	for i in range(1,8):
+		rankResponse = responsesCol.find_one({"user": userName, "collection": str(i), "type": "ranking"})
+		if (rankResponse is None):
+			rank = [0,0,0,0]
+		else:
+			rank = rankResponse["ranking"]
+			rank = [int(x) for x in rank]
+			k = 4
+        		while (k > 0):
+					maxpos = rank.index(max(rank))
             		temp[maxpos] = k
             		rank[maxpos] = -1
             		k -= 1
-        rank = temp
+        	rank = temp
 
         #get pictures
         for j in range(4):
-	    picture = str(j)
-            ratingResponse = responsesCol.find_one({"user": userName, "picture": picture, "collection": collection, "type": "rating"})
-	    if ratingResponse is None:
-		ratingResponse = 0
-	    else:
-	    	ratingResponse = ratingResponse["estimate"]
-		ratingResponse = int(float(ratingResponse))
-            pictures.append(ratingResponse)
+	    	picture = str(j)
+			ratingResponse = responsesCol.find_one({"user": userName, "picture": picture, "collection": collection, "type": "rating"})
+
+
+	    	if ratingResponse is None:
+				ratingResponse = 0
+	    	else:
+	    		ratingResponse = ratingResponse["estimate"]
+			ratingResponse = int(float(ratingResponse))
+            	pictures.append(ratingResponse)
 
 	
 	#sort ratings in order of ground truth

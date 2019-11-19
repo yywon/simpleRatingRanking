@@ -10,16 +10,11 @@ const assignModule = {
         
         //populate array
         allNumbers = []
-        for(i = 0; i < 40; i++){
+        for(i = 0; i < 32; i++){
             allNumbers[i] = 50 + i
         }
 
-        for(let i = allNumbers.length - 1; i > 0; i--){
-            const j = Math.floor(Math.random() * i)
-            const temp = allNumbers[i]
-            allNumbers[i] = allNumbers[j]
-            allNumbers[j] = temp
-          }
+        shuffle(allNumbers)
 
         questions = []
         chunk = 4
