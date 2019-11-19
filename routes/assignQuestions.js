@@ -14,7 +14,12 @@ const assignModule = {
             allNumbers[i] = 50 + i
         }
 
-        shuffle(allNumbers)
+        for(let i = allNumbers.length - 1; i > 0; i--){
+            const j = Math.floor(Math.random() * i)
+            const temp = allNumbers[i]
+            allNumbers[i] = allNumbers[j]
+            allNumbers[j] = temp
+        }
 
         questions = []
         chunk = 4
@@ -26,6 +31,7 @@ const assignModule = {
         }
 
     return questions
+    
     }
 }
 
