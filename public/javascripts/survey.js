@@ -166,7 +166,7 @@ let json = {
         {
             type: "rating",
             isRequired: false,
-            name: "ranking_likeability",
+            name: "ranking_difficulty",
             title: "One a scale of 0-5, how easy were the ranking questions?",
             minRateDescription: "Very difficult",
             maxRateDescription: "Very easy"
@@ -174,7 +174,7 @@ let json = {
         {
             type: "rating",
             isRequired: false,
-            name: "rating_like",
+            name: "rating_difficulty",
             title: "One a scale of 0-5, how easy were the numberical estimation questions?",
             minRateDescription: "Very difficult",
             maxRateDescription: "Very easy"
@@ -182,7 +182,7 @@ let json = {
         {
             type: "rating",
             isRequired: false,
-            name: "rating_likeability",
+            name: "ranking_ui",
             title: "One a scale of 0-5, how much did you like the user interface of the ranking questions?",
             minRateDescription: "Not enjoyable",
             maxRateDescription: "Very enjoyable"
@@ -190,7 +190,7 @@ let json = {
         {
             type: "rating",
             isRequired: false,
-            name: "rating_expressiveness",
+            name: "rating_ui",
             title: "One a scale of 0-5, how much did you like the user interface of the numberical estimation questions?",
             minRateDescription: "Not enjoyable",
             maxRateDescription: "Very enjoyable"
