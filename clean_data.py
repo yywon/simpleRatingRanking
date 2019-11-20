@@ -3,12 +3,9 @@ import json
 
 url = 'mongodb://localhost:27017/'
 
-noiseLevels = [128,64,32,16,8,4,2,1]
-
 client = pymongo.MongoClient(url)
-db = client['ratingsrankingsbasic']
+db = client['ratingsrankingsdistributed']
 usersCol = db['users']
-questionPoolCol = db['questionPool']
 responsesCol = db['responses']
 
 completed_users = []
@@ -22,7 +19,7 @@ for user in usersCol.find():
     responseCount = responsesCol.count({'user' : userName})
 
     print(userName + ": " + str(responseCount))
-    if(key2pay is not None and responseCount == 40):
+    if(key2pay is not None and responseCount >= 40):
         completed_users.append(userName)
     else:
         userRemove += 1
