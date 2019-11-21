@@ -18,7 +18,8 @@ for user in usersCol.find():
     userName = user["user"]
     responseCount = responsesCol.count({'user' : userName})
 
-    print(userName + ": " + str(responseCount))
+    print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
+    
     if(key2pay is not None and responseCount >= 40):
         completed_users.append(userName)
     else:

@@ -81,10 +81,10 @@ for user in usersCol.find():
 
 	
 	data = {
-		"rank_dif": user["surveyResults"]["ranking_likeability"],
-		"rate_dif": user["surveyResults"]["rating_like"],
-		"rank_ui": user["surveyResults"]["rating_likeability"],
-		"rate_ui": user["surveyResults"]["rating_expressiveness"],
+		"rank_dif": user["surveyResults"]["ranking_difficulty"],
+		"rate_dif": user["surveyResults"]["rating_difficulty"],
+		"rank_ui": user["surveyResults"]["ranking_ui"],
+		"rate_ui": user["surveyResults"]["rating_ui"],
  		"rankings": rankings,
 		"ratings": ratings,
 		"groundtruth": ground_truth
