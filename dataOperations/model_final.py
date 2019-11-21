@@ -7,6 +7,7 @@ import cplex
 from cplex.exceptions import CplexError
 import time
 
+
 class Evaluation:
 
     def __init__(self):
@@ -515,9 +516,14 @@ def rating_and_ranking_model(file_name, num_obj, noise_level):
 
     x = []
     for i in range(n):
-        x.append(round(prob_RR.solution.get_values("x" + str(i + 1))))
+        x.append(round(mu*prob_RR.solution.get_values("x" + str(i + 1)) + L))
 
-    rating = x
+    # Define the original rating vector
+    Ratings = np.zeros((m, n))
+    for k in range(m):
+        for i in range(n):
+            Ratings[k][i] = prof.evs[k].Rat[i]
+    rating = callibrate_model(x, Ratings)
 
     # Relative optimality gap
     Gap = prob_RR.solution.MIP.get_mip_relative_gap()
@@ -727,10 +733,16 @@ def separation_deviation_model(file_name, num_obj, noise_level, lambda1, lambda2
     # Used to easily calculate the aggregate ranking
     x = []
     for i in range(n):
-        x.append(round(prob_SD.solution.get_values("x" + str(i + 1))))
+        x.append(round(mu*prob_SD.solution.get_values("x" + str(i + 1))))
 
     ranking = agg_rank_x(x)
-    rating = x
+
+    # Define the original rating vector
+    Ratings = np.zeros((m, n))
+    for k in range(m):
+        for i in range(n):
+            Ratings[k][i] = prof.evs[k].Rat[i]
+    rating = callibrate_model(x, Ratings)
 
     ground_truth = g_truth(prof.groundtruth)
 
@@ -852,9 +864,9 @@ def ratings_only_model(file_name, num_obj, noise_level):
     return ranking, rating, dist, Gap, total_time
 
 
-input_file = 'responseData 11-8.json'
+input_file = '../datafiles/responseData 11-8.json'
 
-noise_level = 128
+noise_level = 1
 objects = 4
 
 # Ratings and ranking model
@@ -866,7 +878,15 @@ CA_rank, CA_rat, CA_dist, CA_gap, CA_time = ratings_only_model(input_file, objec
 # Separation deviation model
 SD_rank, SD_rat, SD_dist, SD_gap, SD_time = separation_deviation_model(input_file, objects, noise_level, 1, 1)
 
+
+
+
+
+print('ranking only model')
 print(OA_rank, OA_dist, OA_gap, OA_time)
+print('ratings and rankings model')
 print(RR_rank, RR_rat, RR_dist, RR_gap, RR_time)
+print('rating only model')
 print(CA_rank, CA_rat, CA_dist, CA_gap, CA_time)
+print('separation deviation model')
 print(SD_rank, SD_rat, SD_dist, SD_gap, SD_time)
