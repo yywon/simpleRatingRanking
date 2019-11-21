@@ -2,7 +2,7 @@ import json
 
 noiseLevels = [128,64,32,16,8,4,2,1]
 
-with open("responseData.json", "r") as read_file:
+with open("../datafiles/responseData 11-8.json", "r") as read_file:
     data = json.load(read_file)
 
     for level in noiseLevels:
