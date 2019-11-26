@@ -6,6 +6,7 @@ import numpy as np
 import cplex
 from cplex.exceptions import CplexError
 import time
+import scipy.spatial
 
 
 class Evaluation:
@@ -95,6 +96,8 @@ class Profile:
                 self.min_rat = min(self.groundtruth)
                 self.evs.append(tempEval)
                 self.num_jud += 1
+
+
 
     def build_Pairwise_Graph(self):
         # Initialize to all zeros
@@ -375,10 +378,10 @@ def rating_and_ranking_model(file_name, num_obj, noise_level):
     for i in range(prof.num_jud):
         prof.evs[i].calc_ratings_seps()
 
-    R = prof.max_rat - prof.min_rat
+    R = 10000000
     L = prof.min_rat
     U = prof.max_rat
-    mu = 0.01
+    mu = .5
     m = prof.num_jud
     n = prof.num_obj
     n_indiv = [0] * m               # number of objects each judge evaluates
@@ -391,6 +394,7 @@ def rating_and_ranking_model(file_name, num_obj, noise_level):
         for j in range(n):
             B[i][j] = round(prof.sci.mat[i][j], 5)
 
+    # Note: Modifyed range in equation
     for j in range(m):
         n_indiv[j] = float(len(prof.evs[j].Vsub))
         C[j] = 1 / (2 * R * math.ceil(n_indiv[j] / 2) * math.floor(n_indiv[j] / 2))
@@ -528,7 +532,12 @@ def rating_and_ranking_model(file_name, num_obj, noise_level):
     # Relative optimality gap
     Gap = prob_RR.solution.MIP.get_mip_relative_gap()
 
-    return ranking, rating, dist, Gap, total_time
+    #get distances
+    true_rating = prof.groundtruth
+    L1 = scipy.spatial.distance.cityblock(rating,true_rating)
+    L2 = scipy.spatial.distance.euclidean(rating,true_rating)
+
+    return ranking, rating, dist, Gap, total_time, L1, L2
 
 
 def ranking_only_model(file_name, num_obj, noise_level):
@@ -752,7 +761,12 @@ def separation_deviation_model(file_name, num_obj, noise_level, lambda1, lambda2
     # Relative optimality gap
     Gap = prob_SD.solution.MIP.get_mip_relative_gap()
 
-    return ranking, rating, dist, Gap, total_time
+    #get distances
+    true_rating = prof.groundtruth
+    L1 = scipy.spatial.distance.cityblock(rating,true_rating)
+    L2 = scipy.spatial.distance.euclidean(rating,true_rating)
+
+    return ranking, rating, dist, Gap, total_time, L1, L2
 
 
 def ratings_only_model(file_name, num_obj, noise_level):
@@ -861,7 +875,61 @@ def ratings_only_model(file_name, num_obj, noise_level):
     # Relative optimality gap
     Gap = prob_FM.solution.MIP.get_mip_relative_gap()
 
-    return ranking, rating, dist, Gap, total_time
+    #get distances
+    true_rating = prof.groundtruth
+    L1 = scipy.spatial.distance.cityblock(rating,true_rating)
+    L2 = scipy.spatial.distance.euclidean(rating,true_rating)
+
+    return ranking, rating, dist, Gap, total_time, L1, L2
+
+def averages(file_name, num_obj, noise_level):
+
+    with open(file_name, "r") as read_file:
+        data = json.load(read_file)
+    
+    rankings = []
+    ratings = []
+    rankingAverages = [0,0,0,0]
+    ratingAverages = [0,0,0,0]
+    responseCount = 0
+
+    #collect all rankings and ratings from data
+    for response in data:
+            if response['noiseLevel'] == noise_level:
+                ranking = response['ranking']
+                rating = response['rating']
+
+                rankings.append(ranking)
+                ratings.append(rating)
+                groundtruth = response['groundtruth']
+                responseCount +=1
+
+    #find rating
+    for rate in ratings:
+        for i in range(num_obj):
+            ratingAverages[i] += rate[i]
+    for i in range(len(rankingAverages)):
+        sum = ratingAverages[i]
+        avg = sum / responseCount
+        ratingAverages[i] = avg
+
+    print(ratingAverages)
+    #get ranking based on ratings
+    index = 1
+    rankingAverages = [0,0,0,0]
+    temp = list(ratingAverages)
+    for i in range(num_obj):
+        maxpos = temp.index(max(temp))
+        rankingAverages[maxpos] = index
+        temp[maxpos] = -1
+        index += 1
+
+    dist = ks_GT(rankingAverages, g_truth(groundtruth))
+
+    L1 = scipy.spatial.distance.cityblock(ratingAverages,groundtruth)
+    L2 = scipy.spatial.distance.euclidean(ratingAverages,groundtruth)
+
+    return rankingAverages, ratingAverages, dist, L1, L2
 
 
 input_file = '../datafiles/responseData 11-8.json'
@@ -870,23 +938,23 @@ noise_level = 1
 objects = 4
 
 # Ratings and ranking model
-RR_rank, RR_rat, RR_dist, RR_gap, RR_time = rating_and_ranking_model(input_file, objects, noise_level)
+RR_rank, RR_rat, RR_dist, RR_gap, RR_time, RR_L1, RR_L2 = rating_and_ranking_model(input_file, objects, noise_level)
 # Rankings only model
 OA_rank, OA_dist, OA_gap, OA_time = ranking_only_model(input_file, objects, noise_level)
 # Ratings only model (Fishbain moreno model)
-CA_rank, CA_rat, CA_dist, CA_gap, CA_time = ratings_only_model(input_file, objects, noise_level)
+CA_rank, CA_rat, CA_dist, CA_gap, CA_time, CA_L1, CA_L2 = ratings_only_model(input_file, objects, noise_level)
 # Separation deviation model
-SD_rank, SD_rat, SD_dist, SD_gap, SD_time = separation_deviation_model(input_file, objects, noise_level, 1, 1)
-
-
-
-
+SD_rank, SD_rat, SD_dist, SD_gap, SD_time, SD_L1, SD_L2 = separation_deviation_model(input_file, objects, noise_level, 1, 1)
+#averages
+A_rank, A_rat, A_dist, A_L1, A_L2 = averages(input_file, objects, noise_level)
 
 print('ranking only model')
 print(OA_rank, OA_dist, OA_gap, OA_time)
 print('ratings and rankings model')
-print(RR_rank, RR_rat, RR_dist, RR_gap, RR_time)
+print(RR_rank, RR_rat, RR_dist, RR_gap, RR_time, RR_L1, RR_L2)
 print('rating only model')
-print(CA_rank, CA_rat, CA_dist, CA_gap, CA_time)
+print(CA_rank, CA_rat, CA_dist, CA_gap, CA_time, CA_L1, CA_L2)
 print('separation deviation model')
-print(SD_rank, SD_rat, SD_dist, SD_gap, SD_time)
+print(SD_rank, SD_rat, SD_dist, SD_gap, SD_time, SD_L1, SD_L2)
+print('averages')
+print(A_rank, A_rat, A_dist, A_L1, A_L2)

@@ -39,8 +39,11 @@ with open("../datafiles/responseData 11-8.json", "r") as read_file:
         for i in range(len(rankingAverages)):
             sum = ratingAverages[i]
             avg = sum / responseCount
+            ratingAverages[i] = avg
             print("Ground Truth: " + str(groundtruth[i]) + " Average Rating: " + str(avg))
 
+        print(ratingAverages)
+        
         print('\n')
 
             
