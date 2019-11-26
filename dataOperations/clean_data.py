@@ -17,10 +17,13 @@ for user in usersCol.find():
     key2pay = user["key2pay"]
     userName = user["user"]
     responseCount = responsesCol.count({'user' : userName})
+     
+    if(key2pay is None):
+	key2pay = "none";
 
     print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
     
-    if(key2pay is not None and responseCount >= 40):
+    if(responseCount >= 40):
         completed_users.append(userName)
     else:
         userRemove += 1
