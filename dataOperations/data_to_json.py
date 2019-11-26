@@ -34,21 +34,9 @@ for user in usersCol.find():
 		if (rankResponse is None):
 			rank = [0,0,0,0]
 		else:
-			temp = [0,0,0,0]
 			rank = rankResponse["ranking"]
 			rank = [int(x) for x in rank]
-
 			print('rank ' + str(rank))
-
-			k = 4
-			#assign values 1 - 4 for rank
-			while (k > 0):
-				maxpos = rank.index(max(rank))
-				print("maxpos " + str(maxpos))
-				temp[maxpos] = k
-				rank[maxpos] = -1
-				k -= 1
-			rank = temp
 		
 		rankings.append(rank)
 
@@ -79,12 +67,33 @@ for user in usersCol.find():
 
 		ratings.append(pictures)
 
+	#block to fix my errors
+	if(user["surveyResults"]["ranking_difficulty"]):
+		rank_dif = user["surveyResults"]["ranking_difficulty"]
+	else:
+		rank_dif = user["surveyResults"]["ranking_likeability"]
+
+	if(user["surveyResults"]["rating_difficulty"]):
+		rate_dif = user["surveyResults"]["rating_difficulty"]
+	else:
+		rate_dif = user["surveyResults"]["rating_like"]
+	
+	if(user["surveyResults"]["ranking_ui"]):
+		rank_ui = user["surveyResults"]["ranking_ui"]
+	else:
+		rank_ui = user["surveyResults"]["rating_likeability"]
+
+	if(user["surveyResults"]["rating_ui"]):
+		rate_ui = user["surveyResults"]["rating_ui"]
+	else:
+		rate_ui = user["surveyResults"]["rating_expressiveness"]
+		
 	
 	data = {
-		"rank_dif": user["surveyResults"]["ranking_difficulty"],
-		"rate_dif": user["surveyResults"]["rating_difficulty"],
-		"rank_ui": user["surveyResults"]["ranking_ui"],
-		"rate_ui": user["surveyResults"]["rating_ui"],
+		"rank_dif": rank_dif,
+		"rate_dif": rate_dif,
+		"rank_ui": rank_ui,
+		"rate_ui": rate_ui,
  		"rankings": rankings,
 		"ratings": ratings,
 		"groundtruth": ground_truth
@@ -92,7 +101,6 @@ for user in usersCol.find():
 
 	dataArray.append(data)
 
-		
 with open('responseData.json', 'w') as outfile:
 	json.dump(dataArray, outfile) 
 
