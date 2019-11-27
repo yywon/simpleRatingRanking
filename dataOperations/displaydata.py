@@ -1,53 +1,38 @@
 import json
 
-noiseLevels = [128,64,32,16,8,4,2,1]
+gtruth = [128,64,32,16,8,4,2,1]
 
 with open("responseData.json", "r") as read_file:
     data = json.load(read_file)
 
-    for level in noiseLevels:
-        print("Noise Level: " + str(level))
-        print('\n')
-        
-        rankings = []
-        ratings = []
-        rankingAverages = [0,0,0,0]
-        ratingAverages = [0,0,0,0]
-        responseCount = 0
+rank_dif = 0
+rate_dif = 0
+rank_ui = 0
+rate_ui = 0
+count = 0
 
-        for response in data:
-            if response['noiseLevel'] == level:
-                ranking = response['ranking']
-                rating = response['rating']
+for response in data:
+    groundtruth = response["groundtruth"]
 
-                rankings.append(ranking)
-                ratings.append(rating)
-                groundtruth = response['groundtruth']
-                responseCount +=1
-            
-        for rank in rankings:
-            for i in range(4):
-                rankingAverages[i] += rank[i]
-        for i in range(len(rankingAverages)):
-            sum = rankingAverages[i]
-            avg = sum / responseCount
-            print("Average Ranking: "+ str(avg))
+    print(response["rank_dif"])
 
-        for rate in ratings:
-            for i in range(4):
-                ratingAverages[i] += rate[i]
-        for i in range(len(rankingAverages)):
-            sum = ratingAverages[i]
-            avg = sum / responseCount
-            print("Ground Truth: " + str(groundtruth[i]) + " Average Rating: " + str(avg))
+    
+    rank_dif += int(response["rank_dif"])
+    rate_dif += int(response["rate_dif"])
+    rank_ui += int(response["rank_ui"])
+    rate_ui += int(response["rate_ui"])
 
-        print('\n')
+    count += 1
 
-            
+rank_dif = rank_dif/count
+rate_dif += rate_dif
+rank_ui += rank_ui
+rate_ui += rate_ui
 
-
-
-
+print("rank_dif" + rank_dif)
+print("rate_dif" + rate_dif)
+print("rank_ui" + rank_ui)
+print("rate_ui" + rate_ui)
 
     
 
