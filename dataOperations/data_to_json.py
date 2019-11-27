@@ -1,6 +1,30 @@
 import pymongo
 import json
 
+def fixResults(item):
+
+	if("rankingdifficulty" in item):
+		rank_dif = user["surveyResults"]["ranking_difficulty"]
+	elif("ranking_likeability" in item):
+		rank_dif = user["surveyResults"]["ranking_likeability"]
+
+	if("rating_difficulty" in item):
+		rate_dif = user["surveyResults"]["rating_difficulty"]
+	elif("rating_like" in item):
+		rate_dif = user["surveyResults"]["rating_like"]
+	
+	if("ranking_ui" in item):
+		rank_ui = user["surveyResults"]["ranking_ui"]
+	elif("rating_likeability" in item):
+		rank_ui = user["surveyResults"]["rating_likeability"]
+
+	if("rating_ui" in item):
+		rate_ui = user["surveyResults"]["rating_ui"]
+	elif("rating_expressiveness" in item):
+		rate_ui = user["surveyResults"]["rating_expressiveness"]
+
+	return rank_dif, rate_dif, rank_ui, rate_ui
+
 url = 'mongodb://localhost:27017/'
 
 #set up database and all columns 
@@ -71,27 +95,7 @@ for user in usersCol.find():
 	
 	if "surveyResults" in user:
 		item = user["surveyResults"]
-
-		if("rankingdifficulty" in item):
-			rank_dif = user["surveyResults"]["ranking_difficulty"]
-		elif("ranking_likeability" in item):
-			rank_dif = user["surveyResults"]["ranking_likeability"]
-
-		if("rating_difficulty" in item):
-			rate_dif = user["surveyResults"]["rating_difficulty"]
-		elif("rating_like" in item):
-			rate_dif = user["surveyResults"]["rating_like"]
-	
-		if("ranking_ui" in item):
-			rank_ui = user["surveyResults"]["ranking_ui"]
-		elif("rating_likeability" in item):
-			rank_ui = user["surveyResults"]["rating_likeability"]
-
-		if("rating_ui" in item):
-			rate_ui = user["surveyResults"]["rating_ui"]
-		elif("rating_expressiveness" in item):
-			rate_ui = user["surveyResults"]["rating_expressiveness"]
-	
+		rank_dif, rate_dif, rank_ui, rate_ui = fixResults(item)
 	else:
 		rank_dif = None
 		rate_dif = None
