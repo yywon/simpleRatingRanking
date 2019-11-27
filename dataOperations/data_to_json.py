@@ -3,7 +3,7 @@ import json
 
 def fixResults(item, rank_dif, rate_dif, rank_ui, rate_ui):
 
-	if("rankingdifficulty" in item):
+	if("ranking_difficulty" in item):
 		rank_dif = user["surveyResults"]["ranking_difficulty"]
 	elif("ranking_likeability" in item):
 		rank_dif = user["surveyResults"]["ranking_likeability"]
