@@ -68,25 +68,35 @@ for user in usersCol.find():
 		ratings.append(pictures)
 
 	#block to fix my errors
-	if(user["surveyResults"]["ranking_difficulty"]):
-		rank_dif = user["surveyResults"]["ranking_difficulty"]
-	else:
-		rank_dif = user["surveyResults"]["ranking_likeability"]
-
-	if(user["surveyResults"]["rating_difficulty"]):
-		rate_dif = user["surveyResults"]["rating_difficulty"]
-	else:
-		rate_dif = user["surveyResults"]["rating_like"]
 	
-	if(user["surveyResults"]["ranking_ui"]):
-		rank_ui = user["surveyResults"]["ranking_ui"]
-	else:
-		rank_ui = user["surveyResults"]["rating_likeability"]
+	if "surveyResults" in user:
+		item = user["surveyResults"]
 
-	if(user["surveyResults"]["rating_ui"]):
-		rate_ui = user["surveyResults"]["rating_ui"]
+		if("rankingdifficulty" in item):
+			rank_dif = user["surveyResults"]["ranking_difficulty"]
+		elif("ranking_likeability" in item):
+			rank_dif = user["surveyResults"]["ranking_likeability"]
+
+		if("rating_difficulty" in item):
+			rate_dif = user["surveyResults"]["rating_difficulty"]
+		elif("rating_like" in item):
+			rate_dif = user["surveyResults"]["rating_like"]
+	
+		if("ranking_ui" in item):
+			rank_ui = user["surveyResults"]["ranking_ui"]
+		elif("rating_likeability" in item):
+			rank_ui = user["surveyResults"]["rating_likeability"]
+
+		if("rating_ui" in item):
+			rate_ui = user["surveyResults"]["rating_ui"]
+		elif("rating_expressiveness" in item):
+			rate_ui = user["surveyResults"]["rating_expressiveness"]
+	
 	else:
-		rate_ui = user["surveyResults"]["rating_expressiveness"]
+		rank_dif = None
+		rate_dif = None
+		rank_ui = None
+		rate_ui = None
 		
 	
 	data = {
