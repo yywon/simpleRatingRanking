@@ -1,7 +1,7 @@
 import pymongo
 import json
 
-def fixResults(item):
+def fixResults(item, rank_dif, rate_dif, rank_ui, rate_ui):
 
 	if("rankingdifficulty" in item):
 		rank_dif = user["surveyResults"]["ranking_difficulty"]
@@ -38,6 +38,8 @@ dataArray = []
 
 #iterate over users
 for user in usersCol.find():
+	
+	print(user)
 
 	rankings = []
 	ratings = []
@@ -93,14 +95,15 @@ for user in usersCol.find():
 
 	#block to fix my errors
 	
-	if "surveyResults" in user:
+	rank_dif = None
+        rate_dif = None
+        rank_ui = None
+        rate_ui = None	
+
+	if user["surveyResults"] is not None:
 		item = user["surveyResults"]
-		rank_dif, rate_dif, rank_ui, rate_ui = fixResults(item)
-	else:
-		rank_dif = None
-		rate_dif = None
-		rank_ui = None
-		rate_ui = None
+		print(item)
+		rank_dif, rate_dif, rank_ui, rate_ui = fixResults(item, rank_dif, rate_dif, rank_ui, rate_ui)
 		
 	
 	data = {
