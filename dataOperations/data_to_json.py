@@ -91,8 +91,3 @@ for user in usersCol.find():
 	
 with open('responseData2.json', 'w') as outfile:
 	json.dump(dataArray, outfile) 
-
-	
-
-	
-
