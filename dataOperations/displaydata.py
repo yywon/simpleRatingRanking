@@ -1,6 +1,14 @@
 import json
 
-gtruth = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82]
+gtruth = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81]
+
+
+def findPosition(num, groundtruth):
+    found = None
+    for i in range(len(groundtruth)):
+        for j in range(len(groundtruth[i])):
+            if int(num) == int(groundtruth[i][j]):
+                return i,j
 
 with open("responseData.json", "r") as read_file:
     data = json.load(read_file)
@@ -10,9 +18,12 @@ rate_dif = 0
 rank_ui = 0
 rate_ui = 0
 count = 0
+responseCount = 0
+avg_ratings = [0] * 32
 
 for response in data:
     groundtruth = response["groundtruth"]
+    rating = response["ratings"]
 
     #get counts for usability scores
     if None not in(response["rank_dif"],response["rate_dif"],response["rank_ui"],response["rate_ui"]):
@@ -23,14 +34,21 @@ for response in data:
 
         count += 1
     
-    for picture in gtruth:
+    for i in range(len(gtruth)):
+        x,y = findPosition(gtruth[i], groundtruth)
+        avg_ratings[i] += rating[x][y]
+
+    responseCount += 1
+
+
+
+avg_ratings = [x / responseCount for x in avg_ratings]
+print(avg_ratings)
 
 rank_dif = rank_dif/count
 rate_dif = rate_dif/count
 rank_ui = rank_ui/count
 rate_ui = rate_ui/count
-
-
 
 print("count " + str(count))
 print("rank_dif " + str(rank_dif))
