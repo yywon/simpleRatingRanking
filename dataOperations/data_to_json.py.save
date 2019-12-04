@@ -1,32 +1,26 @@
 import pymongo
 import json
 
-def to_rank(n):
-	return n - 49
 
-def fixResults(item, rank_dif, rate_dif, rank_ui, rate_ui):
-
-	if("ranking_difficulty" in item):
+def fixResults(item):
+	if("rankingdifficulty" in item):
 		rank_dif = user["surveyResults"]["ranking_difficulty"]
-	elif("ranking_likeability" in item):
-		rank_dif = user["surveyResults"]["ranking_likeability"]
+	elif("ranking_likeability"                rank_dif = user["surveyResults"]["ranking_likeability"]
 
-	if("rating_difficulty" in item):
-		rate_dif = user["surveyResults"]["rating_difficulty"]
-	elif("rating_like" in item):
-		rate_dif = user["surveyResults"]["rating_like"]
-	
-	if("ranking_ui" in item):
-		rank_ui = user["surveyResults"]["ranking_ui"]
-	elif("rating_likeability" in item):
-		rank_ui = user["surveyResults"]["rating_likeability"]
+                if("rating_difficulty" in item):
+                        rate_dif = user["surveyResults"]["rating_difficulty"]
+                elif("rating_like" in item):
+                        rate_dif = user["surveyResults"]["rating_like"]
 
-	if("rating_ui" in item):
-		rate_ui = user["surveyResults"]["rating_ui"]
-	elif("rating_expressiveness" in item):
-		rate_ui = user["surveyResults"]["rating_expressiveness"]
+                if("ranking_ui" in item):
+                        rank_ui = user["surveyResults"]["ranking_ui"]
+                elif("rating_likeability" in item):
+                        rank_ui = user["surveyResults"]["rating_likeability"]
 
-	return rank_dif, rate_dif, rank_ui, rate_ui
+                if("rating_ui" in item):
+                        rate_ui = user["surveyResults"]["rating_ui"]
+                elif("rating_expressiveness" in item):
+                        rate_ui = user["surveyResults"]["rating_expressiveness"]
 
 url = 'mongodb://localhost:27017/'
 
@@ -41,8 +35,6 @@ dataArray = []
 
 #iterate over users
 for user in usersCol.find():
-	
-	print(user)
 
 	rankings = []
 	ratings = []
@@ -65,10 +57,9 @@ for user in usersCol.find():
 		else:
 			rank = rankResponse["ranking"]
 			rank = [int(x) for x in rank]
-			newrank = map(to_rank,rank)
-			print('rank ' + str(newrank))
+			print('rank ' + str(rank))
 		
-		rankings.append(newrank)
+		rankings.append(rank)
 
 		#get pictures
 		for j in range(4):
@@ -99,15 +90,34 @@ for user in usersCol.find():
 
 	#block to fix my errors
 	
-	rank_dif = None
-	rate_dif = None
-	rank_ui = None
-	rate_ui = None	
-
-	if user["surveyResults"] is not None:
+	if "surveyResults" in user:
 		item = user["surveyResults"]
-		print(item)
-		rank_dif, rate_dif, rank_ui, rate_ui = fixResults(item, rank_dif, rate_dif, rank_ui, rate_ui)
+
+		if("rankingdifficulty" in item):
+			rank_dif = user["surveyResults"]["ranking_difficulty"]
+		elif("ranking_likeability" in item):
+			rank_dif = user["surveyResults"]["ranking_likeability"]
+
+		if("rating_difficulty" in item):
+			rate_dif = user["surveyResults"]["rating_difficulty"]
+		elif("rating_like" in item):
+			rate_dif = user["surveyResults"]["rating_like"]
+	
+		if("ranking_ui" in item):
+			rank_ui = user["surveyResults"]["ranking_ui"]
+		elif("rating_likeability" in item):
+			rank_ui = user["surveyResults"]["rating_likeability"]
+
+		if("rating_ui" in item):
+			rate_ui = user["surveyResults"]["rating_ui"]
+		elif("rating_expressiveness" in item):
+			rate_ui = user["surveyResults"]["rating_expressiveness"]
+	
+	else:
+		rank_dif = None
+		rate_dif = None
+		rank_ui = None
+		rate_ui = None
 		
 	
 	data = {

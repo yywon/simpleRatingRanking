@@ -1,5 +1,6 @@
 import pymongo
 import json
+import sys
 
 url = 'mongodb://localhost:27017/'
 
@@ -11,6 +12,8 @@ responsesCol = db['responses']
 completed_users = []
 
 userRemove = 0
+
+args = len(sys.argv) - 1
 
 for user in usersCol.find():
 
@@ -27,8 +30,10 @@ for user in usersCol.find():
         completed_users.append(userName)
     else:
         userRemove += 1
-        responsesCol.remove({'user' : userName})
-	usersCol.remove({'user' : userName})
+	if(args > 0):
+		if(sys.argv[1] == "delete"):
+        		responsesCol.remove({'user' : userName})
+			usersCol.remove({'user' : userName})
 
 print("Completed Users: " + str(len(completed_users)))
 print("Users Removed: " + str(userRemove))
