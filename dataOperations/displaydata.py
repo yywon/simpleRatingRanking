@@ -10,7 +10,7 @@ def findPosition(num, groundtruth):
             if int(num) == int(groundtruth[i][j]):
                 return i,j
 
-with open("responseData.json", "r") as read_file:
+with open("responseData 12 - 4.json", "r") as read_file:
     data = json.load(read_file)
 
 rank_dif = 0
@@ -55,8 +55,6 @@ print("rank_dif " + str(rank_dif))
 print("rate_dif " + str(rate_dif))
 print("rank_ui " + str(rank_ui))
 print("rate_ui " + str(rate_ui))
-
-    
 
 
 

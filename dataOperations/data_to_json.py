@@ -1,6 +1,9 @@
 import pymongo
 import json
 
+def to_rank(n):
+	return n - 51
+
 def fixResults(item, rank_dif, rate_dif, rank_ui, rate_ui):
 
 	if("ranking_difficulty" in item):
@@ -62,6 +65,7 @@ for user in usersCol.find():
 		else:
 			rank = rankResponse["ranking"]
 			rank = [int(x) for x in rank]
+			newrank = map(to_rank,rank)
 			print('rank ' + str(rank))
 		
 		rankings.append(rank)
@@ -96,9 +100,9 @@ for user in usersCol.find():
 	#block to fix my errors
 	
 	rank_dif = None
-        rate_dif = None
-        rank_ui = None
-        rate_ui = None	
+	rate_dif = None
+	rank_ui = None
+	rate_ui = None	
 
 	if user["surveyResults"] is not None:
 		item = user["surveyResults"]
