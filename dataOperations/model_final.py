@@ -537,6 +537,10 @@ def rating_and_ranking_model(file_name, num_obj, noise_level):
 
     #get distances
     true_rating = prof.groundtruth
+
+    print("ratingaa: " + str(rating))
+    print("trueratingaa: " + str(true_rating))
+
     L1 = scipy.spatial.distance.cityblock(rating,true_rating)
     L2 = scipy.spatial.distance.euclidean(rating,true_rating)
 
@@ -940,7 +944,7 @@ def averages(file_name, num_obj, noise_level):
 
     return rankingAverages, ratingAverages, dist, L1, L2
 
-input_file = 'responseData.json'
+input_file = '12-06-2019.json'
 
 noise_level = 1
 objects = 32
