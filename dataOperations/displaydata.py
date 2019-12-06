@@ -1,4 +1,5 @@
 import json
+from scipy.spatial import distance
 
 gtruth = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81]
 
@@ -56,8 +57,16 @@ print("rate_dif " + str(rate_dif))
 print("rank_ui " + str(rank_ui))
 print("rate_ui " + str(rate_ui))
 
+vec = [45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,55,56,56,57,57,58,58,59,59,60,60,61]
 
+print(vec)
+print(avg_ratings)
 
+dst1 = distance.euclidean(vec, gtruth)
+dst2 = distance.euclidean(avg_ratings, gtruth)
+
+print(dst1)
+print(dst2)
 
 
 

@@ -6,6 +6,8 @@ import numpy as np
 import cplex
 from cplex.exceptions import CplexError
 import time
+import scipy
+from scipy.spatial import distance
 
 
 class Evaluation:
@@ -79,18 +81,18 @@ class Profile:
         for item in data:
             for i in range(8):
                 tempEval = Evaluation()
-                tempEval.Ran = item['ranking'][i]
+                tempEval.Ran = item['rankings'][i]
                 tempEval.Ran.reverse()
-                tempEval.Rat = item.get('rating')
+                tempEval.Rat = item['ratings'][i]
                 tempEval.size = len(tempEval.Ran)
                 if tempEval.size == self.num_obj:
-                    self.groundtruth = item.get('groundtruth')
+                    self.groundtruth = item['groundtruth'][i]
                     tempEval.Vsub = []
                     for i in range(tempEval.size):
                         tempEval.Vsub.append(i+1)
                 else:
-                    tempEval.Vsub = item.get('objects ranked')
-                    ground_truth = item.get('groundtruth')
+                    tempEval.Vsub = item['rankings'][i]
+                    ground_truth = item['groundtruth'][i]
                     for i in range(len(ground_truth)):
                         self.groundtruth[tempEval.Vsub[i]-1] = ground_truth[i]
 
@@ -378,10 +380,10 @@ def rating_and_ranking_model(file_name, num_obj, noise_level):
     for i in range(prof.num_jud):
         prof.evs[i].calc_ratings_seps()
 
-    R = prof.max_rat - prof.min_rat
+    R = 10000000
     L = prof.min_rat
     U = prof.max_rat
-    mu = 0.01
+    mu = 0.5
     m = prof.num_jud
     n = prof.num_obj
     n_indiv = [0] * m               # number of objects each judge evaluates
@@ -528,10 +530,17 @@ def rating_and_ranking_model(file_name, num_obj, noise_level):
             Ratings[k][prof.evs[k].Vsub[i] - 1] = prof.evs[k].Rat[i]
     rating = callibrate_model(x, Ratings)
 
+    rating = rating[::-1]
+
     # Relative optimality gap
     Gap = prob_RR.solution.MIP.get_mip_relative_gap()
 
-    return ranking, rating, dist, Gap, total_time
+    #get distances
+    true_rating = prof.groundtruth
+    L1 = scipy.spatial.distance.cityblock(rating,true_rating)
+    L2 = scipy.spatial.distance.euclidean(rating,true_rating)
+
+    return ranking, rating, dist, Gap, total_time, L1, L2
 
 
 def ranking_only_model(file_name, num_obj, noise_level):
@@ -755,7 +764,12 @@ def separation_deviation_model(file_name, num_obj, noise_level, lambda1, lambda2
     # Relative optimality gap
     Gap = prob_SD.solution.MIP.get_mip_relative_gap()
 
-    return ranking, rating, dist, Gap, total_time
+    #get distances
+    true_rating = prof.groundtruth
+    L1 = scipy.spatial.distance.cityblock(rating,true_rating)
+    L2 = scipy.spatial.distance.euclidean(rating,true_rating)
+
+    return ranking, rating, dist, Gap, total_time, L1, L2
 
 
 def ratings_only_model(file_name, num_obj, noise_level):
@@ -865,24 +879,90 @@ def ratings_only_model(file_name, num_obj, noise_level):
     # Relative optimality gap
     Gap = prob_FM.solution.MIP.get_mip_relative_gap()
 
-    return ranking, rating, dist, Gap, total_time
+    #get distances
+    true_rating = prof.groundtruth
+    L1 = scipy.spatial.distance.cityblock(rating,true_rating)
+    L2 = scipy.spatial.distance.euclidean(rating,true_rating)
+
+    return ranking, rating, dist, Gap, total_time, L1, L2
 
 
-input_file = 'responseData 12-4.json'
+#for computing averages
+def findPosition(num, groundtruth):
+    found = None
+    for i in range(len(groundtruth)):
+        for j in range(len(groundtruth[i])):
+            if int(num) == int(groundtruth[i][j]):
+                return i,j
+
+
+def averages(file_name, num_obj, noise_level):
+
+    gtruth = [50 + i for i in range(32)]
+    rankgtruth = [1 + i for i in range(32)]
+
+    with open(file_name, "r") as read_file:
+        data = json.load(read_file)
+
+    responseCount = 0
+    ratingAverages = [0] * 32
+
+    
+    for response in data:
+        groundtruth = response["groundtruth"]
+        rating = response["ratings"]
+
+        for i in range(len(gtruth)):
+            x,y = findPosition(gtruth[i], groundtruth)
+            ratingAverages[i] += rating[x][y]
+
+        responseCount += 1
+
+    ratingAverages = [x / responseCount for x in ratingAverages]
+
+    #get ranking based on ratings
+    index = 1
+    rankingAverages = [0] * num_obj
+    temp = list(ratingAverages)
+    for i in range(num_obj):
+        minpos = temp.index(min(temp))
+        rankingAverages[minpos] = index
+        temp[minpos] = 9999
+        index += 1
+
+    print(rankingAverages)
+    print(gtruth)
+
+    dist = ks_GT(rankingAverages, rankgtruth)
+
+    L1 = scipy.spatial.distance.cityblock(ratingAverages,gtruth)
+    L2 = scipy.spatial.distance.euclidean(ratingAverages,gtruth)
+
+    return rankingAverages, ratingAverages, dist, L1, L2
+
+input_file = 'responseData.json'
 
 noise_level = 1
 objects = 32
 
 # Ratings and ranking model
-RR_rank, RR_rat, RR_dist, RR_gap, RR_time = rating_and_ranking_model(input_file, objects, noise_level)
+RR_rank, RR_rat, RR_dist, RR_gap, RR_time, RR_L1, RR_L2 = rating_and_ranking_model(input_file, objects, noise_level)
 # Rankings only model
 OA_rank, OA_dist, OA_gap, OA_time = ranking_only_model(input_file, objects, noise_level)
 # Ratings only model (Fishbain moreno model)
-CA_rank, CA_rat, CA_dist, CA_gap, CA_time = ratings_only_model(input_file, objects, noise_level)
+CA_rank, CA_rat, CA_dist, CA_gap, CA_time, CA_L1, CA_L2 = ratings_only_model(input_file, objects, noise_level)
 # Separation deviation model
-SD_rank, SD_rat, SD_dist, SD_gap, SD_time = separation_deviation_model(input_file, objects, noise_level, 1, 1)
+SD_rank, SD_rat, SD_dist, SD_gap, SD_time, SD_L1, SD_L2 = separation_deviation_model(input_file, objects, noise_level, 1, 1)
+#averages
+A_rank, A_rat, A_dist, A_L1, A_L2 = averages(input_file, objects, noise_level)
 
+print('ranking only model')
 print(OA_rank, OA_dist, OA_gap, OA_time)
-print(RR_rank, RR_rat, RR_dist, RR_gap, RR_time)
-print(CA_rank, CA_rat, CA_dist, CA_gap, CA_time)
-print(SD_rank, SD_rat, SD_dist, SD_gap, SD_time)
+print('ratings and rankings model')
+print(RR_rank, RR_rat, RR_dist, RR_gap, RR_time, RR_L1, RR_L2)
+print('rating only model')
+print(CA_rank, CA_rat, CA_dist, CA_gap, CA_time, CA_L1, CA_L2)
+print('separation deviation model')
+print(SD_rank, SD_rat, SD_dist, SD_gap, SD_time, SD_L1, SD_L2)
+print('averages')
+print(A_rank, A_rat, A_dist, A_L1, A_L2)
