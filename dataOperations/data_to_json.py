@@ -1,5 +1,7 @@
 import pymongo
 import json
+import time
+import datetime
 
 def to_rank(n):
 	return n - 49
@@ -38,6 +40,7 @@ questionPoolCol = db['questionPool']
 responsesCol = db['responses']
 
 dataArray = []
+
 
 #iterate over users
 for user in usersCol.find():
@@ -122,7 +125,11 @@ for user in usersCol.find():
 
 	dataArray.append(data)
 
-with open('responseData.json', 'w') as outfile:
+
+rightNow = datetime.datetime.today().strftime('%m-%d-%Y')
+file_name = rightNow + ".json" 
+
+with open(str(file_name), 'w+') as outfile:
 	json.dump(dataArray, outfile) 
 
 	
