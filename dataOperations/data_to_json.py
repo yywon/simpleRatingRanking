@@ -1,103 +1,69 @@
-import pymongo
 import json
+from scipy.spatial import distance
 
-url = 'mongodb://localhost:27017/'
+gtruth = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81]
 
-noiseLevels = [128,64,32,16,8,4,2,1]
 
-#set up database and all columns 
-client = pymongo.MongoClient(url)
-db = client['ratingsrankingsbasic']
-usersCol = db['users']
-questionPoolCol = db['questionPool']
-responsesCol = db['responses']
+def findPosition(num, groundtruth):
+    found = None
+    for i in range(len(groundtruth)):
+        for j in range(len(groundtruth[i])):
+            if int(num) == int(groundtruth[i][j]):
+                return i,j
 
-dataArray = []
-#iterate over users
-for user in usersCol.find():
+with open("responseData 12 - 4.json", "r") as read_file:
+    data = json.load(read_file)
 
-    #userQuestions = []
-    #userRankResponses = []
-    #userRatingResponses = []
+rank_dif = 0
+rate_dif = 0
+rank_ui = 0
+rate_ui = 0
+count = 0
+responseCount = 0
+avg_ratings = [0] * 32
 
-    #retrieve permutation
-    userPermutation = user["group4Answers"]
+for response in data:
+    groundtruth = response["groundtruth"]
+    rating = response["ratings"]
 
-    #get username
-    userName = user['user']
+    #get counts for usability scores
+    if None not in(response["rank_dif"],response["rate_dif"],response["rank_ui"],response["rate_ui"]):
+        rank_dif += int(response["rank_dif"])
+        rate_dif += int(response["rate_dif"])
+        rank_ui += int(response["rank_ui"])
+        rate_ui += int(response["rate_ui"])
 
-    #get the users responses for each question 
-    for i in range(len(noiseLevels)):
-	
-	noiseLevel = noiseLevels[i]
-        pictures = []
-	rank = []
-        temp = [None] * 4
-	
-	#get noise level and permutation number
-        variation = userPermutation[i]
-        noiseLevel = noiseLevels[i]
+        count += 1
+    
+    for i in range(len(gtruth)):
+        x,y = findPosition(gtruth[i], groundtruth)
+        avg_ratings[i] += rating[x][y]
 
-        questionOrder = questionPoolCol.find_one({"noiselevel": noiseLevel, "variation": variation})
-        questionOrder = questionOrder["array"]
+    responseCount += 1
 
-        #collection is i+1
-        collection = i + 1
-	collection = str(collection)
 
-        rankResponse = responsesCol.find_one({"user": userName, "collection": collection, "type": "ranking"})
-	if (rankResponse is None):
-		rank = [0,0,0,0]
-	else:
-		rank = rankResponse["ranking"]
-		rank = [int(x) for x in rank]
-		k = 4
-        	while (k > 0):
-            		maxpos = rank.index(max(rank))
-            		temp[maxpos] = k
-            		rank[maxpos] = -1
-            		k -= 1
-        rank = temp
 
-        #get pictures
-        for j in range(4):
-	    picture = str(j)
-            ratingResponse = responsesCol.find_one({"user": userName, "picture": picture, "collection": collection, "type": "rating"})
-	    if ratingResponse is None:
-		ratingResponse = 0
-	    else:
-	    	ratingResponse = ratingResponse["estimate"]
-		ratingResponse = int(float(ratingResponse))
-            pictures.append(ratingResponse)
+avg_ratings = [x / responseCount for x in avg_ratings]
+print(avg_ratings)
 
-	
-	#sort ratings in order of ground truth
-	for i in range(1, len(questionOrder)):
-		key = questionOrder[i] 
-		key2 = pictures[i]
-		j = i-1
+rank_dif = rank_dif/count
+rate_dif = rate_dif/count
+rank_ui = rank_ui/count
+rate_ui = rate_ui/count
 
-		while j>=0 and key < questionOrder[j]:
-			questionOrder[j+1] = questionOrder[j]
-			pictures[j+1] = pictures[j]
-			j = j - 1
-		pictures[j+1] = key2
-		questionOrder[j+1] = key
-	
+print("count " + str(count))
+print("rank_dif " + str(rank_dif))
+print("rate_dif " + str(rate_dif))
+print("rank_ui " + str(rank_ui)) 
+print("rate_ui " + str(rate_ui))
 
-       	data = {
-			"noiseLevel" : noiseLevel,
- 			"ranking": rank,
-			"rating": pictures,
-			"groundtruth": questionOrder
-		}
+vec = [45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,55,56,56,57,57,58,58,59,59,60,60,61]
 
-	dataArray.append(data)
-	
-with open('responseData.json', 'w') as outfile:
-	json.dump(dataArray, outfile) 
+print(vec)
+print(avg_ratings)
 
-	
+dst1 = distance.euclidean(vec, gtruth)
+dst2 = distance.euclidean(avg_ratings, gtruth)
 
-	
-
+print(dst1)
+print(dst2)
