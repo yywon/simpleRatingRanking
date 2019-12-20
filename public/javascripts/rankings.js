@@ -1,3 +1,4 @@
+
 function renderQuestion(question, id, userID, frames){
 
     var startTime = new Date().getTime();
@@ -33,7 +34,7 @@ function renderQuestion(question, id, userID, frames){
     var gap4images
     var space
 
-    if(topNSize === 2){
+    if(topNSize === 3){
         rankingImageSize = divWidth/5;
         space = rankingImageSize;
         gap4images = (divWidth - (space + (rankingImageSize * topNSize)))/ topNSize;
@@ -256,12 +257,12 @@ function renderQuestion(question, id, userID, frames){
             console.log("Button Clicked");
             //console.log(userID)
             //console.log(id)
+            exitStatus = 1
             var endTime = new Date().getTime();
             var timeSpent = endTime- startTime;
             sendData(rankingOrder, id, userID, timeSpent)
         })
-        
-
+    
 }
             
 function sendData(rankingOrder, id, userID, time){

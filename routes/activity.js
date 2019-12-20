@@ -16,8 +16,19 @@ let assignQuestions = require('./assignQuestions')
 const User = require('../User');
 let users = [];
 
+//TODO:
+//populate batches
+
 //function to get current issues of Users
 let getUserInstance = uid => users.find(user => user.id === uid);
+
+
+//TODO:
+//function to pull question
+
+//check if all users are complete in batch to determine if it is finished
+//
+
 
 //store userID and load first activity
 router.post('/', function(req,res,next){
@@ -37,10 +48,12 @@ router.post('/', function(req,res,next){
     currentUser = getUserInstance(req.body.userID);
   }
 
+  userOrder = assignQuestions.assignOrder;
   //assign frames to user
   userFrames = assignQuestions.assignFrames(users)
   console.log("userFrames: ", userFrames)
   currentUser.saveFrames(userFrames)
+
   //load first question
   loadQuestion.loadFirst(req, res, currentUser, userFrames)
 

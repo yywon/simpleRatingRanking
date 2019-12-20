@@ -36,6 +36,13 @@ const assignModule = {
     return questions
     },
 
+    assignOrder: function(){
+
+        frames = [3,4,5,6]
+        shuffle(frames)
+        return frames
+    },
+
     assignFrames: function(users){
 
         console.log(users)
