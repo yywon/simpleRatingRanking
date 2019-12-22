@@ -2,28 +2,40 @@ module.exports = class User {
     constructor(id) {
         this.id = id;
         this.activityID = 1;
-        this.frameNumber = 0;
     }
 
-    saveCurrentQuestion(question) {
+    saveQuestionOrder(order){
+        this.questionOrder = order
+    }
+
+    saveIndexOrder(order){
+        this.indexOrder = order
+    }
+
+    saveCurrentQuestion(question, batch, length) {
         this.currentQuestion = question;
-    }
-
-    saveFrames(frames){
-        this.frameNumber = frames;
-        this.total = 30/frames;
+        this.currentBatch = batch
+        this.currentFrames = length
     }
 
     question() {
         return this.currentQuestion;
     }
 
-    getFrames() {
-        return this.frameNumber;
+    batch() {
+        return this.currentBatch
     }
 
-    getTotal() {
-        return this.total;
+    frames(){
+        return this.currentFrames
+    }
+
+    getQuestionOrder() {
+        return this.questionOrder;
+    }
+
+    getIndexOrder() {
+        return this.indexOrder;
     }
 
     

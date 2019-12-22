@@ -1,25 +1,31 @@
+var shuffle = require('shuffle-array');
+
 module.exports = class batch {
     
     constructor(size){
         this.size = size
         this.completeness = 60/size
-        this.assignmentStatus = [0]*this.completeness
-        this.questions = this.assignQuestions
+        this.assignmentStatus = []
+        for(let i = 0; i < this.completeness; i++){
+            this.assignmentStatus.push(0)
+        }
+        this.questions = this.assignQuestions()
     }
 
     assignQuestions(){
 
-        let questions
+        let questions = [];
         let allNumbers = [];
-        for(i = 0; i < 60; i++){
+        for(let i = 0; i < 60; i++){
             allNumbers[i] = 50 + i
         }
 
         shuffle(allNumbers)
 
-        chunk = this.size
-        i = 0;
-        j = allNumbers.length; 
+        var chunk = this.size
+        var i = 0;
+        var j = allNumbers.length;
+        var temparray = [] 
 
         while(i < j){
             temparray = allNumbers.slice(i,i+chunk);

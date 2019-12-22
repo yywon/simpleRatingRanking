@@ -3,6 +3,7 @@ var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
+var shuffle = require('shuffle-array');
 
 //var url = 'mongodb://localhost:27017/';
 var url = 'mongodb://10.218.105.218:27017/';
@@ -16,18 +17,46 @@ let assignQuestions = require('./assignQuestions')
 const User = require('../User');
 let users = [];
 
-//TODO:
+//Batch object
+const Batch = require('../batch');
+
 //populate batches
+masterBatch = []
+batch3 = []
+batch4 = []
+batch5 = []
+batch6 = []
+
+let i= 0
+while(i < 9){
+  batch3.push(new Batch(3))
+  i++
+}
+masterBatch.push(batch3)
+
+let j= 0
+while(j < 12){
+  batch4.push(new Batch(4))
+  j++
+}
+masterBatch.push(batch4)
+
+let k= 0
+while(k < 15){
+  batch5.push(new Batch(5))
+  k++
+}
+masterBatch.push(batch5)
+
+let l= 0
+while(l < 18){
+  batch6.push(new Batch(6))
+  l++
+}
+masterBatch.push(batch6)
 
 //function to get current issues of Users
 let getUserInstance = uid => users.find(user => user.id === uid);
-
-
-//TODO:
-//function to pull question
-
-//check if all users are complete in batch to determine if it is finished
-//
 
 
 //store userID and load first activity
@@ -48,14 +77,45 @@ router.post('/', function(req,res,next){
     currentUser = getUserInstance(req.body.userID);
   }
 
-  userOrder = assignQuestions.assignOrder;
-  //assign frames to user
-  userFrames = assignQuestions.assignFrames(users)
-  console.log("userFrames: ", userFrames)
-  currentUser.saveFrames(userFrames)
+  //assign order of frames seen
+  userOrder = shuffle([3,4,5,6]);
+  console.log("order: ", userOrder)
+  //assign questions
+  assignedQuestions = []
+  assignedIndexes = []
+  //iterate through batches
+  for(i = 0; i < userOrder.length; i++){
+      frame = userOrder[i]
+      //Minus 3 to get frame index in master batch
+      frameIndex = frame - 3
+      frameLevel = masterBatch[frameIndex]
+      console.log(frameLevel)
+
+      findQuestions:
+      //find first unassigned question in frameLevel
+      for(batch = 0; batch < frameLevel.length; batch++){
+          for(question = 0; question < frameLevel[batch].assignmentStatus.length; question++){
+              if(frameLevel[batch].assignmentStatus[question] === 0){
+                  //update assignment status 
+                  frameLevel[batch].assignmentStatus[question] = 1
+                  //get question from frameLevel and add to questions array
+                  assignedQuestions.push(frameLevel[batch].questions[question])
+                  assignedIndexes.push([batch,question])
+                  break findQuestions;
+              }
+          }
+      }
+
+  }
+
+  console.log("assigned Quesions: ", assignedQuestions)
+  console.log("assigned Indexes: ", assignedIndexes)
+
+  currentUser.saveQuestionOrder(assignedQuestions)
+  currentUser.saveIndexOrder(assignedIndexes)
 
   //load first question
-  loadQuestion.loadFirst(req, res, currentUser, userFrames)
+  loadQuestion.loadFirst(req, res, currentUser)
 
 });
 
@@ -81,11 +141,19 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
   group = JSON.parse(group)
   time = group[4]
 
+  console.log(group)
+
+  let currentUser = getUserInstance(userID);
+  let batch = currentUser.batch();
+  let frames = currentUser.frames();
+
+
+
   //get rid of extra time variable in the group (so that group only constains ranking)
   group.pop()
 
   //store ranking
-  storeQuestion.storeRanking(userID, id, group, time)
+  storeQuestion.storeRanking(userID, id, group, time, frames, batch)
 
 });
 
@@ -126,8 +194,12 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
     return;
   }
 
+  let currentUser = getUserInstance(userID);
+  let batch = currentUser.batch();
+  let frames = currentUser.frames();
+
   //store if rating is valid input
-  storeQuestion.storeRating(userID, id, picture, rating, time)
+  storeQuestion.storeRating(userID, id, picture, rating, time, batch, frames)
 
 });
 
@@ -135,7 +207,6 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
 router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //collect variables
-  //userID = req.body.userID ? req.body.userID : userID;
   rating = req.body.rating;
   time = req.body.time;
   id = req.params.id;
@@ -147,17 +218,17 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //render next page if input is valid
   if(isNaN(rating) || rating === ''){
-    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, total: currentUser.getTotal(), question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
+    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
     return;
   }
 
-  //increment activity ID if user makes it to 3rd picture
-  if(parseInt(picture) === currentUser.getFrames() - 1){
+  //increment activity ID if user makes it to the final picture
+  if(parseInt(picture) === currentUser.frames() - 1){
     currentUser.activityID += 1
   }
 
   //load survey if activity is complete
-  if(currentUser.activityID === (30/currentUser.getFrames()) && parseInt(picture) === currentUser.getFrames() - 1){
+  if(currentUser.activityID === 8){
     res.render('survey', {userID: currentUser.id})
     return
   } 

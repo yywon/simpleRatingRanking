@@ -11,43 +11,13 @@ let assignQuestions = require('./assignQuestions')
 
 const storeModule = {
 
-    storeRanking: function(userID, id, group2save, time){
+    storeRanking: function(userID, id, group2save, time, frames, batch){
 
         //store into db
         co(function* () {
 
             var group = group2save.map(Number);
             console.log(group)
-
-            //calc sum difference 
-            n = group.length
-            group = group.sort((a,b) => a - b);
-            diffSum = 0;
-            for(i = n - 1; i >= 0; i--){
-                diffSum = diffSum + (i*group[i] - (n-1-i) * group[i])
-            }
-            diffSum = Math.abs(diffSum)
-            
-            let pairs = []
-            for (let i = 0; i < group.length - 1; i++) {
-                for (let j = i + 1; j < group.length; j++) {
-                    p = [group[i], group[j]]
-                    pairs.push(p)
-                }
-            }
-
-            console.log(pairs)
-
-            min = 99
-            for(i = 0; i < pairs.length; i++){
-                test = Math.abs(pairs[i][0]- pairs[i][1])
-                if(test < min){
-                    min = test
-                }
-            } 
-
-            console.log("diffSum: ", diffSum)
-            console.log("min", min)
 
             let client = yield MongoClient.connect(url);
             const db = client.db('ratingsrankingsframes')
@@ -56,10 +26,10 @@ const storeModule = {
             var item = {
                 "user" : userID,
                 "collection": id,
+                "frames": frames,
+                "batch": batch,
                 "type": "ranking",
                 "ranking": group2save,
-                "sum_differences": diffSum,
-                "minimum_difference": min, 
                 "time": time
             }
 
@@ -91,7 +61,7 @@ const storeModule = {
 
     },
 
-    storeRating: function(userID, id, picture, rating, time) {
+    storeRating: function(userID, id, picture, rating, time, batch, frames) {
 
         //insert rating into db
         co(function* () {
@@ -103,6 +73,8 @@ const storeModule = {
             var item = {
                 "user" : userID,
                 "collection": id,
+                "batch": batch,
+                "frames": frames,
                 "type": "rating",
                 "picture": picture,
                 "estimate": rating,

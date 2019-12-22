@@ -11,10 +11,7 @@ let assignQuestions = require('./assignQuestions')
 
 const loadModule = { 
     
-    loadFirst: function(req, res, user, userFrames) {
-
-        var question2load
-        var questionArray
+    loadFirst: function(req, res, user) {
 
         co(function* () {
 
@@ -23,12 +20,8 @@ const loadModule = {
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
 
-            let assignedQuestions = assignQuestions.assign(userFrames)
-
-            console.log(assignedQuestions)
-
             check = yield usersCol.findOne({"user" : user.id})
-
+              
             //check to see if user exists in database
             if(check === null && user.id != null){
               
@@ -37,28 +30,24 @@ const loadModule = {
                     "user": user.id,
                     "key2pay": null,
                     "surveyResults": null,
-                    "group4Answers": assignedQuestions,
-                    "frames": userFrames
+                    "questions": user.getQuestionOrder(),
+                    "indexes": user.getIndexOrder()
                 };
                 
                 yield usersCol.insertOne(item);
                 
-                //load next question
-                
-                //find question pool for user
-                var questions =  yield usersCol.find({"user": user.id}).toArray();       
-                questions = questions[0].group4Answers
+                //load first question
+                questionOrder = user.getQuestionOrder()
+                question2load = questionOrder[0]
+                questionLength = question2load.length
 
-                // get question array instance at the position of id
-                let question2load = questions[0];
+                indexOrder = user.getIndexOrder()
+                questionIndex = indexOrder[0]
+                currentBatch = questionIndex[0]
+                user.saveCurrentQuestion(JSON.stringify(question2load), currentBatch, questionLength)
+                console.log(user.question())
                 
-                question = JSON.stringify(question2load)
-                console.log("question: " + question)
-                user.saveCurrentQuestion(question)
-                console.log("user frames: " + userFrames)
-                user.saveFrames(userFrames)
-
-                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: userFrames, total: user.getTotal(), question: user.question()})
+                res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
             } else{
                 res.render('index', {error: "ERROR: Username already exists"});
             }
@@ -77,11 +66,11 @@ const loadModule = {
         check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
 
         if (check === null){
-          res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", question: user.question(), total: user.getTotal(), frames: user.getFrames(), error: "ERROR: Please submit a complete ranking"})
+          res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", frames: user.frames(), question: user.question(), error: "ERROR: Please submit a complete ranking"})
           return;
         } 
         
-        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, total: user.getTotal(), question: user.question()});
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question()});
 
       });
 
@@ -89,9 +78,7 @@ const loadModule = {
 
     loadAfterRating: function(req, res, user, picture){
 
-      var question2load
-
-      if(parseInt(picture) === user.getFrames() - 1){
+      if(parseInt(picture) === user.frames() - 1){
         picture === 0
 
         co(function* () {
@@ -101,26 +88,27 @@ const loadModule = {
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
 
-          //find users questions
-          var questions =  yield usersCol.find({"user": user.id }).toArray();       
-          questions = questions[0].group4Answers
-  
-          let question2load = questions[user.activityID - 1];
-                
-          question = JSON.stringify(question2load)
 
-          console.log("question: " + question)
 
-          user.saveCurrentQuestion(question)
+          //load next question
+          questionOrder = user.getQuestionOrder()
+          question2load = questionOrder[user.activityID - 1]
+          questionLength = question2load.length
+
+          indexOrder = user.getIndexOrder()
+          questionIndex = indexOrder[0]
+          currentBatch = questionIndex[0]
+          user.saveCurrentQuestion(JSON.stringify(question2load), currentBatch, questionLength)
           
           //adjust to next activity
 
-          res.render('rankings', {userID: user.id, id: user.activityID , frames: user.getFrames(), total: user.getTotal(), type: "rankings", question: user.question()})
+          res.render('rankings', {userID: user.id, id: user.activityID , frames: user.frames(), type: "rankings", question: user.question()})
       
         });
+
       } else {
         picture = parseInt(picture)+ 1
-        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, total: user.getTotal(), question: user.question()})
+        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture, question: user.question()})
       }
 
     }
