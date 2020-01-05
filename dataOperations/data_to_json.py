@@ -1,69 +1,109 @@
+import pymongo
 import json
-from scipy.spatial import distance
+import time
+import datetime
 
-gtruth = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81]
+def to_rank(n):
+	return n - 49
+
+url = 'mongodb://10.218.105.218:27017/'
+#url = 'mongodb://localhost:27017/'
+
+#set up database and all columns 
+client = pymongo.MongoClient(url)
+db = client['ratingsrankingsdistributed']
+usersCol = db['users']
+responsesCol = db['responses']
+
+dataArray = []
+
+#iterate over users
+for user in usersCol.find():
+	
+	print(user)
+
+	rankings = []
+	ratings = []
+
+	ground_truth = user['group4Answers']
+	#get username
+	userName = user['user']
+
+	#get the users responses for each question 
+	for i in range(1,5):
+
+		#get ground truth for specified question
+		questionOrder = ground_truth[i-1]
+
+		pictures = []
+
+		rankResponse = responsesCol.find_one({"user": userName, "collection": str(i), "type": "ranking"})
+        
+		if (rankResponse is None):
+			rank = [0,0,0,0]
+		else:
+			rank = rankResponse["ranking"]
+			rank = [int(x) for x in rank]
+			newrank = map(to_rank,rank)
+			print('rank ' + str(newrank))
+		
+		rankings.append(newrank)
+
+		#get pictures
+		for j in range(4):
+			
+			ratingResponse = responsesCol.find_one({"user": userName, "picture": str(j), "collection": str(i), "type": "rating"})
+
+			if ratingResponse is None:
+				ratingResponse = 0
+			else:
+				ratingResponse = ratingResponse["estimate"]
+				ratingResponse = int(float(ratingResponse))
+				pictures.append(ratingResponse)
+
+		#sort ratings in order of ground truth
+		for k in range(1, len(questionOrder)):
+			key = questionOrder[k] 
+			key2 = pictures[k]
+			l = k-1
+
+			while l>=0 and key < questionOrder[l]:
+				questionOrder[l+1] = questionOrder[l]
+				pictures[l+1] = pictures[l]
+				l = l - 1
+			pictures[l+1] = key2
+			questionOrder[l+1] = key
+
+		ratings.append(pictures)
+
+	#block to fix my errors
+	
+	rank_dif = None
+	rate_dif = None
+	rank_ui = None
+	rate_ui = None	
+
+	if user["surveyResults"] is not None:
+		item = user["surveyResults"]
+		print(item)
+		rank_dif, rate_dif, rank_ui, rate_ui = fixResults(item, rank_dif, rate_dif, rank_ui, rate_ui)
+		
+	
+	data = {
+		"rank_dif": rank_dif,
+		"rate_dif": rate_dif,
+		"rank_ui": rank_ui,
+		"rate_ui": rate_ui,
+ 		"rankings": rankings,
+		"ratings": ratings,
+		"groundtruth": ground_truth
+	}
+
+	dataArray.append(data)
 
 
-def findPosition(num, groundtruth):
-    found = None
-    for i in range(len(groundtruth)):
-        for j in range(len(groundtruth[i])):
-            if int(num) == int(groundtruth[i][j]):
-                return i,j
+rightNow = datetime.datetime.today().strftime('%m-%d-%Y')
+file_name = rightNow + ".json" 
 
-with open("responseData 12 - 4.json", "r") as read_file:
-    data = json.load(read_file)
-
-rank_dif = 0
-rate_dif = 0
-rank_ui = 0
-rate_ui = 0
-count = 0
-responseCount = 0
-avg_ratings = [0] * 32
-
-for response in data:
-    groundtruth = response["groundtruth"]
-    rating = response["ratings"]
-
-    #get counts for usability scores
-    if None not in(response["rank_dif"],response["rate_dif"],response["rank_ui"],response["rate_ui"]):
-        rank_dif += int(response["rank_dif"])
-        rate_dif += int(response["rate_dif"])
-        rank_ui += int(response["rank_ui"])
-        rate_ui += int(response["rate_ui"])
-
-        count += 1
-    
-    for i in range(len(gtruth)):
-        x,y = findPosition(gtruth[i], groundtruth)
-        avg_ratings[i] += rating[x][y]
-
-    responseCount += 1
-
-
-
-avg_ratings = [x / responseCount for x in avg_ratings]
-print(avg_ratings)
-
-rank_dif = rank_dif/count
-rate_dif = rate_dif/count
-rank_ui = rank_ui/count
-rate_ui = rate_ui/count
-
-print("count " + str(count))
-print("rank_dif " + str(rank_dif))
-print("rate_dif " + str(rate_dif))
-print("rank_ui " + str(rank_ui)) 
-print("rate_ui " + str(rate_ui))
-
-vec = [45,46,46,47,47,48,48,49,49,50,50,51,51,52,52,53,53,54,54,55,55,56,56,57,57,58,58,59,59,60,60,61]
-
-print(vec)
-print(avg_ratings)
-
-dst1 = distance.euclidean(vec, gtruth)
-dst2 = distance.euclidean(avg_ratings, gtruth)
-
-print(dst1)
-print(dst2)
+with open(str(file_name), 'w+') as outfile:
+	json.dump(dataArray, outfile) 

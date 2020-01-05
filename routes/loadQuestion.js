@@ -45,7 +45,6 @@ const loadModule = {
                 questionIndex = indexOrder[0]
                 currentBatch = questionIndex[0]
                 user.saveCurrentQuestion(JSON.stringify(question2load), currentBatch, questionLength)
-                console.log(user.question())
                 
                 res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
             } else{
@@ -68,9 +67,9 @@ const loadModule = {
         if (check === null){
           res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", frames: user.frames(), question: user.question(), error: "ERROR: Please submit a complete ranking"})
           return;
-        } 
-        
-        res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question()});
+        } else{
+          res.render('ratings', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question()});
+        }
 
       });
 

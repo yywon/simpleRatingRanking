@@ -1,5 +1,6 @@
 var shuffle = require('shuffle-array');
 
+
 module.exports = class batch {
     
     constructor(size){
@@ -35,4 +36,5 @@ module.exports = class batch {
 
         return questions
     }
+
 }

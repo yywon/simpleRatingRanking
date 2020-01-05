@@ -34,6 +34,7 @@ function renderQuestion(question, id, userID, frames){
     var gap4images
     var space
 
+    //specify size based on image gaps 
     if(topNSize === 3){
         rankingImageSize = divWidth/5;
         space = rankingImageSize;
@@ -88,7 +89,6 @@ function renderQuestion(question, id, userID, frames){
         .style("width", labelDivWidth)
 
     //Grouping for candidates
-    //let margin4pool = { top: 10, right: 0, bottom: 0, left: 0 }
     let svg4pool_width = "100%";
     let svg4pool_height = (rankingImageSize) + 70;
     let svg4pool = d3.select(".candidatePoolContents").append("svg")
@@ -200,7 +200,6 @@ function renderQuestion(question, id, userID, frames){
 
             //console.log("length: ", rankingOrder.length)
             
-            
             if (rankingOrder.length > (frames - 1)){
 
                 var endTime = new Date().getTime();
@@ -260,7 +259,9 @@ function renderQuestion(question, id, userID, frames){
             exitStatus = 1
             var endTime = new Date().getTime();
             var timeSpent = endTime- startTime;
-            sendData(rankingOrder, id, userID, timeSpent)
+            if(rankingOrder.length > (frames - 1)){
+                sendData(rankingOrder, id, userID, timeSpent)
+            }
         })
     
 }

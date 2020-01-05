@@ -18,7 +18,8 @@ const storeModule = {
 
             var group = group2save.map(Number);
             console.log(group)
-
+            
+            //connect to db
             let client = yield MongoClient.connect(url);
             const db = client.db('ratingsrankingsframes')
             let responseCol = db.collection('responses')

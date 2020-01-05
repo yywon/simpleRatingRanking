@@ -20,6 +20,9 @@ let users = [];
 //Batch object
 const Batch = require('../batch');
 
+
+//TODO: Change this to be stored in "batch" collection in db
+
 //populate batches
 masterBatch = []
 batch3 = []
@@ -58,7 +61,6 @@ masterBatch.push(batch6)
 //function to get current issues of Users
 let getUserInstance = uid => users.find(user => user.id === uid);
 
-
 //store userID and load first activity
 router.post('/', function(req,res,next){
 
@@ -77,6 +79,9 @@ router.post('/', function(req,res,next){
     currentUser = getUserInstance(req.body.userID);
   }
 
+
+  //TODO: Update this to be used for master batch section of 
+  
   //assign order of frames seen
   userOrder = shuffle([3,4,5,6]);
   console.log("order: ", userOrder)
@@ -228,7 +233,7 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
   }
 
   //load survey if activity is complete
-  if(currentUser.activityID === 8){
+  if(currentUser.activityID === 5){
     res.render('survey', {userID: currentUser.id})
     return
   } 

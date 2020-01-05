@@ -18,7 +18,7 @@ pictureData = []
 os.chdir(PATH)
 
 #each picture per noise level
-for j in range(40):
+for j in range(60):
     N = Base + j
 
     pictureData.append(N)
@@ -53,8 +53,8 @@ for j in range(40):
 
         
     axes = plt.gca()
-    axes.set_xlim([-0.01,1.01])
-    axes.set_ylim([-0.01,1.01])
+    axes.set_xlim([-0.02,1.02])
+    axes.set_ylim([-0.02,1.02])
 
     plt.axes().set_aspect('equal')
     plt.axis('off')

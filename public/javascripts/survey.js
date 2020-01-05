@@ -1,4 +1,3 @@
-
 //survey template
 Survey
     .StylesManager
@@ -164,6 +163,38 @@ let json = {
             ]
         },
         {
+            type: "rating",
+            isRequired: false,
+            name: "ranking_difficulty",
+            title: "One a scale of 0-5, how easy were the ranking questions?",
+            minRateDescription: "Very difficult",
+            maxRateDescription: "Very easy"
+        },
+        {
+            type: "rating",
+            isRequired: false,
+            name: "rating_difficulty",
+            title: "One a scale of 0-5, how easy were the numberical estimation questions?",
+            minRateDescription: "Very difficult",
+            maxRateDescription: "Very easy"
+        },
+        {
+            type: "rating",
+            isRequired: false,
+            name: "ranking_ui",
+            title: "One a scale of 0-5, how much did you like the user interface of the ranking questions?",
+            minRateDescription: "Not enjoyable",
+            maxRateDescription: "Very enjoyable"
+        },
+        {
+            type: "rating",
+            isRequired: false,
+            name: "rating_ui",
+            title: "One a scale of 0-5, how much did you like the user interface of the numberical estimation questions?",
+            minRateDescription: "Not enjoyable",
+            maxRateDescription: "Very enjoyable"
+        },
+        {
             type: "radiogroup",
             //hasOther: true,
             isRequired: false,
@@ -245,4 +276,3 @@ function startFromSurvey(userID) {
     })
 
 };
-
