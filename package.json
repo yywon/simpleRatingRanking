@@ -21,6 +21,7 @@
     "shuffle-array": "^1.0.1",
     "survey-jquery": "^1.1.13",
     "timeme.js": "^2.0.3",
-    "twig": "^0.10.3"
+    "twig": "^0.10.3",
+    "update-mongo": "0.0.4"
   }
 }

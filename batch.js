@@ -20,7 +20,7 @@ module.exports = class batch {
         for(let i = 0; i < 60; i++){
             allNumbers[i] = 50 + i
         }
-
+                
         shuffle(allNumbers)
 
         var chunk = this.size

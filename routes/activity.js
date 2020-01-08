@@ -11,7 +11,7 @@ var url = 'mongodb://10.218.105.218:27017/';
 var userID = null
 let loadQuestion = require('./loadQuestion')
 let storeQuestion = require('./storeQuestion')
-let assignQuestions = require('./assignQuestions')
+let assignBatch = require('./assignBatch')
 
 //User Objects and current User array
 const User = require('../User');
@@ -20,43 +20,9 @@ let users = [];
 //Batch object
 const Batch = require('../batch');
 
-
-//TODO: Change this to be stored in "batch" collection in db
-
-//populate batches
-masterBatch = []
-batch3 = []
-batch4 = []
-batch5 = []
-batch6 = []
-
-let i= 0
-while(i < 9){
-  batch3.push(new Batch(3))
-  i++
-}
-masterBatch.push(batch3)
-
-let j= 0
-while(j < 12){
-  batch4.push(new Batch(4))
-  j++
-}
-masterBatch.push(batch4)
-
-let k= 0
-while(k < 15){
-  batch5.push(new Batch(5))
-  k++
-}
-masterBatch.push(batch5)
-
-let l= 0
-while(l < 18){
-  batch6.push(new Batch(6))
-  l++
-}
-masterBatch.push(batch6)
+//assign batches
+//NOTE: comment this out if batches are already populated
+assignBatch.assign(url)
 
 //function to get current issues of Users
 let getUserInstance = uid => users.find(user => user.id === uid);
@@ -64,63 +30,27 @@ let getUserInstance = uid => users.find(user => user.id === uid);
 //store userID and load first activity
 router.post('/', function(req,res,next){
 
-  //prompt to enter username if null
-  if (!req.body.userID) {
-    res.render('index', {error: "ERROR: Please enter a username"});
-    return;
-  }
+    //prompt to enter username if null
+    if (!req.body.userID) {
+      res.render('index', {error: "ERROR: Please enter a username"});
+      return;
+    }
 
-  //Fetch current user
-  let currentUser = getUserInstance(req.body.userID);
-  
-  //add new user if not already exists based on id
-  if (!currentUser) {
-    users.push(new User(req.body.userID));
-    currentUser = getUserInstance(req.body.userID);
-  }
+    //Fetch current user
+    let currentUser = getUserInstance(req.body.userID);
+    
+    //add new user if not already exists based on id
+    if (!currentUser) {
+      users.push(new User(req.body.userID));
+      currentUser = getUserInstance(req.body.userID);
+    }
+    
+    //assign order of frames seen
+    userOrder = shuffle([3,4,5,6]);
+    console.log("order: ", userOrder)
 
-
-  //TODO: Update this to be used for master batch section of 
-  
-  //assign order of frames seen
-  userOrder = shuffle([3,4,5,6]);
-  console.log("order: ", userOrder)
-  //assign questions
-  assignedQuestions = []
-  assignedIndexes = []
-  //iterate through batches
-  for(i = 0; i < userOrder.length; i++){
-      frame = userOrder[i]
-      //Minus 3 to get frame index in master batch
-      frameIndex = frame - 3
-      frameLevel = masterBatch[frameIndex]
-      console.log(frameLevel)
-
-      findQuestions:
-      //find first unassigned question in frameLevel
-      for(batch = 0; batch < frameLevel.length; batch++){
-          for(question = 0; question < frameLevel[batch].assignmentStatus.length; question++){
-              if(frameLevel[batch].assignmentStatus[question] === 0){
-                  //update assignment status 
-                  frameLevel[batch].assignmentStatus[question] = 1
-                  //get question from frameLevel and add to questions array
-                  assignedQuestions.push(frameLevel[batch].questions[question])
-                  assignedIndexes.push([batch,question])
-                  break findQuestions;
-              }
-          }
-      }
-
-  }
-
-  console.log("assigned Quesions: ", assignedQuestions)
-  console.log("assigned Indexes: ", assignedIndexes)
-
-  currentUser.saveQuestionOrder(assignedQuestions)
-  currentUser.saveIndexOrder(assignedIndexes)
-
-  //load first question
-  loadQuestion.loadFirst(req, res, currentUser)
+    //load first question
+    loadQuestion.loadFirst(req, res, currentUser, userOrder)
 
 });
 
