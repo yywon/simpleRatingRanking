@@ -24,8 +24,7 @@ for user in usersCol.find():
 
 	rankings = []
 	ratings = []
-
-	ground_truth = user['group4Answers']
+	
 	#get username
 	userName = user['user']
 

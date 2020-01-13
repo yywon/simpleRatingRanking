@@ -4,7 +4,8 @@ import sys
 
 responseCount = 22
 
-url = 'mongodb://localhost:27017/'
+#url = 'mongodb://localhost:27017/'
+url = 'mongodb://10.218.105.218:27017/'
 
 client = pymongo.MongoClient(url)
 db = client['ratingsrankingsframes']
@@ -27,7 +28,7 @@ for user in usersCol.find():
     responseCount = responsesCol.count({'user' : userName})
      
     if(key2pay is None):
-	key2pay = "none";
+        key2pay = "none"
 
     print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
     
@@ -35,14 +36,19 @@ for user in usersCol.find():
         completed_users.append(userName)
     else:
         userRemove += 1
-	    if(args > 0):
-		    if(sys.argv[1] == "delete"):
-        		responsesCol.remove({'user' : userName})
-			    usersCol.remove({'user' : userName})
-                #assign back to beginning
+        if(args > 0):
+            if(sys.argv[1] == "delete"):
+                #remove assignment from batch
                 for i in range(len(indexes)):
-                    batch = batchesCol.find_one({'size': indexes[i][0], 'number': indexes[i][1]})
-                    batch["assignedQuestions"][indexes[2]] = 0
+
+                    question = str(indexes[i][2])
+                    update = {"$set": {}}
+                    update['$set']["assignmentStatus."+question] = 0
+
+                    batchesCol.update_one({'size': indexes[i][0], 'number': indexes[i][1]}, update)
+
+                responsesCol.delete_many({'user' : userName})
+                usersCol.delete_one({'user' : userName})
 
 print("Completed Users: " + str(len(completed_users)))
 print("Users Removed: " + str(userRemove))

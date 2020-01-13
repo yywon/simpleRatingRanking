@@ -17,22 +17,36 @@ const assignModule = {
 
             let client = yield MongoClient.connect(url);
             const db = client.db('ratingsrankingsframes')
-            let batchesCol = db.collection('batches')
+            let batchesColA = db.collection('batchesA')
+            let batchesColB = db.collection('batchesB')
 
             let i= 0
             while(i < 9){
 
-                b = new Batch(3)
+                b1 = new Batch(3)
+                b2 = new Batch(3)
 
-                var item = {
-                    "size": b.size,
+                var itemA = {
+                    "size": b1.size,
                     "number": i,
-                    "completness": b.completness,
-                    "assignmentStatus": b.assignmentStatus,
-                    "questions": b.questions
+                    "completness": b1.completness,
+                    "assignmentStatus": b1.assignmentStatus,
+                    "questions": b1.questions
                 }
 
-                batchesCol.insertOne(item, function(err, result) {
+                var itemB = {
+                    "size": b2.size,
+                    "number": i,
+                    "completness": b2.completness,
+                    "assignmentStatus": b2.assignmentStatus,
+                    "questions": b2.questions
+                }
+
+                batchesColA.insertOne(itemA, function(err, result) {
+                    //console.log('Ranking inserted')
+                });
+
+                batchesColB.insertOne(itemB, function(err, result) {
                     //console.log('Ranking inserted')
                 });
 
@@ -42,19 +56,33 @@ const assignModule = {
             let j= 0
             while(j < 12){
 
-                b = new Batch(4)
+                b1 = new Batch(4)
+                b2 = new Batch(4)
 
-                var item = {
-                    "size": b.size,
+                var itemA = {
+                    "size": b1.size,
                     "number": j,
-                    "completness": b.completness,
-                    "assignmentStatus": b.assignmentStatus,
-                    "questions": b.questions
+                    "completness": b1.completness,
+                    "assignmentStatus": b1.assignmentStatus,
+                    "questions": b1.questions
                 }
 
-                batchesCol.insertOne(item, function(err, result) {
+                var itemB = {
+                    "size": b2.size,
+                    "number": j,
+                    "completness": b2.completness,
+                    "assignmentStatus": b2.assignmentStatus,
+                    "questions": b2.questions
+                }
+
+                batchesColA.insertOne(itemA, function(err, result) {
                     //console.log('Ranking inserted')
                 });
+
+                batchesColB.insertOne(itemB, function(err, result) {
+                    //console.log('Ranking inserted')
+                });
+
 
                 j++
 
@@ -64,19 +92,33 @@ const assignModule = {
             let k= 0
             while(k < 15){
 
-                b = new Batch(5)
+                b1 = new Batch(5)
+                b2 = new Batch(5)
 
-                var item = {
-                    "size": b.size,
+                var itemA = {
+                    "size": b1.size,
                     "number": k,
-                    "completness": b.completness,
-                    "assignmentStatus": b.assignmentStatus,
-                    "questions": b.questions
+                    "completness": b1.completness,
+                    "assignmentStatus": b1.assignmentStatus,
+                    "questions": b1.questions
                 }
 
-                batchesCol.insertOne(item, function(err, result) {
+                var itemB = {
+                    "size": b2.size,
+                    "number": k,
+                    "completness": b2.completness,
+                    "assignmentStatus": b2.assignmentStatus,
+                    "questions": b2.questions
+                }
+
+                batchesColA.insertOne(itemA, function(err, result) {
                     //console.log('Ranking inserted')
                 });
+
+                batchesColB.insertOne(itemB, function(err, result) {
+                    //console.log('Ranking inserted')
+                });
+
 
                 k++
             }
@@ -86,18 +128,32 @@ const assignModule = {
             while(l < 18){
 
                 b = new Batch(6)
+                b = new Batch(6)
 
-                var item = {
-                    "size": b.size,
-                    "number": l, 
-                    "completness": b.completness,
-                    "assignmentStatus": b.assignmentStatus,
-                    "questions": b.questions
+                var itemA = {
+                    "size": b1.size,
+                    "number": l,
+                    "completness": b1.completness,
+                    "assignmentStatus": b1.assignmentStatus,
+                    "questions": b1.questions
                 }
 
-                batchesCol.insertOne(item, function(err, result) {
+                var itemB = {
+                    "size": b2.size,
+                    "number": l,
+                    "completness": b2.completness,
+                    "assignmentStatus": b2.assignmentStatus,
+                    "questions": b2.questions
+                }
+
+                batchesColA.insertOne(itemA, function(err, result) {
                     //console.log('Ranking inserted')
                 });
+
+                batchesColB.insertOne(itemB, function(err, result) {
+                    //console.log('Ranking inserted')
+                });
+
 
                 l++
             }

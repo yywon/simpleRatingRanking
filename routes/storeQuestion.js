@@ -11,7 +11,7 @@ let assignQuestions = require('./assignBatch')
 
 const storeModule = {
 
-    storeRanking: function(userID, id, group2save, time, frames, batch){
+    storeRanking: function(userID, id, group2save, time, frames, batch, study){
 
         //store into db
         co(function* () {
@@ -27,6 +27,7 @@ const storeModule = {
             var item = {
                 "user" : userID,
                 "collection": id,
+                "study": study,
                 "frames": frames,
                 "batch": batch,
                 "type": "ranking",
@@ -62,6 +63,16 @@ const storeModule = {
 
     },
 
+    storeMultipleRatings: function(userID, id, picture, rating, time, batch, frames){
+
+        //TODO: 
+
+
+
+
+
+    },
+
     storeRating: function(userID, id, picture, rating, time, batch, frames) {
 
         //insert rating into db
@@ -71,10 +82,13 @@ const storeModule = {
             const db = client.db('ratingsrankingsframes')
             let responseCol = db.collection('responses')
 
+            //NOTE: Study is a
+
             var item = {
                 "user" : userID,
                 "collection": id,
                 "batch": batch,
+                "study": "a",
                 "frames": frames,
                 "type": "rating",
                 "picture": picture,

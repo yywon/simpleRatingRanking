@@ -2,20 +2,38 @@ module.exports = class User {
     constructor(id) {
         this.id = id;
         this.activityID = 1;
+        this.abOrder = ""
     }
 
-    saveQuestionOrder(order){
-        this.questionOrder = order
+    saveABOrder(order){
+        this.abOrder = order
     }
 
-    saveIndexOrder(order){
-        this.indexOrder = order
+    saveQuestionOrderA(order){
+        this.questionOrderA = order
     }
 
-    saveCurrentQuestion(question, batch, length) {
+    saveIndexOrderA(order){
+        this.indexOrderA = order
+    }
+
+    saveQuestionOrderB(order){
+        this.questionOrderB = order
+    }
+
+    saveIndexOrderB(order){
+        this.indexOrderB = order
+    }
+
+    saveCurrentQuestion(study, question, batch, length) {
+        this.currentStudy = study
         this.currentQuestion = question;
         this.currentBatch = batch
         this.currentFrames = length
+    }
+
+    study(){
+        return this.currentStudy
     }
 
     question() {
@@ -30,12 +48,24 @@ module.exports = class User {
         return this.currentFrames
     }
 
-    getQuestionOrder() {
-        return this.questionOrder;
+    getQuestionOrderA() {
+        return this.questionOrderA;
     }
 
-    getIndexOrder() {
-        return this.indexOrder;
+    getIndexOrderA() {
+        return this.indexOrderA;
+    }
+
+    getQuestionOrderB() {
+        return this.questionOrderB;
+    }
+
+    getIndexOrderB() {
+        return this.indexOrderB;
+    }
+
+    getABOrder() {
+        return this.abOrder
     }
 
     

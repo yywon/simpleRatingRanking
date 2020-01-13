@@ -60,8 +60,13 @@ router.post('/:id/rankings/:userID', function(req, res, next){
   //Fetch instance of current user
   let currentUser = getUserInstance(req.params.userID);
 
-  //load next question
-  loadQuestion.loadAfterRanking(req, res, currentUser);
+  //TODO: Make if else statement for study
+  if(currentUser.study() === "a"){
+    //load next question
+    loadQuestion.loadAfterRankingA(req, res, currentUser);
+  } else{
+    loadQuestion.loadAfterRankingB(req, res, currentUser);
+  }
 
 });
 
@@ -81,14 +86,15 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
   let currentUser = getUserInstance(userID);
   let batch = currentUser.batch();
   let frames = currentUser.frames();
-
-
+  let study = currentUser.study();
 
   //get rid of extra time variable in the group (so that group only constains ranking)
   group.pop()
 
+  //TODO: change store ranking to incorporate ab data
+
   //store ranking
-  storeQuestion.storeRanking(userID, id, group, time, frames, batch)
+  storeQuestion.storeRanking(userID, id, group, time, frames, batch, study)
 
 });
 
@@ -132,13 +138,17 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
   let currentUser = getUserInstance(userID);
   let batch = currentUser.batch();
   let frames = currentUser.frames();
+  let study = currentUser.study();
+
+
+  //TODO: change store rating to incorporate ab data
 
   //store if rating is valid input
   storeQuestion.storeRating(userID, id, picture, rating, time, batch, frames)
 
 });
 
-//load next rating page
+//load next rating page (will only be called in study a)
 router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //collect variables
@@ -164,11 +174,14 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //load survey if activity is complete
   if(currentUser.activityID === 5){
-    res.render('survey', {userID: currentUser.id})
-    return
+    loadQuestion.loadNextStudy(req,res,currentUser)
+    return;
   } 
-    //load new question
-    loadQuestion.loadAfterRating(req, res, currentUser, picture);
+    if(currentUser.study() === "a"){
+      loadQuestion.loadAfterRatingA(req, res, currentUser, picture);
+    } else {
+      loadQuestion.loadAfterRatingB(req, res, currentUser, picture);
+    }
   
 });
 
