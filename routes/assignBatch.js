@@ -127,8 +127,8 @@ const assignModule = {
             let l= 0
             while(l < 18){
 
-                b = new Batch(6)
-                b = new Batch(6)
+                b1 = new Batch(6)
+                b2 = new Batch(6)
 
                 var itemA = {
                     "size": b1.size,

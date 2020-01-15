@@ -21,7 +21,6 @@ const loadModule = {
           let batchesColA = db.collection('batchesA')
           let batchesColB = db.collection('batchesB')
 
-
           assignedQuestionsA = []
           assignedIndexesA = []
 
@@ -29,7 +28,7 @@ const loadModule = {
           assignedIndexesB = []
 
 
-          //NOTE: There might be a bug here
+          //NOTE: There is a bug here
 
           //get assigned questions for A
           for(i = 0; i < userOrder.length; i++){
@@ -43,6 +42,8 @@ const loadModule = {
               console.log(batch)
 
               dbBatch = yield batchesColA.findOne({'size': frame, 'number': batch})
+
+              console.log(dbBatch)
             
               for(question = 0; question < dbBatch.assignmentStatus.length; question++){
                 if(dbBatch.assignmentStatus[question] === 0){
@@ -69,7 +70,7 @@ const loadModule = {
             frame = userOrder[i]
             console.log(frame)
 
-            findQuestions:
+            findQuestions2:
             for(batch = 0; batch < 180/(60/frame); batch++){
 
               console.log(batch)
@@ -89,7 +90,7 @@ const loadModule = {
 
                   batchesColB.updateOne( {'size': dbBatch.size, 'number': dbBatch.number}, update)
 
-                  break findQuestions;
+                  break findQuestions2;
                 }
               }
             }
@@ -104,14 +105,17 @@ const loadModule = {
             user.saveABOrder("ba")
           }
           
-          console.log("assigned Quesions: ", assignedQuestions)
-          console.log("assigned Indexes: ", assignedIndexes)
+          console.log("assigned Quesions: ", assignedQuestionsA)
+          console.log("assigned Indexes: ", assignedIndexesA)
+
+          console.log("assigned Quesions: ", assignedQuestionsB)
+          console.log("assigned Indexes: ", assignedIndexesB)
 
           user.saveQuestionOrderA(assignedQuestionsA)
           user.saveIndexOrderA(assignedIndexesA)
 
-          user.saveQuestionOrderB(assignedQuestionsA)
-          user.saveIndexOrderB(assignedIndexesA)
+          user.saveQuestionOrderB(assignedQuestionsB)
+          user.saveIndexOrderB(assignedIndexesB)
 
           check = yield usersCol.findOne({"user" : user.id})
               
@@ -133,7 +137,6 @@ const loadModule = {
               
               yield usersCol.insertOne(item);
               
-
               //condition if user is ab
               if(user.getABOrder() === "ab"){
                 //load first question
@@ -175,17 +178,42 @@ const loadModule = {
 
     loadNextStudy: function(req, res, user){
 
+      if(user.getABOrder() === "ab"){
+        if(user.study() === "a"){
 
-      //Option 1:
-      res.render('survey', {userID: currentUser.id})
+          questionOrder = user.getQuestionOrderB()
+          question2load = questionOrder[0]
+          questionLength = question2load.length
+          indexOrder = user.getIndexOrderA()
+          questionIndex = indexOrder[0]
+          currentBatch = questionIndex[0]
 
-      //Option 2:
-      res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
+          user.saveCurrentQuestion("b", JSON.stringify(question2load), currentBatch, questionLength)
+          
+          res.render('rankings2', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
 
-      //Option 3:
-      res.render('rankings2', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
+        } else {
+          res.render('survey', {userID: currentUser.id})
+        }
+      }
 
+      if(user.getABOrder() === "ba"){
+        if(user.study() === "b"){
 
+          questionOrder = user.getQuestionOrderA()
+          question2load = questionOrder[0]
+          questionLength = question2load.length
+          indexOrder = user.getIndexOrderA()
+          questionIndex = indexOrder[0]
+          currentBatch = questionIndex[0]
+          user.saveCurrentQuestion("a", JSON.stringify(question2load), currentBatch, questionLength)
+
+          res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
+
+        } else {
+          res.render('survey', {userID: currentUser.id})
+        }
+      }
     }, 
 
     loadAfterRankingA: function(req, res, user) {
@@ -226,17 +254,17 @@ const loadModule = {
         check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking', "study": user.study()})
 
         if (check === null){
-          res.render('rankings2', {userID : user.id, id: user.activityID , type: "rankings", frames: user.frames(), question: user.question(), error: "ERROR: Please submit a complete ranking"})
+          res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", frames: user.frames(), question: user.question(), error: "ERROR: Please submit a complete ranking"})
           return;
         } else{
-          res.render('ratings2', {userID: user.id, id: user.activityID, type: "ratings", picture: 0, question: user.question()});
+          res.render('ratings2', {userID: user.id, id: user.activityID, type: "ratings", frames: user.frames(), question: user.question()});
         }
 
       })
 
     },
 
-    loaAfterRatingA: function(req, res, user, picture){
+    loadAfterRatingA: function(req, res, user, picture){
 
       if(parseInt(picture) === user.frames() - 1){
         picture === 0
@@ -270,11 +298,15 @@ const loadModule = {
       }
     },
 
-    loaAfterRatingB: function(req, res, user, picture){
 
-      //reset if ratings are complete
-      if(parseInt(picture) === user.frames() - 1){
-        picture === 0
+
+    //TODO: Adjust accordingly
+
+    loadAfterRatingB: function(req, res, user, picture){
+
+      console.log('in the func')
+
+      //load the next rating question
 
         co(function* () {
 
@@ -285,7 +317,9 @@ const loadModule = {
 
           //load next question
           questionOrder = user.getQuestionOrderB()
+          console.log(questionOrder)
           question2load = questionOrder[user.activityID - 1]
+          console.log(question2load)
           questionLength = question2load.length
 
           indexOrder = user.getIndexOrderB()
@@ -298,11 +332,6 @@ const loadModule = {
           res.render('rankings2', {userID: user.id, id: user.activityID , frames: user.frames(), type: "rankings", question: user.question()})
       
         });
-
-      } else {
-        picture = parseInt(picture)+ 1
-        res.render('ratings2', {userID: user.id, id: user.activityID, type: "ratings", picture, question: user.question()})
-      }
     }
 
 }

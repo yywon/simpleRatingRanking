@@ -53,7 +53,7 @@ function renderQuestion(question, id, userID, frames){
     let svg4ranking_height = rankingImageSize + rankingImageSize/4;
 
     console.log(rankingImageSize)
-
+    
     //Grouping for ranks
 
     let svg4ranking = d3.select(".rankingDiv").append("svg")

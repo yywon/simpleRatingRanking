@@ -22,7 +22,7 @@ const Batch = require('../batch');
 
 //assign batches
 //NOTE: comment this out if batches are already populated
-assignBatch.assign(url)
+//assignBatch.assign(url)
 
 //function to get current issues of Users
 let getUserInstance = uid => users.find(user => user.id === uid);
@@ -79,7 +79,7 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
   id = req.params.id;
   let group = Object.keys(req.body);
   group = JSON.parse(group)
-  time = group[4]
+  time = group[group.length - 1]
 
   console.log(group)
 
@@ -90,8 +90,6 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
 
   //get rid of extra time variable in the group (so that group only constains ranking)
   group.pop()
-
-  //TODO: change store ranking to incorporate ab data
 
   //store ranking
   storeQuestion.storeRanking(userID, id, group, time, frames, batch, study)
@@ -117,7 +115,7 @@ router.post('/:s?/:t?/:d?/:f?/:userID/sendSurvey', function(req,res,next){
 
 })
 
-//send ratings
+//send ratings A
 router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,res,next){
 
   //collect variables from front end
@@ -138,10 +136,6 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
   let currentUser = getUserInstance(userID);
   let batch = currentUser.batch();
   let frames = currentUser.frames();
-  let study = currentUser.study();
-
-
-  //TODO: change store rating to incorporate ab data
 
   //store if rating is valid input
   storeQuestion.storeRating(userID, id, picture, rating, time, batch, frames)
@@ -173,17 +167,41 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
   }
 
   //load survey if activity is complete
-  if(currentUser.activityID === 5){
+  if(currentUser.activityID === 5 || currentUser.activityID === 9){
     loadQuestion.loadNextStudy(req,res,currentUser)
     return;
   } 
-    if(currentUser.study() === "a"){
-      loadQuestion.loadAfterRatingA(req, res, currentUser, picture);
-    } else {
-      loadQuestion.loadAfterRatingB(req, res, currentUser, picture);
-    }
+    
+  loadQuestion.loadAfterRatingA(req, res, currentUser, picture);
+
+});
+
+//TODO: ratings B routing 
+
+//send ratings B
+router.post(':s?/:t?/:d?/:f?/:userID/:id/B/sendRatings/', function(req,res,next){
+
+
+  storeQuestion.storeMultipleRatings()
   
 });
+
+
+router.post('/:id/ratings/B/:userID/B', function(req,res,next){
+
+  //get ratings from req.body
+
+  let currentUser = getUserInstance(req.params.userID);
+  currentUser.activityID += 1
+
+  if(currentUser.activityID === 5 || currentUser.activityID === 9){
+    loadQuestion.loadNextStudy(req,res,currentUser)
+    return;
+  } 
+
+  loadQuestion.loadAfterRatingB(req, res, currentUser)
+
+})
 
 module.exports = router;
 
