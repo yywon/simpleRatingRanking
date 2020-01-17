@@ -5,7 +5,7 @@ module.exports = class batch {
     
     constructor(size){
         this.size = size
-        this.completeness = 60/size
+        this.completeness = 30/size
         this.assignmentStatus = []
         for(let i = 0; i < this.completeness; i++){
             this.assignmentStatus.push(0)
@@ -17,7 +17,7 @@ module.exports = class batch {
 
         let questions = [];
         let allNumbers = [];
-        for(let i = 0; i < 60; i++){
+        for(let i = 0; i < 30; i++){
             allNumbers[i] = 50 + i
         }
                 

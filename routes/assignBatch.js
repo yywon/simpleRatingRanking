@@ -23,8 +23,8 @@ const assignModule = {
             let i= 0
             while(i < 9){
 
-                b1 = new Batch(3)
-                b2 = new Batch(3)
+                b1 = new Batch(2)
+                b2 = new Batch(2)
 
                 var itemA = {
                     "size": b1.size,
@@ -56,8 +56,8 @@ const assignModule = {
             let j= 0
             while(j < 12){
 
-                b1 = new Batch(4)
-                b2 = new Batch(4)
+                b1 = new Batch(3)
+                b2 = new Batch(3)
 
                 var itemA = {
                     "size": b1.size,

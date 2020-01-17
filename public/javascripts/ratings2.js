@@ -18,7 +18,7 @@ function renderQuestion(question, id, userID, frames){
 
     let divWidth = d3.select('.activity').node().offsetWidth
     //specify size based on image gaps 
-    if(topNSize === 3){
+    if(topNSize === 2){
         rankingImageSize = divWidth/5;
         space = rankingImageSize;
         gap4images = (divWidth - (space + (rankingImageSize * topNSize)))/ topNSize;
@@ -46,6 +46,9 @@ function renderQuestion(question, id, userID, frames){
         .selectAll("rect")
         .data(topNPositions)
         .enter().append("rect")
+        .attr("id", function(d,i){
+            return i
+        })
         .attr("x", function (d, i) {
             let xValue = space + ((rankingImageSize + gap4images) * i)
             return xValue
@@ -56,6 +59,7 @@ function renderQuestion(question, id, userID, frames){
         .attr("style", function (d, i) {
             return "fill:transparent;stroke:black;stroke-width:1;stroke-opacity:1"
         })
+        .enter().append("xhtml:div")
 
         let g4candidatesImage = svg4image.append("g")
         .attr("class", "g4candidatesImage")
@@ -80,6 +84,16 @@ function renderQuestion(question, id, userID, frames){
         .attr("width", rankingImageSize)
         .attr("height", rankingImageSize)
 
+    for(var ii = 0; ii < frames; ii++){
+        var testest = document.createElement("foreignobject");
+        var box = document.createElement("input")
+        var str = ii.toString();
+        testest.setAttribute("id","element"+str)
+        box.setAttribute("type", "text")
+        document.getElementById(str).appendChild(testest);
+        document.getElementById("element"+str).appendChild(box)
+    }
+        
     d3.select(".btn.btn-success.nextBtn").on("click", function () {
         //console.log("Button Clicked");
         //console.log(userID)

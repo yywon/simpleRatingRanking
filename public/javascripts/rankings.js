@@ -35,7 +35,7 @@ function renderQuestion(question, id, userID, frames){
     var space
 
     //specify size based on image gaps 
-    if(topNSize === 3){
+    if(topNSize === 2){
         rankingImageSize = divWidth/5;
         space = rankingImageSize;
         gap4images = (divWidth - (space + (rankingImageSize * topNSize)))/ topNSize;

@@ -46,7 +46,7 @@ router.post('/', function(req,res,next){
     }
     
     //assign order of frames seen
-    userOrder = shuffle([3,4,5,6]);
+    userOrder = shuffle([2,3,5,6]);
     console.log("order: ", userOrder)
 
     //load first question
