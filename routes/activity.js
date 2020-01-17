@@ -153,7 +153,6 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
   //Fetch current user instance
   let currentUser = getUserInstance(req.params.userID);
-  console.log(currentUser)
 
   //render next page if input is valid
   if(isNaN(rating) || rating === ''){
@@ -164,13 +163,16 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
   //increment activity ID if user makes it to the final picture
   if(parseInt(picture) === currentUser.frames() - 1){
     currentUser.activityID += 1
+    currentUser.studyQuestion += 1
   }
 
+  console.log(currentUser)
+
   //load survey if activity is complete
-  if(currentUser.activityID === 5 || currentUser.activityID === 9){
+  if(currentUser.studyQuestion === 5 && parseInt(picture) === (currentUser.frames() - 1)){
     loadQuestion.loadNextStudy(req,res,currentUser)
     return;
-  } 
+  } else{}
     
   loadQuestion.loadAfterRatingA(req, res, currentUser, picture);
 
@@ -181,20 +183,35 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 //send ratings B
 router.post(':s?/:t?/:d?/:f?/:userID/:id/B/sendRatings/', function(req,res,next){
 
+  //collect variables from front end
+  userID = req.params.userID
+  id = req.params.id;
+  let data = Object.keys(req.body);
+  data = JSON.parse(data)
 
-  storeQuestion.storeMultipleRatings()
+  let time = data[0]
+  let rating = data[1]
+
+  //return if rating is not valid
+
+  let currentUser = getUserInstance(userID);
+  let batch = currentUser.batch();
+  let frames = currentUser.frames();
+
+  storeQuestion.storeMultipleRatings(userID, id, rating, time, batch, frames)
   
 });
 
 
-router.post('/:id/ratings/B/:userID/B', function(req,res,next){
+router.post('/:id/ratingsB/B/:userID', function(req,res,next){
 
   //get ratings from req.body
 
   let currentUser = getUserInstance(req.params.userID);
   currentUser.activityID += 1
+  currentUser.studyQuestion += 1
 
-  if(currentUser.activityID === 5 || currentUser.activityID === 9){
+  if(currentUser.studyQuestion === 5){
     loadQuestion.loadNextStudy(req,res,currentUser)
     return;
   } 

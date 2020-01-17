@@ -38,7 +38,8 @@ const storeModule = {
             var criteria = {
                 "user": userID, 
                 "collection": id, 
-                "type": "ranking"
+                "type": "ranking",
+                "study": study
             }
 
             var newItem = {
@@ -50,7 +51,7 @@ const storeModule = {
 
             if(count > 0){
                 responseCol.update(criteria,{ $set: newItem })
-                //console.log('Ranking updated')
+                console.log('Ranking updated')
             } else {
                 responseCol.insertOne(item, function(err, result) {
                 //console.log('Ranking inserted')
@@ -63,14 +64,29 @@ const storeModule = {
 
     },
 
-    storeMultipleRatings: function(userID, id, picture, rating, time, batch, frames){
+    storeMultipleRatings: function(userID, id, rating, time, batch, frames){
 
-        //TODO: 
+        co(function* () {
 
+            let client = yield MongoClient.connect(url);
+            const db = client.db('ratingsrankingsframes')
+            let responseCol = db.collection('responses')
 
+            var item = {
+                "user" : userID,
+                "collection": id,
+                "batch": batch,
+                "study": "b",
+                "frames": frames,
+                "type": "rating",
+                "estimate": rating,
+                "time": time
+            }
 
-
-
+            responseCol.insertOne(item, function(err, result) {
+                //console.log('Rating inserted')
+            });
+        })
     },
 
     storeRating: function(userID, id, picture, rating, time, batch, frames) {

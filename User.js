@@ -2,7 +2,12 @@ module.exports = class User {
     constructor(id) {
         this.id = id;
         this.activityID = 1;
+        this.studyQuestion = 1;
         this.abOrder = ""
+    }
+
+    setStudyQuestion(num){
+        this.studyQuestion = num
     }
 
     saveABOrder(order){

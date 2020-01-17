@@ -11,7 +11,8 @@ client = pymongo.MongoClient(url)
 db = client['ratingsrankingsframes']
 usersCol = db['users']
 responsesCol = db['responses']
-batchesCol = db['batches']
+batchesColA = db['batchesA']
+batchesColB = db['batchesB']
 
 completed_users = []
 
@@ -23,7 +24,8 @@ for user in usersCol.find():
 
     key2pay = user["key2pay"]
     userName = user["user"]
-    indexes = user["indexes"]
+    indexesA = user["indexesA"]
+    indexesB = user["indexesB"]
 
     responseCount = responsesCol.count({'user' : userName})
      
@@ -32,21 +34,31 @@ for user in usersCol.find():
 
     print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
     
-    if(responseCount >= 22):
+    if(responseCount >= 26):
         completed_users.append(userName)
     else:
         userRemove += 1
         if(args > 0):
             if(sys.argv[1] == "delete"):
-                #remove assignment from batch
-                for i in range(len(indexes)):
 
-                    question = str(indexes[i][2])
+                #remove assignment from batch A
+                for i in range(len(indexesA)):
+
+                    question = str(indexesA[i][2])
                     update = {"$set": {}}
                     update['$set']["assignmentStatus."+question] = 0
 
-                    batchesCol.update_one({'size': indexes[i][0], 'number': indexes[i][1]}, update)
+                    batchesColA.update_one({'size': indexesA[i][0], 'number': indexesA[i][1]}, update)
 
+                #remove assignment from batch B
+                for i in range(len(indexesB)):
+
+                    question = str(indexesB[i][2])
+                    update = {"$set": {}}
+                    update['$set']["assignmentStatus."+question] = 0
+
+                    batchesColB.update_one({'size': indexesB[i][0], 'number': indexesB[i][1]}, update)
+                
                 responsesCol.delete_many({'user' : userName})
                 usersCol.delete_one({'user' : userName})
 

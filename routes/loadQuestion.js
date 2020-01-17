@@ -178,6 +178,8 @@ const loadModule = {
 
     loadNextStudy: function(req, res, user){
 
+      user.setStudyQuestion(1)
+
       if(user.getABOrder() === "ab"){
         if(user.study() === "a"){
 
@@ -193,7 +195,7 @@ const loadModule = {
           res.render('rankings2', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
 
         } else {
-          res.render('survey', {userID: currentUser.id})
+          res.render('survey', {userID: user.id})
         }
       }
 
@@ -211,7 +213,7 @@ const loadModule = {
           res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
 
         } else {
-          res.render('survey', {userID: currentUser.id})
+          res.render('survey', {userID: user.id})
         }
       }
     }, 
@@ -225,7 +227,7 @@ const loadModule = {
         let usersCol = db.collection('users')
         let responseCol = db.collection('responses')
 
-        check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
+        check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking', "study": user.study()})
 
         if (check === null){
           res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", frames: user.frames(), question: user.question(), error: "ERROR: Please submit a complete ranking"})
@@ -266,6 +268,8 @@ const loadModule = {
 
     loadAfterRatingA: function(req, res, user, picture){
 
+      console.log("in the func")
+
       if(parseInt(picture) === user.frames() - 1){
         picture === 0
 
@@ -278,7 +282,7 @@ const loadModule = {
 
           //load next question
           questionOrder = user.getQuestionOrderA()
-          question2load = questionOrder[user.activityID - 1]
+          question2load = questionOrder[user.studyQuestion - 1]
           questionLength = question2load.length
 
           indexOrder = user.getIndexOrderA()
@@ -302,9 +306,10 @@ const loadModule = {
 
     //TODO: Adjust accordingly
 
-    loadAfterRatingB: function(req, res, user, picture){
+    loadAfterRatingB: function(req, res, user){
 
       console.log('in the func')
+      console.log(user)
 
       //load the next rating question
 
@@ -318,7 +323,7 @@ const loadModule = {
           //load next question
           questionOrder = user.getQuestionOrderB()
           console.log(questionOrder)
-          question2load = questionOrder[user.activityID - 1]
+          question2load = questionOrder[user.studyQuestion - 1]
           console.log(question2load)
           questionLength = question2load.length
 
