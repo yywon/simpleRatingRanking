@@ -13,7 +13,7 @@ const storeModule = {
 
     storeRanking: function(userID, id, group2save, time, frames, batch, study){
 
-        //store into db
+        //store into dbsho
         co(function* () {
 
             var group = group2save.map(Number);
