@@ -8,7 +8,162 @@ from cplex.exceptions import CplexError
 import time
 import scipy
 from scipy.spatial import distance
+from operator import truediv
+from itertools import combinations 
 
+def val2rank(n):
+    return n - 49
+
+class Sampler:
+
+    def __init__(self, n, num_activities, input_file, obj):
+        self.sampleSize = n
+        self.array = [i for i in range(8)]
+        self.questions = [0] * num_activities
+        self.input_file = input_file
+        self.objects = obj
+
+    def sample_rating_and_ranking_model(self):
+
+        combinations_array = list(combinations(self.array, self.sampleSize))
+
+        RR_dist_sum = 0
+        RR_L2_sum = 0
+    
+        combinationCount = 0
+
+        for comb in combinations_array:
+
+            for q in range(len(self.questions)):
+                if (q in comb):
+                    self.questions[q] = 1
+                else:
+                    self.questions[q] = 0
+
+            # Ratings and ranking model
+            RR_rank, RR_rat, RR_dist, RR_gap, RR_time, RR_L1, RR_L2 = rating_and_ranking_model(self.input_file, self.objects, self.questions)
+            RR_dist_sum += RR_dist
+            RR_L2_sum += RR_L2
+
+            combinationCount +=1
+        
+        RR_dist = RR_dist_sum/combinationCount
+        RR_L2 = RR_L2_sum/combinationCount
+
+        return RR_dist, RR_L2
+
+    def sample_ranking_only_model(self):
+
+        combinations_array = list(combinations(self.array, self.sampleSize))
+
+        OA_dist_sum = 0
+
+        combinationCount = 0
+
+        for comb in combinations_array:
+
+            for q in range(len(self.questions)):
+                if (q in comb):
+                    self.questions[q] = 1
+                else:
+                    self.questions[q] = 0
+
+            # Rankings only model
+            OA_rank, OA_dist, OA_gap, OA_time = ranking_only_model(self.input_file, self.objects, self.questions)
+            OA_dist_sum += OA_dist
+
+            combinationCount +=1
+
+        OA_dist = OA_dist_sum/combinationCount
+
+        return OA_dist
+
+    def sample_ratings_only_model(self):
+
+        combinations_array = list(combinations(self.array, self.sampleSize))
+
+        CA_dist_sum = 0
+        CA_L2_sum = 0
+
+        combinationCount = 0
+
+        for comb in combinations_array:
+
+            for q in range(len(self.questions)):
+                if (q in comb):
+                    self.questions[q] = 1
+                else:
+                    self.questions[q] = 0
+
+            # Ratings only model (Fishbain moreno model)
+            CA_rank, CA_rat, CA_dist, CA_gap, CA_time, CA_L1, CA_L2 = ratings_only_model(self.input_file, self.objects, self.questions)
+            CA_dist_sum += CA_dist
+            CA_L2_sum += CA_L2
+
+            combinationCount +=1
+
+        CA_dist = CA_dist_sum/combinationCount
+        CA_L2 = CA_L2_sum/combinationCount
+
+        return CA_dist, CA_L2
+
+    def sample_separation_deviation_model(self):
+
+        combinations_array = list(combinations(self.array, self.sampleSize))
+
+        SD_dist_sum = 0
+        SD_L2_sum = 0
+
+        combinationCount = 0
+
+        for comb in combinations_array:
+
+            for q in range(len(self.questions)):
+                if (q in comb):
+                    self.questions[q] = 1
+                else:
+                    self.questions[q] = 0
+
+            # Separation deviation model
+            SD_rank, SD_rat, SD_dist, SD_gap, SD_time, SD_L1, SD_L2 = separation_deviation_model(self.input_file, self.objects, self.questions, 1, 1)
+            SD_dist_sum += SD_dist
+            SD_L2_sum += SD_L2
+
+            combinationCount +=1
+
+        SD_dist = SD_dist_sum/combinationCount
+        SD_L2 = SD_L2_sum/combinationCount
+
+        return SD_dist, SD_L2
+
+    def sample_averages(self):
+
+        combintations_array = list(combinations(self.array, self.sampleSize))
+
+        A_dist_sum = 0
+        A_L2_sum = 0
+
+        combinationCount = 0
+
+        for comb in combintations_array:
+
+            for q in range(len(self.questions)):
+                if (q in comb):
+                    self.questions[q] = 1
+                else:
+                    self.questions[q] = 0
+
+            #averages
+            A_rank, A_rat, A_dist, A_L1, A_L2 = averages(self.input_file, self.objects, self.questions)
+            A_dist_sum += A_dist
+            A_L2_sum += A_L2
+
+            combinationCount +=1
+        
+        A_dist = A_dist_sum/combinationCount
+        A_L2 = A_L2_sum/combinationCount
+
+        return A_dist, A_L2
 
 class Evaluation:
 
@@ -72,34 +227,34 @@ class Profile:
 
     # Read datafile and assign ranks
     # Change this as required
-    def assign_rank(self, input_file, noise):
+    def assign_rank(self, input_file, questions):
 
         # Read the data file
         with open(input_file) as json_file:
             data = json.load(json_file)
 
         for item in data:
-            for i in range(8):
-                tempEval = Evaluation()
-                tempEval.Ran = item['rankings'][i]
-                tempEval.Ran.reverse()
-                tempEval.Rat = item['ratings'][i]
-                tempEval.size = len(tempEval.Ran)
-                if tempEval.size == self.num_obj:
-                    self.groundtruth = item['groundtruth'][i]
-                    tempEval.Vsub = []
-                    for i in range(tempEval.size):
-                        tempEval.Vsub.append(i+1)
-                else:
-                    tempEval.Vsub = item['rankings'][i]
-                    ground_truth = item['groundtruth'][i]
-                    for i in range(len(ground_truth)):
-                        self.groundtruth[tempEval.Vsub[i]-1] = ground_truth[i]
-
-                self.max_rat = max(self.groundtruth)
-                self.min_rat = min(self.groundtruth)
-                self.evs.append(tempEval)
-                self.num_jud += 1
+            for question in range(len(questions)):
+                if questions[question] == 1:
+                    tempEval = Evaluation()
+                    tempEval.Ran = item['rankings'][question]
+                    tempEval.Ran.reverse()
+                    tempEval.Rat = item['ratings'][question]
+                    tempEval.size = len(tempEval.Ran)
+                    if tempEval.size == self.num_obj:
+                        self.groundtruth = item['groundtruth'][question]
+                        tempEval.Vsub = []
+                        for j in range(tempEval.size):
+                            tempEval.Vsub.append(j+1)
+                    else:
+                        tempEval.Vsub = map(val2rank, item['groundtruth'][question])
+                        self.groundtruth = [50 + i for i in range(32)]
+                        #for i in range(len(ground_truth)):
+                         #       self.groundtruth[tempEval.Vsub[i]-1] = ground_truth[i]
+                    self.max_rat = max(self.groundtruth)
+                    self.min_rat = min(self.groundtruth)
+                    self.evs.append(tempEval)
+                    self.num_jud += 1
 
     def build_Pairwise_Graph(self):
         # Initialize to all zeros
@@ -369,11 +524,11 @@ def callibrate_model(solns, data):
     return solns
 
 
-def rating_and_ranking_model(file_name, num_obj, noise_level):
+def rating_and_ranking_model(file_name, num_obj, questions):
 
     prof = Profile(num_obj)
 
-    prof.assign_rank(file_name, noise_level)
+    prof.assign_rank(file_name, questions)
     prof.set_SCI()
     prof.calc_instance_stats()
 
@@ -530,24 +685,23 @@ def rating_and_ranking_model(file_name, num_obj, noise_level):
             Ratings[k][prof.evs[k].Vsub[i] - 1] = prof.evs[k].Rat[i]
     rating = callibrate_model(x, Ratings)
 
-    rating = rating[::-1]
-
     # Relative optimality gap
     Gap = prob_RR.solution.MIP.get_mip_relative_gap()
 
     #get distances
-    true_rating = prof.groundtruth
+    true_rating = [50 + i for i in range(32)]
     L1 = scipy.spatial.distance.cityblock(rating,true_rating)
     L2 = scipy.spatial.distance.euclidean(rating,true_rating)
+
 
     return ranking, rating, dist, Gap, total_time, L1, L2
 
 
-def ranking_only_model(file_name, num_obj, noise_level):
+def ranking_only_model(file_name, num_obj, question):
 
     prof = Profile(num_obj)
 
-    prof.assign_rank(file_name, noise_level)
+    prof.assign_rank(file_name, question)
     prof.set_SCI()
     prof.calc_instance_stats()
 
@@ -628,11 +782,11 @@ def ranking_only_model(file_name, num_obj, noise_level):
     return ranking, dist, Gap, total_time
 
 
-def separation_deviation_model(file_name, num_obj, noise_level, lambda1, lambda2):
+def separation_deviation_model(file_name, num_obj, question, lambda1, lambda2):
 
     prof = Profile(num_obj)
 
-    prof.assign_rank(file_name, noise_level)
+    prof.assign_rank(file_name, question)
     prof.set_SCI()
     prof.calc_instance_stats()
 
@@ -765,17 +919,17 @@ def separation_deviation_model(file_name, num_obj, noise_level, lambda1, lambda2
     Gap = prob_SD.solution.MIP.get_mip_relative_gap()
 
     #get distances
-    true_rating = prof.groundtruth
+    true_rating = [50 + i for i in range(32)]
     L1 = scipy.spatial.distance.cityblock(rating,true_rating)
     L2 = scipy.spatial.distance.euclidean(rating,true_rating)
 
     return ranking, rating, dist, Gap, total_time, L1, L2
 
 
-def ratings_only_model(file_name, num_obj, noise_level):
+def ratings_only_model(file_name, num_obj, question):
     prof = Profile(num_obj)
 
-    prof.assign_rank(file_name, noise_level)
+    prof.assign_rank(file_name, question)
     prof.set_SCI()
     prof.calc_instance_stats()
 
@@ -880,89 +1034,144 @@ def ratings_only_model(file_name, num_obj, noise_level):
     Gap = prob_FM.solution.MIP.get_mip_relative_gap()
 
     #get distances
-    true_rating = prof.groundtruth
+    true_rating = [50 + i for i in range(32)]
     L1 = scipy.spatial.distance.cityblock(rating,true_rating)
     L2 = scipy.spatial.distance.euclidean(rating,true_rating)
 
     return ranking, rating, dist, Gap, total_time, L1, L2
 
 
-#for computing averages
-def findPosition(num, groundtruth):
-    found = None
-    for i in range(len(groundtruth)):
-        for j in range(len(groundtruth[i])):
-            if int(num) == int(groundtruth[i][j]):
-                return i,j
+def averages(file_name, num_obj, questions):
 
-
-def averages(file_name, num_obj, noise_level):
-
+    #initialize arrays 
     gtruth = [50 + i for i in range(32)]
-    rankgtruth = [1 + i for i in range(32)]
+    rankgtruth = [32 - i for i in range(32)]
 
+    #load in data
     with open(file_name, "r") as read_file:
         data = json.load(read_file)
 
-    responseCount = 0
-    ratingAverages = [0] * 32
+    ratingSums = [0] * 32
+    numberCounts = [0] * 32
 
-    
-    for response in data:
-        groundtruth = response["groundtruth"]
-        rating = response["ratings"]
+    #find rating averages
+    for item in data:
+        for question in range(len(questions)):
+            if questions[question] == 1:
+                rating = item['ratings'][question]
+                truth = item['groundtruth'][question]
 
-        for i in range(len(gtruth)):
-            x,y = findPosition(gtruth[i], groundtruth)
-            ratingAverages[i] += rating[x][y]
+                for l in range(len(truth)):
+                    idx = gtruth.index(truth[l])
+                    ratingSums[idx] += rating[l]
+                    numberCounts[idx] += 1
 
-        responseCount += 1
+    ratingAverages = list(map(truediv, ratingSums, numberCounts))
 
-    ratingAverages = [x / responseCount for x in ratingAverages]
-
-    #get ranking based on ratings
-    index = 1
+    #get ranking based on rating averages
+    index = 32
     rankingAverages = [0] * num_obj
     temp = list(ratingAverages)
     for i in range(num_obj):
         minpos = temp.index(min(temp))
         rankingAverages[minpos] = index
         temp[minpos] = 9999
-        index += 1
-
-    print(rankingAverages)
-    print(gtruth)
+        index -= 1
 
     dist = ks_GT(rankingAverages, rankgtruth)
 
+    #get distance
     L1 = scipy.spatial.distance.cityblock(ratingAverages,gtruth)
     L2 = scipy.spatial.distance.euclidean(ratingAverages,gtruth)
 
     return rankingAverages, ratingAverages, dist, L1, L2
 
-input_file = 'responseData.json'
 
-noise_level = 1
+input_file = '12-06-2019.json'
 objects = 32
+num_activities = 8
+size = 1
 
-# Ratings and ranking model
-RR_rank, RR_rat, RR_dist, RR_gap, RR_time, RR_L1, RR_L2 = rating_and_ranking_model(input_file, objects, noise_level)
-# Rankings only model
-OA_rank, OA_dist, OA_gap, OA_time = ranking_only_model(input_file, objects, noise_level)
-# Ratings only model (Fishbain moreno model)
-CA_rank, CA_rat, CA_dist, CA_gap, CA_time, CA_L1, CA_L2 = ratings_only_model(input_file, objects, noise_level)
-# Separation deviation model
-SD_rank, SD_rat, SD_dist, SD_gap, SD_time, SD_L1, SD_L2 = separation_deviation_model(input_file, objects, noise_level, 1, 1)
+sample = Sampler(size,num_activities, input_file, objects)
+
+#print incompleteness level
+print("Incompleteness level: " + str(size))
+
+#rankings only model
+OA_dist = sample.sample_ranking_only_model()
+#ratings and rankings model
+RR_dist, RR_L2 = sample.sample_rating_and_ranking_model()
+#ratings only model
+CA_dist, CA_L2 = sample.sample_ratings_only_model()
+#separation deviation model
+SD_dist, SD_L2 = sample.sample_separation_deviation_model()
 #averages
-A_rank, A_rat, A_dist, A_L1, A_L2 = averages(input_file, objects, noise_level)
+A_dist, A_L2 = sample.sample_averages()
+
+
+print('rankings only :')
+print(OA_dist)
+
+print('ratings and rankings:')
+print(RR_dist)
+print(RR_L2)
+
+print('ratings only:')
+print(CA_dist)
+print(CA_L2)
+
+print('separation deviation: ')
+print(SD_dist)
+print(SD_L2)
+
+print('averages: ')
+print(A_dist)
+print(A_L2)
+
+
+
+
+
+
+
+'''
+# Ratings and ranking model
+RR_rank, RR_rat, RR_dist, RR_gap, RR_time, RR_L1, RR_L2 = rating_and_ranking_model(input_file, objects, questions)
+# Rankings only model
+OA_rank, OA_dist, OA_gap, OA_time = ranking_only_model(input_file, objects, questions)
+# Ratings only model (Fishbain moreno model)
+CA_rank, CA_rat, CA_dist, CA_gap, CA_time, CA_L1, CA_L2 = ratings_only_model(input_file, objects, questions)
+# Separation deviation model
+SD_rank, SD_rat, SD_dist, SD_gap, SD_time, SD_L1, SD_L2 = separation_deviation_model(input_file, objects, questions, 1, 1)
+#averages
+A_rank, A_rat, A_dist, A_L1, A_L2 = averages(input_file, objects, questions)
 
 print('ranking only model')
-print(OA_rank, OA_dist, OA_gap, OA_time)
+print('rank: ' + str(OA_rank))
+print('distance: ' + str(OA_dist))
+
 print('ratings and rankings model')
-print(RR_rank, RR_rat, RR_dist, RR_gap, RR_time, RR_L1, RR_L2)
+print('rank: ' + str(RR_rank))
+print('rating: ' + str(RR_rat))
+print('KS Distance: ' + str(RR_dist))
+print('L2 Distance: ' + str(RR_L2))
+
 print('rating only model')
-print(CA_rank, CA_rat, CA_dist, CA_gap, CA_time, CA_L1, CA_L2)
+print('rank: ' + str(CA_rank))
+print('rating: ' + str(CA_rat))
+print('KS Distance: ' + str(CA_dist))
+print('L2 Distance: ' + str(CA_L2))
+
 print('separation deviation model')
-print(SD_rank, SD_rat, SD_dist, SD_gap, SD_time, SD_L1, SD_L2)
+print('rank: ' + str(SD_rank))
+print('rating: ' + str(SD_rat))
+print('KS Distance: ' + str(SD_dist))
+print('L2 Distance: ' + str(SD_L2))
+
 print('averages')
-print(A_rank, A_rat, A_dist, A_L1, A_L2)
+print('rank: ' + str(A_rank))
+print('rating: ' + str(A_rat))
+print('KS Distance: ' + str(A_dist))
+print('L2 Distance: ' + str(A_L2))
+
+'''
