@@ -18,7 +18,8 @@ let getUserInstance = uid => users.find(user => user.id === uid);
 
 //store userID and load first activity
 router.post('/', function(req,res,next){
-
+	
+  console.log(users)
   //prompt to enter username if null
   if (!req.body.userID) {
     res.render('index', {error: "ERROR: Please enter a username"});
