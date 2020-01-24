@@ -128,17 +128,36 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
   let time = data[0]
   let rating = data[1]
 
-  //return if rating is not valid
-  if(isNaN(rating) || rating === ''){
-    return;
-  }
-
   let currentUser = getUserInstance(userID);
   let batch = currentUser.batch();
   let frames = currentUser.frames();
 
-  //store if rating is valid input
-  storeQuestion.storeRating(userID, id, picture, rating, time, batch, frames)
+  if(picture === "B"){
+
+    console.log('sent to b')
+
+    for(var i = 0; i < frames; i++){
+      if(isNaN(rating[i]) || rating[i] === ''){
+        return;
+      }
+    }
+
+    storeQuestion.storeMultipleRatings(userID, id, rating, time, batch, frames)
+
+  } else {
+
+    console.log('sent to a')
+
+    //return if rating is not valid
+    if(isNaN(rating) || rating === ''){
+      return;
+    }
+
+    //store if rating is valid input
+    storeQuestion.storeRating(userID, id, picture, rating, time, batch, frames)
+
+  }
+
 
 });
 
@@ -178,38 +197,31 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
 
 });
 
-//TODO: ratings B routing 
-
-//send ratings B
-router.post(':s?/:t?/:d?/:f?/:userID/:id/B/sendRatings/', function(req,res,next){
-
-  //collect variables from front end
-  userID = req.params.userID
-  id = req.params.id;
-  let data = Object.keys(req.body);
-  data = JSON.parse(data)
-
-  let time = data[0]
-  let rating = data[1]
-
-  //return if rating is not valid
-
-  let currentUser = getUserInstance(userID);
-  let batch = currentUser.batch();
-  let frames = currentUser.frames();
-
-  storeQuestion.storeMultipleRatings(userID, id, rating, time, batch, frames)
-  
-});
-
 
 router.post('/:id/ratingsB/B/:userID', function(req,res,next){
 
   //get ratings from req.body
 
   let currentUser = getUserInstance(req.params.userID);
+  frames = currentUser.frames()
   currentUser.activityID += 1
   currentUser.studyQuestion += 1
+
+  console.log(req.body)
+
+  //NOTE: Need to fix errors for this 
+  
+/*
+  //collect ratings and see if valid
+  for(var i = 0; i< frames; i++){
+    str = i.toString()
+    rating = req.body.input+str;
+    if(isNaN(rating) || rating === ''){
+      res.render('ratings2', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", frames: currentUser.frames(), question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
+      return;
+    }
+  }
+  */
 
   if(currentUser.studyQuestion === 5){
     loadQuestion.loadNextStudy(req,res,currentUser)

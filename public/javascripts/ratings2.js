@@ -1,3 +1,5 @@
+//import { svg } from "d3";
+
 function renderQuestion(question, id, userID, frames){
 
     console.log(question)
@@ -38,6 +40,7 @@ function renderQuestion(question, id, userID, frames){
 
     //grouping for image
     let svg4image = d3.select('.images').append('svg')
+        .attr("id", "svg4images")
         .attr("width", svgimagewidth)
         .attr("height", svg4rating_height)
 
@@ -83,37 +86,62 @@ function renderQuestion(question, id, userID, frames){
 
         .attr("width", rankingImageSize)
         .attr("height", rankingImageSize)
+    
 
-    for(var ii = 0; ii < frames; ii++){
-        var testest = document.createElement("foreignobject");
+    let est = d3.select(".estimations").append('svg')
+        .attr("id", "estimations")
+        .attr("width", svgimagewidth)
+        .attr("height", 150)
+
+    for(var i = 0; i < frames; i++){
+        var str = i.toString();
+        est.append('foreignObject')
+            .attr("id","element"+str)
+            .attr("x", (2 + space - 10 + (rankingImageSize +  gap4images) * i)) //Note took out "space + 2"
+            .attr("y", 50)
+            .attr("width", 200)
+            .attr("height", 40)
+        }
+
+
+    for(var i = 0; i < frames; i++){
+
         var box = document.createElement("input")
-        var str = ii.toString();
-        testest.setAttribute("id","element"+str)
+        var str = i.toString();
+        
         box.setAttribute("type", "text")
-        document.getElementById(str).appendChild(testest);
+        box.setAttribute("class", "form-control")
+        box.setAttribute("style", "margin-bottom: 30px; width: 150px; margin-left: auto; margin-right: auto;")
+        box.setAttribute("autocomplete", "off")
+        box.setAttribute("placeholder", "Enter Estimate")
+        box.setAttribute("aria-label", "Enter Estimate")
+        box.setAttribute("aria-describedby", "basic-addon2")
+        box.setAttribute("id","input"+str)
+
         document.getElementById("element"+str).appendChild(box)
     }
         
     d3.select(".btn.btn-success.nextBtn").on("click", function () {
-        //console.log("Button Clicked");
-        //console.log(userID)
-        //console.log(id)
         var endTime = new Date().getTime();
         var timeSpent = endTime - startTime;
-        rating = document.getElementById("rating").value
-        sendData(id, userID, picture, timeSpent, rating)
+        ratings = []
+        for(var i = 0; i < frames; i++){
+            var str = i.toString();
+            rating = document.getElementById("input"+str).value
+            ratings.push(rating)
+        }
+        sendData(id, userID, picture, timeSpent, ratings)
     })
 }
 
-function sendData(id, userID, picture, time, rating){
+function sendData(id, userID, picture, time, ratings){
     //console.log("sending data")
     
     //url2go =  id + "/rankings"
-    url2go = userID + "/" + id + "/" + picture + "/sendRatings/"
+    url2go = userID + "/" + id + "/B/sendRatings/"
 
-    data2send = [time, rating]
+    data2send = [time, ratings]
     
-    /*
     //add ajax function
     new Promise((resolve, reject) => {
             $.ajax({
@@ -125,5 +153,4 @@ function sendData(id, userID, picture, time, rating){
             });
         });
 
-    */
 }

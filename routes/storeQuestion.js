@@ -64,7 +64,7 @@ const storeModule = {
 
     },
 
-    storeMultipleRatings: function(userID, id, rating, time, batch, frames){
+    storeMultipleRatings: function(userID, id, ratings, time, batch, frames){
 
         co(function* () {
 
@@ -79,7 +79,7 @@ const storeModule = {
                 "study": "b",
                 "frames": frames,
                 "type": "rating",
-                "estimate": rating,
+                "estimates": ratings,
                 "time": time
             }
 
