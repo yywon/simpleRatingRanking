@@ -16,7 +16,7 @@ const loadModule = {
         co(function* () {
 
           let client = yield MongoClient.connect(url);
-          const db = client.db('ratingsrankingsframes')
+          const db = client.db('ratingsrankingsA')
           let usersCol = db.collection('users')
           let batchesCol = db.collection('batches')
 
@@ -34,7 +34,7 @@ const loadModule = {
 
               console.log(batch)
 
-              dbBatch = yield batchesColA.findOne({'size': frame, 'number': batch})
+              dbBatch = yield batchesCol.findOne({'size': frame, 'number': batch})
 
               console.log(dbBatch)
             
@@ -49,7 +49,7 @@ const loadModule = {
                   update = {"$set": {}}
                   update['$set']["assignmentStatus."+question] = 1
 
-                  batchesColA.updateOne( {'size': dbBatch.size, 'number': dbBatch.number}, update)
+                  batchesCol.updateOne( {'size': dbBatch.size, 'number': dbBatch.number}, update)
 
                   break findQuestions;
                 }
@@ -104,11 +104,11 @@ const loadModule = {
       co(function* () {
 
         let client = yield MongoClient.connect(url);
-        const db = client.db('ratingsrankingsframes')
+        const db = client.db('ratingsrankingsA')
         let usersCol = db.collection('users')
         let responseCol = db.collection('responses')
 
-        check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking', "study": user.study()})
+        check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
 
         if (check === null){
           res.render('rankings', {userID : user.id, id: user.activityID , type: "rankings", frames: user.frames(), question: user.question(), error: "ERROR: Please submit a complete ranking"})
@@ -131,7 +131,7 @@ const loadModule = {
         co(function* () {
 
           let client = yield MongoClient.connect(url);
-          const db = client.db('ratingsrankingsframes')
+          const db = client.db('ratingsrankingsA')
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
 
@@ -158,7 +158,7 @@ const loadModule = {
     },
 
     loadSurvey: function(req,res,user){
-      res.render('survey')
+      res.render('survey', {userID: user.id})
     }
 
 }

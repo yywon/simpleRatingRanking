@@ -86,7 +86,7 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
   group.pop()
 
   //store ranking
-  storeQuestion.storeRanking(userID, id, group, time, frames, batch, study)
+  storeQuestion.storeRanking(userID, id, group, time, frames, batch)
 
 });
 

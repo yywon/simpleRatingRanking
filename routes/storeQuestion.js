@@ -21,7 +21,7 @@ const storeModule = {
             
             //connect to db
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsframes')
+            const db = client.db('ratingsrankingsA')
             let responseCol = db.collection('responses')
 
             var item = {
@@ -38,7 +38,6 @@ const storeModule = {
                 "user": userID, 
                 "collection": id, 
                 "type": "ranking",
-                "study": study
             }
 
             var newItem = {
@@ -63,47 +62,19 @@ const storeModule = {
 
     },
 
-    storeMultipleRatings: function(userID, id, ratings, time, batch, frames){
-
-        co(function* () {
-
-            let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsframes')
-            let responseCol = db.collection('responses')
-
-            var item = {
-                "user" : userID,
-                "collection": id,
-                "batch": batch,
-                "study": "b",
-                "frames": frames,
-                "type": "rating",
-                "estimates": ratings,
-                "time": time
-            }
-
-            responseCol.insertOne(item, function(err, result) {
-                //console.log('Rating inserted')
-            });
-        })
-    },
-
     storeRating: function(userID, id, picture, rating, time, batch, frames) {
 
         //insert rating into db
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsframes')
+            const db = client.db('ratingsrankingsA')
             let responseCol = db.collection('responses')
-
-            //NOTE: Study is a
 
             var item = {
                 "user" : userID,
                 "collection": id,
                 "batch": batch,
-                "study": "a",
                 "frames": frames,
                 "type": "rating",
                 "picture": picture,
@@ -114,6 +85,9 @@ const storeModule = {
             responseCol.insertOne(item, function(err, result) {
                 //console.log('Rating inserted')
             });
+
+            client.close();
+
         });
     },
 
@@ -121,7 +95,7 @@ const storeModule = {
 
         co(function* () {
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsframes')
+            const db = client.db('ratingsrankingsA')
             let UsersCol = db.collection('users')
 
             newItem = {
