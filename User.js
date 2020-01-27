@@ -10,35 +10,18 @@ module.exports = class User {
         this.studyQuestion = num
     }
 
-    saveABOrder(order){
-        this.abOrder = order
+    saveQuestionOrder(order){
+        this.questionOrder = order
     }
 
-    saveQuestionOrderA(order){
-        this.questionOrderA = order
+    saveIndexOrder(order){
+        this.indexOrder = order
     }
 
-    saveIndexOrderA(order){
-        this.indexOrderA = order
-    }
-
-    saveQuestionOrderB(order){
-        this.questionOrderB = order
-    }
-
-    saveIndexOrderB(order){
-        this.indexOrderB = order
-    }
-
-    saveCurrentQuestion(study, question, batch, length) {
-        this.currentStudy = study
+    saveCurrentQuestion(question, batch, length) {
         this.currentQuestion = question;
         this.currentBatch = batch
         this.currentFrames = length
-    }
-
-    study(){
-        return this.currentStudy
     }
 
     question() {
@@ -53,25 +36,12 @@ module.exports = class User {
         return this.currentFrames
     }
 
-    getQuestionOrderA() {
-        return this.questionOrderA;
+    getQuestionOrder() {
+        return this.questionOrder;
     }
 
-    getIndexOrderA() {
-        return this.indexOrderA;
+    getIndexOrder() {
+        return this.indexOrder;
     }
-
-    getQuestionOrderB() {
-        return this.questionOrderB;
-    }
-
-    getIndexOrderB() {
-        return this.indexOrderB;
-    }
-
-    getABOrder() {
-        return this.abOrder
-    }
-
     
 };

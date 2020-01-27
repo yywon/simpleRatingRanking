@@ -57,16 +57,11 @@ router.post('/', function(req,res,next){
 //load new rating question
 router.post('/:id/rankings/:userID', function(req, res, next){
 
-  //Fetch instance of current user
-  let currentUser = getUserInstance(req.params.userID);
-
-  //TODO: Make if else statement for study
-  if(currentUser.study() === "a"){
-    //load next question
-    loadQuestion.loadAfterRankingA(req, res, currentUser);
-  } else{
-    loadQuestion.loadAfterRankingB(req, res, currentUser);
-  }
+  setTimeout(function (){
+    //Fetch instance of current user
+    let currentUser = getUserInstance(req.params.userID);
+    loadQuestion.loadAfterRanking(req, res, currentUser);
+  }, 250)
 
 });
 
@@ -86,17 +81,14 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
   let currentUser = getUserInstance(userID);
   let batch = currentUser.batch();
   let frames = currentUser.frames();
-  let study = currentUser.study();
 
   //get rid of extra time variable in the group (so that group only constains ranking)
   group.pop()
 
   //store ranking
-  storeQuestion.storeRanking(userID, id, group, time, frames, batch, study)
+  storeQuestion.storeRanking(userID, id, group, time, frames, batch)
 
 });
-
-
 
 //send survey questions
 router.post('/:s?/:t?/:d?/:f?/:userID/sendSurvey', function(req,res,next){
@@ -115,8 +107,10 @@ router.post('/:s?/:t?/:d?/:f?/:userID/sendSurvey', function(req,res,next){
 
 })
 
-//send ratings A
+//send ratings 
 router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,res,next){
+
+  console.log("in the funcccc")
 
   //collect variables from front end
   userID = req.params.userID
@@ -127,109 +121,36 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
 
   let time = data[0]
   let rating = data[1]
+  console.log('ratings', rating)
 
   let currentUser = getUserInstance(userID);
   let batch = currentUser.batch();
   let frames = currentUser.frames();
+  
+  var ratingInt = rating.map(function (x){
+    return parseInt(x)
+  })
 
-  if(picture === "B"){
-
-    console.log('sent to b')
-
-    for(var i = 0; i < frames; i++){
-      if(isNaN(rating[i]) || rating[i] === ''){
-        return;
-      }
-    }
-
-    storeQuestion.storeMultipleRatings(userID, id, rating, time, batch, frames)
-
-  } else {
-
-    console.log('sent to a')
-
-    //return if rating is not valid
-    if(isNaN(rating) || rating === ''){
+  for(var i = 0; i < frames; i++){
+    if(isNaN(ratingInt[i]) || ratingInt[i] === ''){
       return;
     }
-
-    //store if rating is valid input
-    storeQuestion.storeRating(userID, id, picture, rating, time, batch, frames)
-
   }
 
+  console.log('made it')
+  storeQuestion.storeMultipleRatings(userID, id, rating, time, batch, frames)
 
 });
-
-//load next rating page (will only be called in study a)
-router.post('/:id/ratings/:picture/:userID', function(req,res,next){
-
-  //collect variables
-  rating = req.body.rating;
-  time = req.body.time;
-  id = req.params.id;
-  picture = req.params.picture;
-
-  //Fetch current user instance
-  let currentUser = getUserInstance(req.params.userID);
-
-  //render next page if input is valid
-  if(isNaN(rating) || rating === ''){
-    res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
-    return;
-  }
-
-  //increment activity ID if user makes it to the final picture
-  if(parseInt(picture) === currentUser.frames() - 1){
-    currentUser.activityID += 1
-    currentUser.studyQuestion += 1
-  }
-
-  console.log(currentUser)
-
-  //load survey if activity is complete
-  if(currentUser.studyQuestion === 5 && parseInt(picture) === (currentUser.frames() - 1)){
-    loadQuestion.loadNextStudy(req,res,currentUser)
-    return;
-  } else{}
-    
-  loadQuestion.loadAfterRatingA(req, res, currentUser, picture);
-
-});
-
 
 router.post('/:id/ratingsB/B/:userID', function(req,res,next){
 
-  //get ratings from req.body
+  setTimeout(function (){
+    let currentUser = getUserInstance(req.params.userID);
+    frames = currentUser.frames()
 
-  let currentUser = getUserInstance(req.params.userID);
-  frames = currentUser.frames()
-  currentUser.activityID += 1
-  currentUser.studyQuestion += 1
+    loadQuestion.loadAfterRating(req, res, currentUser)
 
-  console.log(req.body)
-
-  //NOTE: Need to fix errors for this 
-  
-/*
-  //collect ratings and see if valid
-  for(var i = 0; i< frames; i++){
-    str = i.toString()
-    rating = req.body.input+str;
-    if(isNaN(rating) || rating === ''){
-      res.render('ratings2', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", frames: currentUser.frames(), question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
-      return;
-    }
-  }
-  */
-
-  if(currentUser.studyQuestion === 5){
-    loadQuestion.loadNextStudy(req,res,currentUser)
-    return;
-  } 
-
-  loadQuestion.loadAfterRatingB(req, res, currentUser)
-
+  }, 250)
 })
 
 module.exports = router;

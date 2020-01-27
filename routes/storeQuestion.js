@@ -11,7 +11,7 @@ let assignQuestions = require('./assignBatch')
 
 const storeModule = {
 
-    storeRanking: function(userID, id, group2save, time, frames, batch, study){
+    storeRanking: function(userID, id, group2save, time, frames, batch){
 
         //store into dbsho
         co(function* () {
@@ -21,13 +21,12 @@ const storeModule = {
             
             //connect to db
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsframes')
+            const db = client.db('ratingsrankingsB')
             let responseCol = db.collection('responses')
 
             var item = {
                 "user" : userID,
                 "collection": id,
-                "study": study,
                 "frames": frames,
                 "batch": batch,
                 "type": "ranking",
@@ -38,8 +37,7 @@ const storeModule = {
             var criteria = {
                 "user": userID, 
                 "collection": id, 
-                "type": "ranking",
-                "study": study
+                "type": "ranking"
             }
 
             var newItem = {
@@ -69,14 +67,13 @@ const storeModule = {
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsframes')
+            const db = client.db('ratingsrankingsB')
             let responseCol = db.collection('responses')
 
             var item = {
                 "user" : userID,
                 "collection": id,
                 "batch": batch,
-                "study": "b",
                 "frames": frames,
                 "type": "rating",
                 "estimates": ratings,
@@ -84,45 +81,16 @@ const storeModule = {
             }
 
             responseCol.insertOne(item, function(err, result) {
-                //console.log('Rating inserted')
+                console.log('Rating inserted')
             });
         })
-    },
-
-    storeRating: function(userID, id, picture, rating, time, batch, frames) {
-
-        //insert rating into db
-        co(function* () {
-
-            let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsframes')
-            let responseCol = db.collection('responses')
-
-            //NOTE: Study is a
-
-            var item = {
-                "user" : userID,
-                "collection": id,
-                "batch": batch,
-                "study": "a",
-                "frames": frames,
-                "type": "rating",
-                "picture": picture,
-                "estimate": rating,
-                "time": time
-            }
-
-            responseCol.insertOne(item, function(err, result) {
-                //console.log('Rating inserted')
-            });
-        });
     },
 
     storeSurvey: function(userID, result, key){
 
         co(function* () {
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsframes')
+            const db = client.db('ratingsrankingsB')
             let UsersCol = db.collection('users')
 
             newItem = {

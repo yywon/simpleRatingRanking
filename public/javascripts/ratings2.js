@@ -130,12 +130,12 @@ function renderQuestion(question, id, userID, frames){
             rating = document.getElementById("input"+str).value
             ratings.push(rating)
         }
-        sendData(id, userID, picture, timeSpent, ratings)
+        sendData(id, userID, timeSpent, ratings)
     })
 }
 
-function sendData(id, userID, picture, time, ratings){
-    //console.log("sending data")
+function sendData(id, userID, time, ratings){
+    console.log("sending data")
     
     //url2go =  id + "/rankings"
     url2go = userID + "/" + id + "/B/sendRatings/"
