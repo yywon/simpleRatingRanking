@@ -11,7 +11,7 @@ let assignQuestions = require('./assignBatch')
 
 const storeModule = {
 
-    storeRanking: function(userID, id, group2save, time, frames, batch, study){
+    storeRanking: function(userID, id, group2save, time, frames, batch){
 
         //store into dbsho
         co(function* () {
@@ -27,7 +27,6 @@ const storeModule = {
             var item = {
                 "user" : userID,
                 "collection": id,
-                "study": study,
                 "frames": frames,
                 "batch": batch,
                 "type": "ranking",
