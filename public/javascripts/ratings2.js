@@ -70,7 +70,7 @@ function renderQuestion(question, id, userID, frames){
         .data(question)
         .enter().append("image")
         .attr('xlink:href', function (d, i) {
-            let path4image = "/images/dots/" + d + ".png"
+            let path4image = "/images/dots/dots" + topNSize + "/" + d + ".png"
             return path4image
         })
 

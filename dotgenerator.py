@@ -18,7 +18,7 @@ pictureData = []
 os.chdir(PATH)
 
 #each picture per noise level
-for j in range(60):
+for j in range(30):
     N = Base + j
 
     pictureData.append(N)
