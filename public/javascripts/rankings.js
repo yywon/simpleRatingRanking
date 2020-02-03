@@ -121,7 +121,7 @@ function renderQuestion(question, id, userID, frames){
         .data(question)
         .enter().append("image")
         .attr('xlink:href', function (d, i) {
-            let path4image = "/images/dots/" + d + ".png"
+            let path4image = "/images/dots/dots" + topNSize + "/" + d + ".png"
             return path4image
         })
 
@@ -200,7 +200,7 @@ function renderQuestion(question, id, userID, frames){
 
             //console.log("length: ", rankingOrder.length)
             
-            if (rankingOrder.length > (frames - 1)){
+            if (rankingOrder.length > (topNSize - 1)){
 
                 var endTime = new Date().getTime();
                 var timeSpent = endTime- startTime;

@@ -5,8 +5,8 @@ var assert = require('assert');
 const co = require('co');
 var shuffle = require('shuffle-array');
 
-//var url = 'mongodb://localhost:27017/';
-var url = 'mongodb://10.218.105.218:27017/';
+var url = 'mongodb://localhost:27017/';
+//var url = 'mongodb://10.218.105.218:27017/';
 
 var userID = null
 let loadQuestion = require('./loadQuestion')
@@ -22,7 +22,7 @@ const Batch = require('../batch');
 
 //assign batches
 //NOTE: comment this out if batches are already populated
-//assignBatch.assign(url)
+assignBatch.assign(url)
 
 //function to get current issues of Users
 let getUserInstance = uid => users.find(user => user.id === uid);
@@ -127,7 +127,7 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
   let frames = currentUser.frames();
 
   //return if rating is not valid
-  if(isNaN(rating) || rating === ''){
+  if(isNaN(rating) || rating.trim() === ''){
     return;
   }
   //store if rating is valid input
@@ -148,7 +148,7 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
   let currentUser = getUserInstance(req.params.userID);
 
   //render next page if input is valid
-  if(isNaN(rating) || rating === ''){
+  if(isNaN(rating) || rating.trim() === ''){
     res.render('ratings', { userID: currentUser.id , id: currentUser.activityID , type: "ratings", picture, question: currentUser.question(), error: "ERROR: Please submit a valid estimate"})
     return;
   }

@@ -3,6 +3,7 @@ function renderQuestion(question, picture, id, userID){
     var startTime = new Date().getTime(); 
 
     candidate = question[picture]
+    frames = question.length
 
     d3.select(".activity").html("")
 
@@ -36,13 +37,11 @@ function renderQuestion(question, picture, id, userID){
             .attr("class", "g4image")
 
         let img = g4image.append("image")
-            .attr('xlink:href', "/images/dots/" + candidate + ".png")
+            .attr('xlink:href', "/images/dots/dots"+ frames + "/" + candidate + ".png")
             .attr("x", imageSize + 2)
             .attr("y", 2)
             .attr("width", imageSize)
             .attr("height", imageSize)
-    
-    var data = [0, 50, 100, 150, 200, 250, 300, 350, 400];
 
     d3.select(".btn.btn-success.nextBtn").on("click", function () {
         //console.log("Button Clicked");

@@ -4,8 +4,10 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://10.218.105.218:27017/';
-//var url = 'mongodb://localhost:27017/';
+//var url = 'mongodb://10.218.105.218:27017/';
+var url = 'mongodb://localhost:27017/';
+
+var datab = 'ratingsrankingsA1'
 
 let assignQuestions = require('./assignBatch')
 
@@ -21,7 +23,7 @@ const storeModule = {
             
             //connect to db
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsA')
+            const db = client.db(datab)
             let responseCol = db.collection('responses')
 
             var item = {
@@ -68,7 +70,7 @@ const storeModule = {
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsA')
+            const db = client.db(datab)
             let responseCol = db.collection('responses')
 
             var item = {
@@ -95,7 +97,7 @@ const storeModule = {
 
         co(function* () {
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsA')
+            const db = client.db(datab)
             let UsersCol = db.collection('users')
 
             newItem = {
