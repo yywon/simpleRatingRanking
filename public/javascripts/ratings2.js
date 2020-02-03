@@ -2,7 +2,7 @@
 
 function renderQuestion(question, id, userID, frames){
 
-    console.log(question)
+    //console.log(question)
 
     var startTime = new Date().getTime();
     
@@ -135,7 +135,7 @@ function renderQuestion(question, id, userID, frames){
 }
 
 function sendData(id, userID, time, ratings){
-    console.log("sending data")
+    //console.log("sending data")
     
     //url2go =  id + "/rankings"
     url2go = userID + "/" + id + "/B/sendRatings/"
