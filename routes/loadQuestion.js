@@ -4,8 +4,10 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-var url = 'mongodb://10.218.105.218:27017/';
-//var url = 'mongodb://localhost:27017/';
+//var url = 'mongodb://10.218.105.218:27017/';
+var url = 'mongodb://localhost:27017/';
+
+var dbase = 'ratingsrankingsB1'
 
 const User = require('../User');
 
@@ -16,7 +18,7 @@ const loadModule = {
         co(function* () {
 
           let client = yield MongoClient.connect(url);
-          const db = client.db('ratingsrankingsB')
+          const db = client.db(dbase)
           let usersCol = db.collection('users')
           let batchesCol = db.collection('batches')
 
@@ -86,7 +88,7 @@ const loadModule = {
               questionLength = question2load.length
               indexOrder = user.getIndexOrder()
               questionIndex = indexOrder[0]
-              currentBatch = questionIndex[0]
+              currentBatch = questionIndex[1]
               user.saveCurrentQuestion(JSON.stringify(question2load), currentBatch, questionLength)
             
               res.render('rankings', { userID: user.id , id: user.activityID , type: "rankings", frames: user.frames(), question: user.question()})
@@ -103,7 +105,7 @@ const loadModule = {
         //connect to db
         let client = yield MongoClient.connect(url);
         const db = client.db('ratingsrankingsB')
-        let usersCol = db.collection('users')
+        let usersCol = db.collection(dbase)
         let responseCol = db.collection('responses')
 
         check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'ranking'})
@@ -128,7 +130,7 @@ const loadModule = {
         co(function* () {
 
           let client = yield MongoClient.connect(url);
-          const db = client.db('ratingsrankingsB')
+          const db = client.db(dbase)
           let usersCol = db.collection('users')
           let responseCol = db.collection('responses')
           
@@ -156,8 +158,8 @@ const loadModule = {
               questionLength = question2load.length
 
               indexOrder = user.getIndexOrder()
-              questionIndex = indexOrder[0]
-              currentBatch = questionIndex[0]
+              questionIndex = indexOrder[user.studyQuestion - 1]
+              currentBatch = questionIndex[1]
               user.saveCurrentQuestion(JSON.stringify(question2load), currentBatch, questionLength)
               
               //adjust to next activity

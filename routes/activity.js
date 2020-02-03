@@ -5,8 +5,8 @@ var assert = require('assert');
 const co = require('co');
 var shuffle = require('shuffle-array');
 
-//var url = 'mongodb://localhost:27017/';
-var url = 'mongodb://10.218.105.218:27017/';
+var url = 'mongodb://localhost:27017/';
+//var url = 'mongodb://10.218.105.218:27017/';
 
 var userID = null
 let loadQuestion = require('./loadQuestion')
@@ -132,7 +132,7 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
   })
 
   for(var i = 0; i < frames; i++){
-    if(isNaN(ratingInt[i]) || ratingInt[i] === ''){
+    if(isNaN(ratingInt[i]) || ratingInt[i].trim() === ''){
       return;
     }
   }

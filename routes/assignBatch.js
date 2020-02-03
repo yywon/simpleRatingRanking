@@ -8,6 +8,7 @@ const co = require('co');
 const User = require('../User');
 const Batch = require('../batch');
 
+var dbase = 'ratingsrankingsB1'
 
 const assignModule = {
 
@@ -16,7 +17,7 @@ const assignModule = {
         co(function* () {
 
             let client = yield MongoClient.connect(url);
-            const db = client.db('ratingsrankingsB')
+            const db = client.db(dbase)
             let batchesCol = db.collection('batches')
 
             let i= 0
