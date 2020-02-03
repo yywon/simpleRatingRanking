@@ -169,7 +169,7 @@ let json = {
             title: "How mentally demanding were the ranking questions?",
             minRateDescription: "Very low",
             maxRateDescription: "Very high",
-            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
         },
         {
             type: "rating",
@@ -178,7 +178,7 @@ let json = {
             title: "How mentally demanding were the numberical estimation questions?",
             minRateDescription: "Very low",
             maxRateDescription: "Very high",
-            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
         },
         {
             type: "rating",
@@ -187,7 +187,7 @@ let json = {
             title: "How successful were you at the ranking questions?",
             minRateDescription: "Very low",
             maxRateDescription: "Very high",
-            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
         },
         {
             type: "rating",
@@ -196,7 +196,7 @@ let json = {
             title: "How successful were you at the numberical estimation questions?",
             minRateDescription: "Very low",
             maxRateDescription: "Very high",
-            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
         },
         {
             type: "radiogroup",
