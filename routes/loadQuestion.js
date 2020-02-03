@@ -29,21 +29,21 @@ const loadModule = {
           for(i = 0; i < userOrder.length; i++){
 
             frame = userOrder[i]
-            console.log(frame)
+            //console.log(frame)
 
             findQuestions:
             for(batch = 0; batch < 180/(60/frame); batch++){
 
-              console.log(batch)
+              //console.log(batch)
 
               dbBatch = yield batchesCol.findOne({'size': frame, 'number': batch})
 
-              console.log(dbBatch)
+              //console.log(dbBatch)
             
               for(question = 0; question < dbBatch.assignmentStatus.length; question++){
                 if(dbBatch.assignmentStatus[question] === 0){
 
-                  console.log('question, ', question)
+                  //console.log('question, ', question)
     
                   assignedQuestions.push(dbBatch.questions[question])
                   assginedIndexes.push([frame, dbBatch.number, question])  

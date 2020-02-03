@@ -10,7 +10,7 @@ function renderQuestion(question, id, userID, frames){
     d3.select(".activity").html("")
 
     //Variables
-    console.log(frames)
+    //console.log(frames)
     topNSize = parseInt(frames)
 
     topNPositions = Array.from(Array(topNSize).keys()) //array from 1 to 4
@@ -52,7 +52,7 @@ function renderQuestion(question, id, userID, frames){
 
     let svg4ranking_height = rankingImageSize + rankingImageSize/4;
 
-    console.log(rankingImageSize)
+    //console.log(rankingImageSize)
     
     //Grouping for ranks
 
@@ -253,7 +253,7 @@ function renderQuestion(question, id, userID, frames){
 
         
         d3.select(".btn.btn-success.nextBtn").on("click", function () {
-            console.log("Button Clicked");
+            //console.log("Button Clicked");
             //console.log(userID)
             //console.log(id)
             exitStatus = 1

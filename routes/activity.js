@@ -47,7 +47,7 @@ router.post('/', function(req,res,next){
     
     //assign order of frames seen
     userOrder = shuffle([2,3,5,6]);
-    console.log("order: ", userOrder)
+    //console.log("order: ", userOrder)
 
     //load first question
     loadQuestion.loadFirst(req, res, currentUser, userOrder)
@@ -76,7 +76,7 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/sendRankings/', function(req,res,next){
   group = JSON.parse(group)
   time = group[group.length - 1]
 
-  console.log(group)
+  //console.log(group)
 
   let currentUser = getUserInstance(userID);
   let batch = currentUser.batch();
@@ -159,7 +159,7 @@ router.post('/:id/ratings/:picture/:userID', function(req,res,next){
     currentUser.studyQuestion += 1
   }
 
-  console.log(currentUser)
+  //console.log(currentUser)
 
   //load survey if activity is complete
   if(currentUser.studyQuestion === 5 && parseInt(picture) === (currentUser.frames() - 1)){

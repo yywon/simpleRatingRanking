@@ -2,7 +2,7 @@
 
 function renderQuestion(question, id, userID, frames){
 
-    console.log(question)
+    //console.log(question)
 
     var startTime = new Date().getTime();
     
