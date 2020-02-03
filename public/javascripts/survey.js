@@ -165,34 +165,38 @@ let json = {
         {
             type: "rating",
             isRequired: false,
-            name: "ranking_difficulty",
-            title: "One a scale of 0-5, how easy were the ranking questions?",
-            minRateDescription: "Very difficult",
-            maxRateDescription: "Very easy"
+            name: "ranking_mental_demand",
+            title: "How mentally demanding were the ranking questions?",
+            minRateDescription: "Very low",
+            maxRateDescription: "Very high",
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         },
         {
             type: "rating",
             isRequired: false,
-            name: "rating_difficulty",
-            title: "One a scale of 0-5, how easy were the numberical estimation questions?",
-            minRateDescription: "Very difficult",
-            maxRateDescription: "Very easy"
+            name: "rating_mental_demand",
+            title: "How mentally demanding were the numberical estimation questions?",
+            minRateDescription: "Very low",
+            maxRateDescription: "Very high",
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         },
         {
             type: "rating",
             isRequired: false,
-            name: "ranking_ui",
-            title: "One a scale of 0-5, how much did you like the user interface of the ranking questions?",
-            minRateDescription: "Not enjoyable",
-            maxRateDescription: "Very enjoyable"
+            name: "ranking_performance",
+            title: "How successful were you at the ranking questions?",
+            minRateDescription: "Very low",
+            maxRateDescription: "Very high",
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         },
         {
             type: "rating",
             isRequired: false,
-            name: "rating_ui",
-            title: "One a scale of 0-5, how much did you like the user interface of the numberical estimation questions?",
-            minRateDescription: "Not enjoyable",
-            maxRateDescription: "Very enjoyable"
+            name: "rating_performance",
+            title: "How successful were you at the numberical estimation questions?",
+            minRateDescription: "Very low",
+            maxRateDescription: "Very high",
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
         },
         {
             type: "radiogroup",
