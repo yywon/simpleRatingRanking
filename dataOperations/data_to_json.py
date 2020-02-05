@@ -41,7 +41,6 @@ for user in usersCol.find():
         
 		rank = rankResponse["ranking"]
 		ranking = [int(x) for x in rank]
-		print(ranking)
 		#Note: change rank to format
 		pos = 1
 		for ra in ranking:
@@ -53,7 +52,6 @@ for user in usersCol.find():
 		for j in range(frames):
 			
 			ratingResponse = responsesCol.find_one({"user": userName, "picture": str(j), "collection": str(i), "type": "rating"})
-			print(ratingResponse)
 			ratingResponse = ratingResponse["estimate"]
 			ratingResponse = int(float(ratingResponse))
 			rating.append(ratingResponse)
