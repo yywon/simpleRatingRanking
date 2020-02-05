@@ -3,7 +3,44 @@ Survey
     .StylesManager
     .applyTheme("default");
 let json = {
-    questions: [{
+    questions: [
+        {
+            type: "rating",
+            isRequired: false,
+            name: "ranking_mental_demand",
+            title: "How mentally demanding were the ranking questions?",
+            minRateDescription: "Very low",
+            maxRateDescription: "Very high",
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        },
+        {
+            type: "rating",
+            isRequired: false,
+            name: "rating_mental_demand",
+            title: "How mentally demanding were the numerical estimation questions?",
+            minRateDescription: "Very low",
+            maxRateDescription: "Very high",
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        },
+        {
+            type: "rating",
+            isRequired: false,
+            name: "ranking_performance",
+            title: "How successful were you at the ranking questions?",
+            minRateDescription: "Very low",
+            maxRateDescription: "Very high",
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        },
+        {
+            type: "rating",
+            isRequired: false,
+            name: "rating_performance",
+            title: "How successful were you at the numerical estimation questions?",
+            minRateDescription: "Very low",
+            maxRateDescription: "Very high",
+            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        },
+        {
             name: "age",
             type: "text",
             title: "What is your age?",
@@ -161,42 +198,6 @@ let json = {
                     text: "Greater than 5 years"
                 },
             ]
-        },
-        {
-            type: "rating",
-            isRequired: false,
-            name: "ranking_mental_demand",
-            title: "How mentally demanding were the ranking questions?",
-            minRateDescription: "Very low",
-            maxRateDescription: "Very high",
-            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
-        },
-        {
-            type: "rating",
-            isRequired: false,
-            name: "rating_mental_demand",
-            title: "How mentally demanding were the numberical estimation questions?",
-            minRateDescription: "Very low",
-            maxRateDescription: "Very high",
-            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
-        },
-        {
-            type: "rating",
-            isRequired: false,
-            name: "ranking_performance",
-            title: "How successful were you at the ranking questions?",
-            minRateDescription: "Very low",
-            maxRateDescription: "Very high",
-            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
-        },
-        {
-            type: "rating",
-            isRequired: false,
-            name: "rating_performance",
-            title: "How successful were you at the numberical estimation questions?",
-            minRateDescription: "Very low",
-            maxRateDescription: "Very high",
-            rateValues: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
         },
         {
             type: "radiogroup",
