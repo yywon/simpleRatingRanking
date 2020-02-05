@@ -4,10 +4,11 @@ import sys
 
 responseCount = 20
 
-#url = 'mongodb://localhost:27017/'
-url = 'mongodb://10.218.105.218:27017/'
+url = 'mongodb://localhost:27017/'
+#url = 'mongodb://10.218.105.218:27017/'
 
 dbase = sys.argv[1]
+print(dbase)
 
 client = pymongo.MongoClient(url)
 db = client[dbase]

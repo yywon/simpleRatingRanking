@@ -2,6 +2,7 @@ import pymongo
 import json
 import time
 import datetime
+import sys
 
 #url = 'mongodb://10.218.105.218:27017/'
 url = 'mongodb://localhost:27017/'
@@ -21,6 +22,9 @@ for user in usersCol.find():
 
 	#get username
 	userName = user['user']
+	print(userName)
+	#get questions
+	questions = user['questions']
 
 	#get the users responses for each question 
 	for i in range(1,5):
@@ -37,14 +41,19 @@ for user in usersCol.find():
         
 		rank = rankResponse["ranking"]
 		ranking = [int(x) for x in rank]
-
-		#TODO: change rank to format 
+		print(ranking)
+		#Note: change rank to format
+		pos = 1
+		for ra in ranking:
+			max_index = ranking.index(max(ranking))
+			ranking[max_index] = pos
+			pos += 1 
 
 		#get pictures
 		for j in range(frames):
 			
 			ratingResponse = responsesCol.find_one({"user": userName, "picture": str(j), "collection": str(i), "type": "rating"})
-
+			print(ratingResponse)
 			ratingResponse = ratingResponse["estimate"]
 			ratingResponse = int(float(ratingResponse))
 			rating.append(ratingResponse)
@@ -63,8 +72,10 @@ for user in usersCol.find():
 			questionOrder[l+1] = key
 		
 		question = {
- 			"rankings": rankings,
-			"ratings": ratings,
+			"batch": batch,
+			"frames": frames,
+ 			"rankings": ranking,
+			"ratings": rating,
 			"groundtruth": questionOrder
 		}
 
