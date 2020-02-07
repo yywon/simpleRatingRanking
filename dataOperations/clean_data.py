@@ -34,7 +34,27 @@ for user in usersCol.find():
 
     print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
     
-    if(responseCount >= 20):
+    discard = 0
+    #check if indexes are in valid range
+    for i in range(4):
+        if indexes[i][0] == 2:
+		print('frame: 2 batch: ' + str(indexes[i][1]))
+		if indexes[i][1] > 3:
+			discard = 1
+	if indexes[i][0] == 3:
+		print('frame: 3 batch: ' + str(indexes[i][1])) 
+		if indexes[i][1] > 5:
+			discard = 1
+	if indexes[i][0] == 5:
+		print('frame: 5 batch: ' + str(indexes[i][1])) 
+		if indexes[i][1] > 9:
+			discard = 1
+	if indexes[i][0] == 6:
+		print('frame: 6 batch: ' + str(indexes[i][1])) 
+		if indexes[i][1] > 11:
+			discard = 1
+
+    if(responseCount >= 20 and discard == 0):
         completed_users.append(userName)
     else:
         userRemove += 1
