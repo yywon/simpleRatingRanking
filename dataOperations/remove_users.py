@@ -32,22 +32,21 @@ for user in usersCol.find():
     userName = user["user"]
     indexes = user["indexes"]
     
-    discard = 0
     if userName in badUsers:
-	discard = 1
-	print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
 
-               	#remove assignment from batch 
-                for i in range(len(indexes)):
+	    print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
 
-                    question = str(indexes[i][2])
-                    update = {"$set": {}}
-                    update['$set']["assignmentStatus."+question] = 0
+        #remove assignment from batch 
+        for i in range(len(indexes)):
 
-                    batchesCol.update_one({'size': indexes[i][0], 'number': indexes[i][1]}, update)
+            question = str(indexes[i][2])
+            update = {"$set": {}}
+            update['$set']["assignmentStatus."+question] = 0
+
+            batchesCol.update_one({'size': indexes[i][0], 'number': indexes[i][1]}, update)
                 
-                responsesCol.delete_many({'user' : userName})
-                usersCol.delete_one({'user' : userName})
+        responsesCol.delete_many({'user' : userName})
+        usersCol.delete_one({'user' : userName})
 
 print("Users Removed: " + str(userRemove))
 
