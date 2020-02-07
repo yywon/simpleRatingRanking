@@ -20,7 +20,7 @@ completed_users = []
 
 userRemove = 0
 
-args = len(sys.argv) - 1
+args = len(sys.argv)
 
 badUsers =[]
 for i in range(2, args):
@@ -34,7 +34,7 @@ for user in usersCol.find():
     
     if userName in badUsers:
 
-	    print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
+	print(userName)
 
         #remove assignment from batch 
         for i in range(len(indexes)):
