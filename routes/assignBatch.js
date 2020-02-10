@@ -21,7 +21,7 @@ const assignModule = {
             let batchesCol = db.collection('batches')
 
             let i= 0
-            while(i < 9){
+            while(i < 4){
 
                 b1 = new Batch(2)
 
@@ -41,7 +41,7 @@ const assignModule = {
             }
 
             let j= 0
-            while(j < 12){
+            while(j < 6){
 
                 b1 = new Batch(3)
 
@@ -63,7 +63,7 @@ const assignModule = {
 
 
             let k= 0
-            while(k < 15){
+            while(k < 10){
 
                 b1 = new Batch(5)
 
@@ -84,7 +84,7 @@ const assignModule = {
 
 
             let l= 0
-            while(l < 18){
+            while(l < 12){
 
                 b1 = new Batch(6)
 
