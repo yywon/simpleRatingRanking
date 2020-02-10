@@ -22,35 +22,40 @@ userRemove = 0
 
 args = len(sys.argv) - 1
 
+#get bad users
+badUsers =[]
+for i in range(2, args):
+	badUsers.append(sys.argv[i])
+
+
 for user in usersCol.find():
     key2pay = user["key2pay"]
     userName = user["user"]
     indexes = user["indexes"]
 
-    responseCount = responsesCol.count({'user' : userName})
-     
-    if(key2pay is None):
-        key2pay = "none"
+    discard = 0
+    if userName in badUsers:
+    	discard = 0
 
-    print(userName + ": " + str(responseCount) + " responses. Key2pay: " + key2pay)
+ 
     
     discard = 0
     #check if indexes are in valid range
     for i in range(4):
         if indexes[i][0] == 2:
-#		print('frame: 2 batch: ' + str(indexes[i][1]))
+		print('frame: 2 batch: ' + str(indexes[i][1]))
 		if indexes[i][1] > 3:
 			discard = 1
 	if indexes[i][0] == 3:
-#		print('frame: 3 batch: ' + str(indexes[i][1])) 
+		print('frame: 3 batch: ' + str(indexes[i][1])) 
 		if indexes[i][1] > 5:
 			discard = 1
 	if indexes[i][0] == 5:
-#		print('frame: 5 batch: ' + str(indexes[i][1])) 
+		print('frame: 5 batch: ' + str(indexes[i][1])) 
 		if indexes[i][1] > 9:
 			discard = 1
 	if indexes[i][0] == 6:
-#		print('frame: 6 batch: ' + str(indexes[i][1])) 
+		print('frame: 6 batch: ' + str(indexes[i][1])) 
 		if indexes[i][1] > 11:
 			discard = 1
 
