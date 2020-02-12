@@ -22,7 +22,7 @@ const Batch = require('../batch');
 
 //assign batches
 //NOTE: comment this out if batches are already populated
-assignBatch.assign(url)
+//assignBatch.assign(url)
 
 //function to get current issues of Users
 let getUserInstance = uid => users.find(user => user.id === uid);

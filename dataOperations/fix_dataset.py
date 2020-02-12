@@ -34,7 +34,7 @@ for user in usersCol.find():
         update = {"$set": {}}
         update['$set']["assignmentStatus."+question] = 2
 
-        batchesCol.update_one({'size': indexes[i][0], 'number': indexes[i][1]}, update)
+        batchesCol.update_many({'size': indexes[i][0], 'number': indexes[i][1]}, update)
     
 #update all batches that have actually been assigned to 1, and those that havent to 0
 real = 0
@@ -49,23 +49,24 @@ for batch in batchesCol.find():
     for i in range(len(status)):
 
         assignment = str(status[i])
+	print(assignment)
 
         if assignment is "2":
             real += 1
 
             update = {"$set": {}}
-            update['$set']["assignmentStatus."+assignment] = 1
+            update['$set']["assignmentStatus."+str(i)] = 1
 
-            batchesCol.update_one({'size': size, 'number': number}, update)
+            batchesCol.update_many({'size': size, 'number': number}, update)
 
         else:
 
             changed += 1
 
             update = {"$set": {}}
-            update['$set']["assignmentStatus."+assignment] = 0
+            update['$set']["assignmentStatus."+str(i)] = 0
 
-            batchesCol.update_one({'size': size, 'number': number}, update)
+            batchesCol.update_many({'size': size, 'number': number}, update)
 
 
 print("number of assignments kept:", str(real))

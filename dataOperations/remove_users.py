@@ -48,6 +48,8 @@ for user in usersCol.find():
         responsesCol.delete_many({'user' : userName})
         usersCol.delete_one({'user' : userName})
 
+	userRemove+=1
+
 print("Users Removed: " + str(userRemove))
 
 
