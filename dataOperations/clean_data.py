@@ -114,12 +114,9 @@ for batch in batchesCol.find():
 
             batchesCol.update_many({'size': size, 'number': number}, update)
 
-print("Unfinished Users: ")
+
 print("Completed Users: " + str(len(completed_users)))
 print("Users Removed: " + str(userRemove))
-
-print("Invalid Responses: ")
-print("Number of assignments kept: ", str(real))
-print("Number of assignments removed: ", str(changed))
+print("Number of Valid Users: ", str(real/4))
 
 
