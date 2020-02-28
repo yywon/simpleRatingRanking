@@ -1,3 +1,5 @@
+#script to only keep responses that are valid and tied to a user, as well as clear out users that have not finished
+
 import pymongo
 import json
 import sys
@@ -38,24 +40,31 @@ for user in usersCol.find():
     #check if indexes are in valid range
     for i in range(4):
         if indexes[i][0] == 2:
-#		print('frame: 2 batch: ' + str(indexes[i][1]))
-		if indexes[i][1] > 3:
+		    if indexes[i][1] > 3:
+			    discard = 1
+        if indexes[i][0] == 3:
+		    if indexes[i][1] > 5:
+			    discard = 1
+        if indexes[i][0] == 5:
+		    if indexes[i][1] > 9:
+			    discard = 1
+        if indexes[i][0] == 6:
+		    if indexes[i][1] > 11:
 			discard = 1
-	if indexes[i][0] == 3:
-#		print('frame: 3 batch: ' + str(indexes[i][1])) 
-		if indexes[i][1] > 5:
-			discard = 1
-	if indexes[i][0] == 5:
-#		print('frame: 5 batch: ' + str(indexes[i][1])) 
-		if indexes[i][1] > 9:
-			discard = 1
-	if indexes[i][0] == 6:
-#		print('frame: 6 batch: ' + str(indexes[i][1])) 
-		if indexes[i][1] > 11:
-			discard = 1
+
+    #validate user responses
+    for i in range(len(indexes)):
+
+        question = str(indexes[i][2])
+        update = {"$set": {}}
+        update['$set']["assignmentStatus."+question] = 2
+
+        batchesCol.update_many({'size': indexes[i][0], 'number': indexes[i][1]}, update)
+
 
     if(responseCount >= 20 and discard == 0):
         completed_users.append(userName)
+
     else:
         userRemove += 1
         if(args > 1):
@@ -73,8 +82,44 @@ for user in usersCol.find():
                 responsesCol.delete_many({'user' : userName})
                 usersCol.delete_one({'user' : userName})
 
+
+#update all batches that have actually been assigned to 1, and those that havent to 0
+real = 0
+changed = 0
+ 
+for batch in batchesCol.find():
+
+    size = batch['size']
+    number = batch['number']
+    status = batch['assignmentStatus']
+
+    for i in range(len(status)):
+
+        assignment = str(status[i])
+
+        if assignment is "2":
+            real += 1
+
+            update = {"$set": {}}
+            update['$set']["assignmentStatus."+str(i)] = 1
+
+            batchesCol.update_many({'size': size, 'number': number}, update)
+
+        else:
+
+            changed += 1
+
+            update = {"$set": {}}
+            update['$set']["assignmentStatus."+str(i)] = 0
+
+            batchesCol.update_many({'size': size, 'number': number}, update)
+
+print("Unfinished Users: ")
 print("Completed Users: " + str(len(completed_users)))
 print("Users Removed: " + str(userRemove))
 
+print("Invalid Responses: ")
+print("Number of assignments kept: ", str(real))
+print("Number of assignments removed: ", str(changed))
 
 
