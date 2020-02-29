@@ -8,7 +8,7 @@ const co = require('co');
 const User = require('../User');
 const Batch = require('../batch');
 
-var dbase = 'ratingsrankingsA2'
+var dbase = 'ratingsrankingsA3'
 
 const assignModule = {
 
