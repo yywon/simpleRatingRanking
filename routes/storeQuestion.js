@@ -7,7 +7,7 @@ const co = require('co');
 //var url = 'mongodb://10.218.105.218:27017/';
 var url = 'mongodb://localhost:27017/';
 
-var datab = 'ratingsrankingsA3'
+var datab = 'ratingsrankingsA5'
 
 let assignQuestions = require('./assignBatch')
 
