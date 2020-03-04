@@ -1,3 +1,13 @@
+"""
+version 8
+
+@author: Romena, Ryan, Yeawon
+
+Edited on Feb 29 2020 9:01 PM 
+-> Changes: solution -> strict rankings
+"""
+
+
 from __future__ import division
 import json
 import math
@@ -186,7 +196,6 @@ class Sampler:
                 else:
                     self.batches[q] = 0
 
-            # Ratings and ranking model
             SF_rank, SF_rat, SF_dist, SF_gap, SF_time, SF_L1, SF_L2 = SF_ratings_and_ranking_model(self.input_file, self.objects, self.batches, self.frames, lambda_rat, lambda_ran)
             SF_dist_sum += SF_dist
             SF_L2_sum += SF_L2
@@ -196,7 +205,7 @@ class Sampler:
         SF_dist = SF_dist_sum/combinationCount
         SF_L2 = SF_L2_sum/combinationCount
 
-        return SF_dist, SF_L2, SF_gap
+        return SF_dist, SF_L2
 
     def sample_HD_ratings_and_ranking_model(self):
 
@@ -215,7 +224,6 @@ class Sampler:
                 else:
                     self.batches[q] = 0
 
-            # Ratings and ranking model
             HD_rank, HD_rat, HD_dist, HD_gap, HD_time, HD_L1, HD_L2 = HD_ratings_and_ranking_model(self.input_file, self.objects, self.batches, self.frames, lambda_rat, lambda_ran)
             HD_dist_sum += HD_dist
             HD_L2_sum += HD_L2
@@ -225,8 +233,36 @@ class Sampler:
         HD_dist = HD_dist_sum/combinationCount
         HD_L2 = HD_L2_sum/combinationCount
 
-        return HD_dist, HD_L2, HD_gap
+        return HD_dist, HD_L2
 
+    def sample_CD_ratings_and_ranking_model(self):
+
+        combinations_array = list(combinations(self.array, self.sampleSize))
+
+        CD_dist_sum = 0
+        CD_L2_sum = 0
+    
+        combinationCount = 0
+
+        for comb in combinations_array:
+
+            for q in range(len(self.batches)):
+                if (q in comb):
+                    self.batches[q] = 1
+                else:
+                    self.batches[q] = 0
+
+            CD_rank, CD_rat, CD_dist, CD_gap, CD_time, CD_L1, CD_L2 = CD_ratings_and_ranking_model(self.input_file, self.objects, self.batches, self.frames, lambda_rat, lambda_ran)
+            CD_dist_sum += CD_dist
+            CD_L2_sum += CD_L2
+
+            combinationCount +=1
+        
+        CD_dist = CD_dist_sum/combinationCount
+        CD_L2 = CD_L2_sum/combinationCount
+
+        return CD_dist, CD_L2
+    
     def sample_maximin_model(self):
 
         combinations_array = list(combinations(self.array, self.sampleSize))
@@ -243,7 +279,6 @@ class Sampler:
                 else:
                     self.batches[q] = 0
 
-            # Rankings only model
             MM_rank, MM_dist = maximin_model(self.input_file, self.objects, self.batches, self.frames)
             MM_dist_sum += MM_dist
 
@@ -269,7 +304,6 @@ class Sampler:
                 else:
                     self.batches[q] = 0
 
-            # Rankings only model
             CL_rank, CL_dist = copeland_model(self.input_file, self.objects, self.batches, self.frames)
             CL_dist_sum += CL_dist
 
@@ -278,7 +312,64 @@ class Sampler:
         CL_dist = CL_dist_sum/combinationCount
 
         return CL_dist      
-    
+
+    def sample_borda_model(self):
+
+        combinations_array = list(combinations(self.array, self.sampleSize))
+
+        BD_dist_sum = 0
+        #BD_L2_sum = 0
+
+        combinationCount = 0
+
+        for comb in combinations_array:
+
+            for q in range(len(self.batches)):
+                if (q in comb):
+                    self.batches[q] = 1
+                else:
+                    self.batches[q] = 0
+
+            BD_rank, BD_dist = borda_model(self.input_file, self.objects, self.batches, self.frames)
+            BD_dist_sum += BD_dist
+#            BD_L2_sum += BD_L2
+
+            combinationCount +=1
+
+        BD_dist = BD_dist_sum/combinationCount
+        #BD_L2 = BD_L2_sum/combinationCount
+
+        return BD_dist
+
+
+    def sample_plurality_model(self):
+
+        combinations_array = list(combinations(self.array, self.sampleSize))
+
+        PL_dist_sum = 0
+        #PL_L2_sum = 0
+
+        combinationCount = 0
+        
+        for comb in combinations_array:
+
+            for q in range(len(self.batches)):
+                if (q in comb):
+                    self.batches[q] = 1
+                else:
+                    self.batches[q] = 0
+
+            PL_rank, PL_dist = plurality_model(self.input_file, self.objects, self.batches, self.frames)
+            PL_dist_sum += PL_dist
+#            PL_L2_sum += PL_L2
+
+            combinationCount +=1
+
+        PL_dist = PL_dist_sum/combinationCount
+        #PL_L2 = PL_L2_sum/combinationCount
+
+        return PL_dist
+        
 
 class Evaluation:
 
@@ -300,7 +391,7 @@ class Evaluation:
         rat_copy = np.copy(self.Rat)
 
         curr_rank = 1
-
+        # Here, it assigns the better rank position for the larger number of dots rating.
         while sum(rat_copy) > 0:
             num_curr_rank = 0
             maxRat = max(rat_copy)
@@ -310,6 +401,7 @@ class Evaluation:
                     num_curr_rank += 1
                     rat_copy[i] = 0
             curr_rank += num_curr_rank
+
 
     # Obtains the separation gaps for a ratings vector
     def calc_ratings_seps(self):
@@ -360,10 +452,10 @@ class Profile:
                     tempEval = Evaluation()
                     tempEval.Ran = item['rankings']
                     tempEval.Rat = item['ratings']
-                    tempEval.size = len(tempEval.Ran)
 
                     tempEval.Vsub = [val2rank(i) for i in item['groundtruth']]
-                    self.groundtruth = [50 + i for i in range(30)]
+                    tempEval.size = len(tempEval.Ran)
+                    self.groundtruth = [50 + i for i in range(30)]        
 
                     min_rat = np.min(tempEval.Rat)
                     max_rat = np.max(tempEval.Rat)
@@ -491,7 +583,8 @@ def maximin(mat):
     agg_rank = [0] * len(mat)
     
     for i in range(len(mat)):
-        min_vec[i] = min(i for i in mat[i] if i > 0)   
+        min_vec[i] = min(k for j in range(len(mat)) for k in mat[i] if j != i)   
+
     agg_rank = ss.rankdata([-1 * i for i in min_vec]).astype(int)
     
     return agg_rank
@@ -505,7 +598,7 @@ def copeland(mat):
         for j in range(len(mat)):
             if (mat[i,j] - mat[j,i]) > 0:
                 cpld_score[i] += 1
-                       
+                      
     agg_rank = ss.rankdata([-1 * i for i in cpld_score]).astype(int)
              
     return agg_rank
@@ -557,6 +650,7 @@ def get_max_hops(G):
 
 # Get the aggregate ranks of the objects from the values of y
 def agg_rank_y(vec):
+    
     l = len(vec)
     row_sum = [0] * l
 
@@ -583,22 +677,26 @@ def agg_rank_y(vec):
     return r
 
 # Get the aggregate ranks of the objects from the values of x (for Conv_RR and RR)
+# v4. The smaller rating values -> the better rank position
+# v5 (current version). The larger rating values -> the better rank position
 def agg_rank_x(vec):
+
     r = [0]*len(vec)
 
     numAssigned = 0
     while numAssigned < len(vec):
-        minEntry = 9999
+        maxEntry = 0
         count = 0
         for j in range(len(vec)):
-            if r[j] == 0 and vec[j] <= minEntry:
-                minEntry = vec[j]
+            if r[j] == 0 and vec[j] >= maxEntry:
+                maxEntry = vec[j]
 
         for j in range(len(vec)):
-            if vec[j] == minEntry:
+            if vec[j] == maxEntry:
                 r[j] = numAssigned + 1
                 count += 1
         numAssigned += count
+        
     return r
 
 
@@ -614,13 +712,26 @@ def ks_GT(r1, r2):
 
 # Get the aggregate ranks of the objects from the values of x
 def g_truth(vec):
+    
     r = [0] * len(vec)
 
-    for i in range(len(vec)):
-        r[i] = i+1
+    rat_copy = np.copy(vec)
+
+    curr_rank = 1
+
+    while sum(rat_copy) > 0:
+        num_curr_rank = 0
+        maxRat = max(rat_copy)
+        for i in range(len(vec)):
+            if vec[i] == maxRat:
+                r[i] = curr_rank
+                num_curr_rank += 1
+                rat_copy[i] = 0
+        curr_rank += num_curr_rank
     return r
 
 # Calculate all the parameters
+    
 def calculate_parameters(p):
     profile = p
     num_obj = profile.num_obj
@@ -641,6 +752,7 @@ def calculate_parameters(p):
         n_indiv[j] = float(profile.evs[j].size)
         C[j] = 1 / (4 * R * math.ceil(n_indiv[j] / 2) * math.floor(n_indiv[j] / 2))
 
+
     for k in range(num_jud):
         for i in range(profile.evs[k].size):
             for j in range(profile.evs[k].size):
@@ -656,60 +768,6 @@ def calculate_parameters(p):
 
     return B, C, Sep, rat_matrix
 
-
- 
-
-def callibrate_model(solns, data):
-
-    # this is the solution vector (aggregate rating vector)
-    solns = np.array(solns)
-
-    m = cplex.Cplex()
-    m.objective.set_sense(m.objective.sense.minimize)
-
-    # number of judges and number of objects
-    num_judges, num_objects = np.shape(data)
-
-    # add the variable "c" to the model
-    m.variables.add([0], [-cplex.infinity], [cplex.infinity], types="C", names=["cal"])
-
-    for i in range(num_judges):
-        for j in range(num_objects):
-            m.variables.add([0], [-cplex.infinity], [cplex.infinity], types="C", names=["h_abs" + str(i) + "," + str(j)])
-
-    # objective function has absolute value so linearize this using the following two equations
-    # objective function : min |(x_i + c) - a_ij|
-
-    for i in range(num_judges):
-        for j in range(num_objects):
-            if data[i, j] != 0:
-                m.linear_constraints.add(
-                    lin_expr=[[["h_abs" + str(i) + "," + str(j)] + ["cal"], [1] + [-1]]],
-                    senses="G", rhs=[solns[j] - data[i, j]],
-                    names=["abs_1" + str(i) + "," + str(j)])
-
-    for i in range(num_judges):
-        for j in range(num_objects):
-            if data[i, j] != 0:
-                m.linear_constraints.add(
-                    lin_expr=[[["h_abs" + str(i) + "," + str(j)] + ["cal"], [1] + [1]]],
-                    senses="L", rhs=[- solns[j] + data[i, j]],
-                    names=["abs_2" + str(i) + "," + str(j)])
-
-
-    m.set_log_stream(None)
-    m.set_error_stream(None)
-    m.set_warning_stream(None)
-    m.set_results_stream(None)
-    
-    m.solve()
-
-    cal = m.solution.get_values("cal")
-
-    for k in range(len(solns)):
-        solns[k] = solns[k] + cal
-
-    return solns
 
 # ratings and ranking model with NPKS and NPCK distance
 def rating_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat, lambda_ran):
@@ -801,13 +859,14 @@ def rating_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat, la
                         senses="G", rhs=[-M],
                         names=["RatToRan_b" + str(i + 1) + "," + str(j + 1)])
 
+        # ties are not allowed
         for i in range(n):
             for j in range(n):
                 if j > i:
                     prob_RR.linear_constraints.add(
                         lin_expr=[
                             [["y" + str(i + 1) + "," + str(j + 1)] + ["y" + str(j + 1) + "," + str(i + 1)], [1] + [1]]],
-                        senses="G", rhs=[1],
+                        senses="E", rhs=[1],
                         names=["dispref" + str(i + 1) + "," + str(j + 1)])
 
         for i in range(n):
@@ -819,6 +878,7 @@ def rating_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat, la
                                        + ["y" + str(i + 1) + "," + str(k + 1)], [1] + [-1] + [-1]]],
                             senses="G", rhs=[-1],
                             names=["ttvt" + str(i + 1) + "," + str(j + 1) + "," + str(k + 1)])
+
 
         start_time = time.time()
 
@@ -843,7 +903,7 @@ def rating_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat, la
             if i != j:
                 y[i][j] = round(prob_RR.solution.get_values("y" + str(i + 1) + "," + str(j + 1)))
 
-    ranking = agg_rank_y(y)
+    ranking = agg_rank_y(y)#
 
     ground_truth = g_truth(prof.groundtruth)
 
@@ -898,14 +958,14 @@ def ranking_only_model(file_name, num_obj, batches, frames):
                     prob_OA.variables.add([2 * B[i][j]], [0], [1], types="I",
                                           names=["y" + str(i + 1) + "," + str(j + 1)])
 
-        # Add constraints
+        # Add constraints ("G" -> "E", ties are not allowed)
         for i in range(n):
             for j in range(n):
                 if j > i:
                     prob_OA.linear_constraints.add(
                         lin_expr=[
                             [["y" + str(i + 1) + "," + str(j + 1)] + ["y" + str(j + 1) + "," + str(i + 1)], [1] + [1]]],
-                        senses="G", rhs=[1],
+                        senses="E", rhs=[1],
                         names=["dispref" + str(i + 1) + "," + str(j + 1)])
 
         for i in range(n):
@@ -944,7 +1004,6 @@ def ranking_only_model(file_name, num_obj, batches, frames):
     ranking = agg_rank_y(y)
 
     ground_truth = g_truth(prof.groundtruth)
-
     
     # KS distance between the aggregate ranking and the ground truth
     dist = ks_GT(ranking, ground_truth)
@@ -1178,10 +1237,9 @@ def ratings_only_model(file_name, num_obj, batches, frames):
 
     ranking = agg_rank_x(x)
 
-
     # calibration step
-    #rating = callibrate_model(x, input_ratings)
     rating = x
+
 
     ground_truth = g_truth(prof.groundtruth)
 
@@ -1340,7 +1398,7 @@ def SF_ratings_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat
                         lin_expr=[
                             [["y" + str(i + 1) + "," + str(j + 1)] + ["y" + str(j + 1) + "," + str(i + 1)],
                              [1] + [1]]],
-                        senses="G", rhs=[1],
+                        senses="E", rhs=[1],
                         names=["dispref" + str(i + 1) + "," + str(j + 1)])
 
         for i in range(n):
@@ -1542,7 +1600,7 @@ def HD_ratings_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat
                         lin_expr=[
                             [["y" + str(i + 1) + "," + str(j + 1)] + ["y" + str(j + 1) + "," + str(i + 1)],
                              [1] + [1]]],
-                        senses="G", rhs=[1],
+                        senses="E", rhs=[1],
                         names=["dispref" + str(i + 1) + "," + str(j + 1)])
 
         for i in range(n):
@@ -1642,7 +1700,6 @@ def HD_ratings_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat
         for j in range(n):
             if i != j:
                 y[i][j] = round(prob_HD.solution.get_values("y" + str(i + 1) + "," + str(j + 1)))
-
 
 
     ranking = agg_rank_y(y)
@@ -1757,7 +1814,7 @@ def CD_ratings_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat
                     prob_CD.linear_constraints.add(
                         lin_expr=[
                             [["y" + str(i + 1) + "," + str(j + 1)] + ["y" + str(j + 1) + "," + str(i + 1)], [1] + [1]]],
-                        senses="G", rhs=[1],
+                        senses="E", rhs=[1],
                         names=["dispref" + str(i + 1) + "," + str(j + 1)])
 
         for i in range(n):
@@ -1838,7 +1895,6 @@ def CD_ratings_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat
             if i != j:
                 y[i][j] = round(prob_CD.solution.get_values("y" + str(i + 1) + "," + str(j + 1)))
 
-
     ranking = agg_rank_y(y)
 
     ground_truth = g_truth(prof.groundtruth)
@@ -1901,25 +1957,71 @@ def copeland_model(file_name, num_obj, batches, frames):
 
     return ranking, dist
 
+def borda_model(file_name, num_obj, batches, frames):
+    
+#    print("borda")
+    prof = Profile(num_obj)
+    prof.assign_rank(file_name, batches, frames)  
+    borda_sum = [0] * num_obj
+
+    # Expand reduced ranking vector into a full ranking vector (insert zeros for unranked objects)
+    full_rank = np.zeros(prof.num_obj)
+
+    for i in range(prof.num_jud):
+        for j in range(len(prof.evs[i].Vsub)):
+            full_rank[prof.evs[i].Vsub[j] - 1] = prof.evs[i].Ran[j]
+        borda = [max(full_rank) - x for x in full_rank]        
+        borda_sum = [sum(x) for x in zip(borda, borda_sum)]
+
+    borda_ranking = ss.rankdata([-1 * i for i in borda_sum], method = 'min').astype(int) 
+    ground_truth = g_truth(prof.groundtruth)
+
+    # KS distance between the aggregate ranking and the ground truth
+    dist = ks_GT(borda_ranking, ground_truth)
+
+    return borda_ranking, dist
+
+
+def plurality_model(file_name, num_obj, batches, frames):
+    
+#    print("plurality")
+    prof = Profile(num_obj)
+    prof.assign_rank(file_name, batches, frames) 
+    plur_sum = [0] * num_obj
+
+    # Expand reduced ranking vector into a full ranking vector (insert zeros for unranked objects)
+    full_rank = np.zeros(prof.num_obj)
+
+    for i in range(prof.num_jud):
+        for j in range(len(prof.evs[i].Vsub)):
+            full_rank[prof.evs[i].Vsub[j] - 1] = prof.evs[i].Ran[j]
+        plur = [1 if x == 1 else 0 for x in full_rank]        
+        plur_sum = [sum(x) for x in zip(plur, plur_sum)]
+
+    plur_ranking = ss.rankdata([-1 * i for i in plur_sum], method = 'min').astype(int) 
+    ground_truth = g_truth(prof.groundtruth)
+
+    # KS distance between the aggregate ranking and the ground truth
+    dist = ks_GT(plur_ranking, ground_truth)
+
+    return plur_ranking, dist
 
 #input_file = 'responseData Incomplete 12-3.json'
 input_file = '02-17-2020ratingsrankingsA1.json'
 objects = 30
 
-frames = 5
+frames = 6
 num_batches = int(60/(30/frames))
-size = 6
-
-
 lambda_rat = 1 
 lambda_ran = 1
+size = 4
 
 start_time = time.time()
 
 sample = Sampler(size, num_batches, input_file, objects, frames)
 
 #print incompleteness level
-print("Incompleteness level: " + str(size))
+print("frame: " + str(frames) + ", # of batches used: " + str(size) )
 
 #rankings only model
 OA_dist = sample.sample_ranking_only_model()
@@ -1928,7 +2030,6 @@ print(OA_dist)
 
 #ratings only model
 CA_dist, CA_L2 = sample.sample_ratings_only_model()
-
 print('ratings only:')
 print(CA_dist)
 print(CA_L2)
@@ -1939,22 +2040,59 @@ print('separation deviation: ')
 print(SD_dist)
 print(SD_L2)
 
-#averages
-A_dist, A_L2 = sample.sample_averages()
-print('averages: ')
-print(A_dist)
-print(A_L2)
+MM_dist = sample.sample_maximin_model()
+print('maximin model: ')
+print(MM_dist)
 
 CL_dist = sample.sample_copeland_model()
 print('copeland model: ')
 print(CL_dist)
 
+BD_dist = sample.sample_borda_model()
+print('borda model: ')
+print(BD_dist)
+
+PL_dist = sample.sample_plurality_model()
+print('plurality model: ')
+print(PL_dist)
+
+#averages
+
+A_dist, A_L2 = sample.sample_averages()
+print('averages: ')
+print(A_dist)
+print(A_L2)
+
+
+#ratings and rankings model
+
+'''
+RR_dist, RR_L2, RR_gap = sample.sample_rating_and_ranking_model()
+print('ratings and rankings:')
+print(RR_dist)
+print(RR_L2)
+'''
+
+#CD_dist, CD_L2 = sample.sample_CD_ratings_and_ranking_model()
+#print('chevyshev distance model')
+#print(CD_dist)
+#print(CD_L2)
+
+#SF_dist, SF_L2 = sample.sample_SF_ratings_and_ranking_model() 
+#print('spearman footrule model')
+#print(SF_dist)
+#print(SF_L2)
+
+#HD_dist, HD_L2 = sample.sample_HD_ratings_and_ranking_model()
+#print('hamming distance model')
+#print(HD_dist)
+#print(HD_L2)
+
+total_time = time.time() - start_time
+print("time:", total_time)
 
 
 '''
-MM_dist = sample.sample_maximin_model()
-print('maximin model: ')
-print(MM_dist)
 
 
 HD_dist, HD_L2 = sample.sample_HD_ratings_and_ranking_model()

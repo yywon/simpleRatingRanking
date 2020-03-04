@@ -30,9 +30,9 @@ const loadModule = {
 
             frame = userOrder[i]
             //console.log(frame)
-
+            found = 0
             findQuestions:
-            for(batch = 0; batch < 180/(60/frame); batch++){
+            for(batch = 0; batch < 60/(30/frame); batch++){
 
               //console.log(batch)
 
@@ -52,11 +52,16 @@ const loadModule = {
                   update['$set']["assignmentStatus."+question] = 1
 
                   batchesCol.updateOne( {'size': dbBatch.size, 'number': dbBatch.number}, update)
-
+                  found = 1
                   break findQuestions;
                 }
               }
             }
+
+            if(found == 0){
+              res.render('index', {error: "ERROR: Activity is full"});
+            }
+
           }
 
           //assign ab order to user
