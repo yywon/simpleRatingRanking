@@ -465,8 +465,6 @@ class Profile:
 
                     if max_rat > self.max_rat:
                         self.max_rat = max_rat
-                    #self.max_rat = max(self.groundtruth)
-                    #self.min_rat = min(self.groundtruth)
 
                     self.evs.append(tempEval)
                     self.num_jud += 1
@@ -674,6 +672,7 @@ def agg_rank_y(vec):
                 r[j] = numAssigned + 1
                 count += 1
         numAssigned += count
+    
     return r
 
 # Get the aggregate ranks of the objects from the values of x (for Conv_RR and RR)
@@ -880,13 +879,14 @@ def rating_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat, la
                             names=["ttvt" + str(i + 1) + "," + str(j + 1) + "," + str(k + 1)])
 
 
-        start_time = time.time()
-
+        prob_RR.parameters.timelimit.set(300)   
         prob_RR.set_log_stream(None)
         prob_RR.set_error_stream(None)
         prob_RR.set_warning_stream(None)
         prob_RR.set_results_stream(None)        
-        
+
+
+        start_time = time.time()        
         prob_RR.solve()
         end_time = time.time()
         total_time = end_time - start_time
@@ -978,13 +978,15 @@ def ranking_only_model(file_name, num_obj, batches, frames):
                             senses="G", rhs=[-1],
                             names=["ttvt" + str(i + 1) + "," + str(j + 1) + "," + str(k + 1)])
 
-        start_time = time.time()
-        
+
+
+        prob_OA.parameters.timelimit.set(300)          
         prob_OA.set_log_stream(None)
         prob_OA.set_error_stream(None)
         prob_OA.set_warning_stream(None)
         prob_OA.set_results_stream(None)
-        
+
+        start_time = time.time()        
         prob_OA.solve()
         end_time = time.time()
         total_time = end_time - start_time
@@ -1111,13 +1113,15 @@ def separation_deviation_model(file_name, num_obj, batches, frames, lambda1, lam
                                     names=["Dev_2" + str(k + 1) + "," + str(i + 1) + "," + str(j + 1)])
 
 
-        start_time = time.time()
 
+
+        prob_SD.parameters.timelimit.set(300) 
         prob_SD.set_log_stream(None)
         prob_SD.set_error_stream(None)
         prob_SD.set_warning_stream(None)
         prob_SD.set_results_stream(None)
 
+        start_time = time.time()
         prob_SD.solve()
         end_time = time.time()
         total_time = end_time - start_time
@@ -1215,13 +1219,15 @@ def ratings_only_model(file_name, num_obj, batches, frames):
                                     senses="G", rhs=[Sep[k][i][j]],
                                     names=["absVal_b" + str(k + 1) + "," + str(i + 1) + "," + str(j + 1)])
 
-        start_time = time.time()
 
+
+        prob_FM.parameters.timelimit.set(300) 
         prob_FM.set_log_stream(None)
         prob_FM.set_error_stream(None)
         prob_FM.set_warning_stream(None)
         prob_FM.set_results_stream(None)
 
+        start_time = time.time()
         prob_FM.solve()
         end_time = time.time()
         total_time = end_time - start_time
@@ -1457,13 +1463,14 @@ def SF_ratings_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat
                         senses="G", rhs=[-M],
                         names=["RatToRan_b" + str(i + 1) + "," + str(j + 1)])
 
-        start_time = time.time()
-        
+
+        prob_SF.parameters.timelimit.set(300)     
         prob_SF.set_log_stream(None)
         prob_SF.set_error_stream(None)
         prob_SF.set_warning_stream(None)
         prob_SF.set_results_stream(None)
-        
+
+        start_time = time.time()      
         prob_SF.solve()
         end_time = time.time()
         total_time = end_time - start_time
@@ -1678,13 +1685,14 @@ def HD_ratings_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat
                         senses="G", rhs=[-M],
                         names=["RatToRan_b" + str(i + 1) + "," + str(j + 1)])
 
-        start_time = time.time()
-        
+
+        prob_HD.parameters.timelimit.set(300)        
         prob_HD.set_log_stream(None)
         prob_HD.set_error_stream(None)
         prob_HD.set_warning_stream(None)
         prob_HD.set_results_stream(None)
-        
+
+        start_time = time.time()        
         prob_HD.solve()
         end_time = time.time()
         total_time = end_time - start_time
@@ -1871,13 +1879,14 @@ def CD_ratings_and_ranking_model(file_name, num_obj, batches, frames, lambda_rat
                         senses="G", rhs=[-M],
                         names=["RatToRan_b" + str(i + 1) + "," + str(j + 1)])
 
-        start_time = time.time()
+
         
+        prob_CD.parameters.timelimit.set(300)           
         prob_CD.set_log_stream(None)
         prob_CD.set_error_stream(None)
         prob_CD.set_warning_stream(None)
         prob_CD.set_results_stream(None)
-        
+        start_time = time.time()        
         prob_CD.solve()
         
         end_time = time.time()
@@ -2014,7 +2023,7 @@ frames = 6
 num_batches = int(60/(30/frames))
 lambda_rat = 1 
 lambda_ran = 1
-size = 4
+size = 2
 
 start_time = time.time()
 
@@ -2063,30 +2072,30 @@ print('averages: ')
 print(A_dist)
 print(A_L2)
 
-
 #ratings and rankings model
-
-'''
 RR_dist, RR_L2, RR_gap = sample.sample_rating_and_ranking_model()
 print('ratings and rankings:')
 print(RR_dist)
 print(RR_L2)
-'''
 
-#CD_dist, CD_L2 = sample.sample_CD_ratings_and_ranking_model()
-#print('chevyshev distance model')
-#print(CD_dist)
-#print(CD_L2)
+SF_dist, SF_L2 = sample.sample_SF_ratings_and_ranking_model() 
+print('spearman footrule model')
+print(SF_dist)
+print(SF_L2)
 
-#SF_dist, SF_L2 = sample.sample_SF_ratings_and_ranking_model() 
-#print('spearman footrule model')
-#print(SF_dist)
-#print(SF_L2)
+"""
 
-#HD_dist, HD_L2 = sample.sample_HD_ratings_and_ranking_model()
-#print('hamming distance model')
-#print(HD_dist)
-#print(HD_L2)
+CD_dist, CD_L2 = sample.sample_CD_ratings_and_ranking_model()
+print('chevyshev distance model')
+print(CD_dist)
+print(CD_L2)
+
+HD_dist, HD_L2 = sample.sample_HD_ratings_and_ranking_model()
+print('hamming distance model')
+print(HD_dist)
+print(HD_L2)
+
+"""
 
 total_time = time.time() - start_time
 print("time:", total_time)
