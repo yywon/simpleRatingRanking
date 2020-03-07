@@ -1031,8 +1031,8 @@ def separation_deviation_model(file_name, num_obj, batches, frames, lambda1, lam
 
     n = prof.num_obj
     m = prof.num_jud
-    L = prof.min_rat
-    U = prof.max_rat
+    L = float(prof.min_rat)
+    U = float(prof.max_rat)
     
 
     lambda_1 = lambda1  # weight of deviation cost
@@ -1172,8 +1172,8 @@ def ratings_only_model(file_name, num_obj, batches, frames):
     n = prof.num_obj
     m = prof.num_jud
 
-    L = prof.min_rat
-    U = prof.max_rat
+    L = float(prof.min_rat)
+    U = float(prof.max_rat)
     
     try:
         prob_FM = cplex.Cplex()
