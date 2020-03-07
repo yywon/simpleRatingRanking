@@ -19,7 +19,12 @@ dataArray = []
 
 #iterate over users
 for user in usersCol.find():
-	dataArray.append(user)
+
+	userJSON = {
+		"ID" : user['user'],
+		"surveyResults" : user['surveyResults']
+	}
+	dataArray.append(userJSON)
 
 file_name = "users" + dbase + ".json" 
 
