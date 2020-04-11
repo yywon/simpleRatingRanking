@@ -43,14 +43,14 @@ for user in usersCol.find():
 			time = int(ratingResponse["time"])
 			ratingtime += time
 		
-        question = {
-            	"user": userName,
-		"frames": frames,
- 		"rankingTime": ranktime,
-		"ratingTime": ratingtime,
-	}
+        	question = {
+            		"user": userName,
+			"frames": frames,
+ 			"rankingTime": ranktime,
+			"ratingTime": ratingtime,
+		}
 
-        dataArray.append(question)
+        	dataArray.append(question)
 
 
 file_name = "times" + dbase + ".json" 
