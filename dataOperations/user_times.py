@@ -29,26 +29,26 @@ for user in usersCol.find():
 	#get the users responses for each question 
 	for i in range(1,5):
 
-        #find rank
+        	#find rank
 		rankResponse = responsesCol.find_one({"user": userName, "collection": str(i), "type": "ranking"})
-        ranktime = int(rankResponse["time"])
-        frames = int(rankResponse["frames"])
+        	ranktime = int(rankResponse["time"])
+       		frames = int(rankResponse["frames"])
 
 		#get pictures
 
-        ratingtime = 0
-        for j in range(frames):
+        	ratingtime = 0
+        	for j in range(frames):
 			
 			ratingResponse = responsesCol.find_one({"user": userName, "picture": str(j), "collection": str(i), "type": "rating"})
 			time = int(ratingResponse["time"])
 			ratingtime += time
 		
         question = {
-            "user": userName,
-			"frames": frames,
- 			"rankingTime": ranktime,
-			"ratingTime": ratingtime,
-		}
+            	"user": userName,
+		"frames": frames,
+ 		"rankingTime": ranktime,
+		"ratingTime": ratingtime,
+	}
 
         dataArray.append(question)
 
