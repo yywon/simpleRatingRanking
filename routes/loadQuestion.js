@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const co = require('co');
 
-//var url = 'mongodb://10.218.105.218:27017/';
+//var url = 'mongodb://10.138.0.2:27017/';
 var url = 'mongodb://localhost:27017/';
 
 var dbase = 'ratingsrankingsB1'
@@ -104,7 +104,7 @@ const loadModule = {
         
         //connect to db
         let client = yield MongoClient.connect(url);
-        const db = client.db('ratingsrankingsB')
+        const db = client.db(dbase)
         let usersCol = db.collection(dbase)
         let responseCol = db.collection('responses')
 
@@ -122,7 +122,7 @@ const loadModule = {
 
     loadAfterRating: function(req, res, user){
 
-      console.log('in the func')
+      console.log('loading after rating')
       console.log(user)
 
       //load the next rating question
@@ -136,7 +136,6 @@ const loadModule = {
           
           //check if response made it to db
           check =  yield responseCol.findOne({"user": user.id, "collection": String(user.activityID), "type": 'rating'})
-          console.log('check')
 
           if (check === null){
             res.render('ratings2', {userID : user.id, id: user.activityID , type: "ratings", frames: user.frames(), question: user.question(), error: "ERROR: Please submit valid estimates"})

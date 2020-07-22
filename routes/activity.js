@@ -6,7 +6,7 @@ const co = require('co');
 var shuffle = require('shuffle-array');
 
 var url = 'mongodb://localhost:27017/';
-//var url = 'mongodb://10.218.105.218:27017/';
+//var url = 'mongodb://10.138.0.2:27017/';
 
 var userID = null
 let loadQuestion = require('./loadQuestion')
@@ -22,7 +22,7 @@ const Batch = require('../batch');
 
 //assign batches
 //NOTE: comment this out if batches are already populated
-assignBatch.assign(url)
+//assignBatch.assign(url)
 
 //function to get current issues of Users
 let getUserInstance = uid => users.find(user => user.id === uid);
@@ -56,10 +56,11 @@ router.post('/', function(req,res,next){
 
 //load new rating question
 router.post('/:id/rankings/:userID', function(req, res, next){
-
+  console.log("loading a rating")
   setTimeout(function (){
     //Fetch instance of current user
     let currentUser = getUserInstance(req.params.userID);
+    console.log(currentUser)
     loadQuestion.loadAfterRanking(req, res, currentUser);
   }, 250)
 
@@ -110,7 +111,7 @@ router.post('/:s?/:t?/:d?/:f?/:userID/sendSurvey', function(req,res,next){
 //send ratings 
 router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,res,next){
 
-  console.log("in the funcccc")
+  console.log("in the sendddd funcccc")
 
   //collect variables from front end
   userID = req.params.userID
@@ -122,26 +123,26 @@ router.post(':s?/:t?/:d?/:f?/:userID/:id/:picture/sendRatings/', function(req,re
   let time = data[0]
   let rating = data[1]
   console.log('ratings', rating)
+  console.log('test rating', rating[0])
 
   let currentUser = getUserInstance(userID);
   let batch = currentUser.batch();
   let frames = currentUser.frames();
   
-  var ratingInt = rating.map(function (x){
-    return parseInt(x)
-  })
 
   for(var i = 0; i < frames; i++){
-    if(isNaN(ratingInt[i]) || ratingInt[i].trim() === ''){
+    if(isNaN(parseInt(rating[i])) || rating[i].trim() === ''){
+      console.log("stuck as nan")
       return;
     }
   }
-
+  console.log("final rating" , rating)
   console.log('made it')
   storeQuestion.storeMultipleRatings(userID, id, rating, time, batch, frames)
 
 });
 
+//load a new ranking question
 router.post('/:id/ratingsB/B/:userID', function(req,res,next){
 
   setTimeout(function (){

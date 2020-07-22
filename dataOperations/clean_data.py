@@ -2,17 +2,19 @@ import pymongo
 import json
 import sys
 
-responseCount = 22
+responseCount = 8
 
-#url = 'mongodb://localhost:27017/'
-url = 'mongodb://10.218.105.218:27017/'
+url = 'mongodb://localhost:27017/'
+#url = 'mongodb://10.218.105.218:27017/'
+
+dbase = sys.argv[1]
+print(dbase)
 
 client = pymongo.MongoClient(url)
 db = client['ratingsrankingsframes']
 usersCol = db['users']
 responsesCol = db['responses']
-batchesColA = db['batchesA']
-batchesColB = db['batchesB']
+batchesCol = db['batches']
 
 completed_users = []
 
@@ -24,8 +26,7 @@ for user in usersCol.find():
 
     key2pay = user["key2pay"]
     userName = user["user"]
-    indexesA = user["indexesA"]
-    indexesB = user["indexesB"]
+    indexes = user["indexes"]
 
     responseCount = responsesCol.count({'user' : userName})
      
