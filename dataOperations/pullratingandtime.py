@@ -35,20 +35,20 @@ for user in usersCol.find():
 		#get pictures
 		for j in range(len(questionOrder)):
 			
-            gtruth = questionOrder[j]
+		        gtruth = questionOrder[j]
 			ratingResponse = responsesCol.find_one({"user": userName, "picture": str(j), "collection": str(i), "type": "rating"})
-			ratingResponse = ratingResponse["estimate"]
-			ratingResponse = int(float(ratingResponse))
-            timespent = ratingResponse["time"]
+			rating = ratingResponse["estimate"]
+			rating = int(float(rating))
+            		timespent = int(ratingResponse["time"])
 
-		    question = {
-                "user": userName
+		    	question = {
+		            "user": userName,
 			    "time": timespent,
-			    "rating": ratingResponse,
+			    "rating": rating,
 			    "groundtruth": gtruth
-		    }
+		    	}
 
-		    dataArray.append(question)
+		    	dataArray.append(question)
 
 rightNow = datetime.datetime.today().strftime('%m-%d-%Y')
 file_name = rightNow + dbase + ".json" 
