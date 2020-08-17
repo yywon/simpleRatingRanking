@@ -41,7 +41,19 @@ for user in usersCol.find():
         
 		rank = rankResponse["ranking"]
 		ranking = [int(x) for x in rank]
-		#Note: change rank to format
+		rank_copy = ranking[:]
+		
+		#get mins:
+		pos = 0
+		ranks_min = [None] * len(rank_copy)
+		for ra in rank_copy:
+			min_index = ranking.index(min(rank_copy))
+			rank_copy[min_index] = 1000
+			ranks_min[min_index] = pos
+			pos += 1
+
+
+		#change rank to format
 		pos = 1
 		for ra in ranking:
 			max_index = ranking.index(max(ranking))
@@ -52,28 +64,21 @@ for user in usersCol.find():
 		ratingResponse = responsesCol.find_one({"user": userName, "collection": str(i), "type": "rating"})
 		ratingResponse = ratingResponse["estimates"]
 		for i in ratingResponse:
-			rating.append(int(float(ratingResponse)))
+			rating.append(int(float(filter(lambda x: x.isdigit(), i))))
 
-		#TODO: decode rating response
+		decoded_ratings = [None] * len(rating)
+		#decode rating response
+		for i in range(len(rating)):
+			rankpos = ranks_min[i]
+			cur_rat = rating[i]
+			decoded_ratings[rankpos] = cur_rat 
 
-		#sort ratings in order of ground truth
-		for k in range(1, len(questionOrder)):
-			key = questionOrder[k] 
-			key2 = rating[k]
-			l = k-1
 
-			while l>=0 and key < questionOrder[l]:
-				questionOrder[l+1] = questionOrder[l]
-				rating[l+1] = rating[l]
-				l = l - 1
-			rating[l+1] = key2
-			questionOrder[l+1] = key
-		
 		question = {
 			"batch": batch,
 			"frames": frames,
  			"rankings": ranking,
-			"ratings": rating,
+			"ratings": decoded_ratings,
 			"groundtruth": questionOrder
 		}
 
