@@ -1,0 +1,8 @@
+[{"user" : "AKQAI78JTXXC9", "collection" : "1", "frames" : 5, "batch" : 2, "type" : "ranking", "ranking" : [ "51", "53", "63", "62", "76" ], "time" : 8325 },
+{"user" : "AKQAI78JTXXC9", "collection" : "1", "batch" : 2, "frames" : 5, "type" : "rating", "estimates" : [ "50", "55", "60", "65", "70" ], "time" : 10932 },
+{"user" : "AKQAI78JTXXC9", "collection" : "2", "frames" : 6, "batch" : 2, "type" : "ranking", "ranking" : [ "50", "52", "68", "70", "74", "76" ], "time" : 7604 },
+{"user" : "AKQAI78JTXXC9", "collection" : "2", "batch" : 2, "frames" : 6, "type" : "rating", "estimates" : [ "40", "45", "55", "60", "65", "70" ], "time" : 9794 },
+{"user" : "AKQAI78JTXXC9", "collection" : "3", "frames" : 2, "batch" : 0, "type" : "ranking", "ranking" : [ "54", "71" ], "time" : 7109 },
+{"user" : "AKQAI78JTXXC9", "collection" : "3", "batch" : 0, "frames" : 2, "type" : "rating", "estimates" : [ "50", "65" ], "time" : 8090 },
+{"user" : "AKQAI78JTXXC9", "collection" : "4", "frames" : 3, "batch" : 1, "type" : "ranking", "ranking" : [ "52", "67", "79" ], "time" : 5889 },
+{"user" : "AKQAI78JTXXC9", "collection" : "4", "batch" : 1, "frames" : 3, "type" : "rating", "estimates" : [ "50", "60", "70" ], "time" : 6257 }]
