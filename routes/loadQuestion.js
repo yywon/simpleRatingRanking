@@ -5,7 +5,7 @@ var assert = require('assert');
 const co = require('co');
 
 //var url = 'mongodb://10.138.0.2:27017/';
-var url = 'mongodb://localhost:27017/';
+var url = 'mongodb://localhost:27014/';
 
 var dbase = 'ratingsrankingsB3'
 
